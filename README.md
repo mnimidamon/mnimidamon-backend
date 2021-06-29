@@ -1,5 +1,5 @@
 # mnimidamon-backend
-Backend for mnimidamon written in Go.
+Backend for _mnimidamon_ written in Go.
 
 
 ## Running
