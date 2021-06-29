@@ -1,1 +1,1 @@
-module "mnimidamon-server"
+module "mnimidamonserver"
