@@ -1,1 +1,1 @@
-module "mnimidamonserver"
+module "mnimidamonbackend"
