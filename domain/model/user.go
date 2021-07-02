@@ -5,6 +5,4 @@ type User struct {
 
 	Username string
 	PasswordHash string
-
-	Computers []Computer
 }

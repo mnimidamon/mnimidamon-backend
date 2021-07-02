@@ -1,9 +1,14 @@
 package repository
 
+import "mnimidamonbackend/domain/model"
+
 type UserRepository interface {
 	BeginTx() UserRepositoryTx
 
 	// TODO: Functionalities
+	FindAll() ([]*model.User, error)
+	FindByUsername(username string) (*model.User, error)
+	Save(*model.User) error
 }
 
 type UserRepositoryTx interface {
