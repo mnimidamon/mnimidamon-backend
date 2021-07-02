@@ -1,6 +1,6 @@
 package modelsql
 
-// Represents a Group which is
+// Represents a Group which has GroupMembers and a list of active Invites.
 type Group struct {
 	Entity
 
