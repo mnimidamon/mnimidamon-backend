@@ -59,11 +59,11 @@ func main() {
 		PasswordHash: "xxxxxxx12312",
 	}
 
-	err = ur.Save(user)
+	err = ur.Create(user)
 	if err != nil {
-		log.Printf("Error UserRepo.Save: %v", err)
+		log.Printf("Error UserRepo.Create: %v", err)
 	} else {
-		log.Printf("UserRepo.Save: %v", user)
+		log.Printf("UserRepo.Create: %v", user)
 	}
 
 

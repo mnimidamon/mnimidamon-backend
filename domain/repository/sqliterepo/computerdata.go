@@ -2,6 +2,7 @@ package sqliterepo
 
 import (
 	. "gorm.io/gorm"
+	"mnimidamonbackend/domain/model"
 	"mnimidamonbackend/domain/repository"
 )
 
@@ -14,18 +15,34 @@ type computerData struct {
 	*DB
 }
 
+func (cd computerData) FindAll() ([]*model.Computer, error) {
+	panic("implement me")
+}
+
+func (cd computerData) FindById(computerID int) (*model.Computer, error) {
+	panic("implement me")
+}
+
+func (cd computerData) FindByName(name string) (*model.Computer, error) {
+	panic("implement me")
+}
+
+func (cd computerData) Create(cm *model.Computer) error {
+	panic("implement me")
+}
+
 // Transaction support.
 type computerDataTx struct {
 	computerData
 
 }
 
-func (c computerDataTx) Rollback() error {
-	return c.computerData.Rollback().Error
+func (cdtx computerDataTx) Rollback() error {
+	return cdtx.computerData.Rollback().Error
 }
 
-func (c computerDataTx) Commit() error {
-	return c.computerData.Commit().Error
+func (cdtx computerDataTx) Commit() error {
+	return cdtx.computerData.Commit().Error
 }
 
 func (cd computerData) BeginTx() repository.ComputerServiceTx {

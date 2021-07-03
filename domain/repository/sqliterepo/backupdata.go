@@ -2,6 +2,7 @@ package sqliterepo
 
 import (
 	. "gorm.io/gorm"
+	"mnimidamonbackend/domain/model"
 	"mnimidamonbackend/domain/repository"
 )
 
@@ -13,16 +14,29 @@ type backupData struct {
 	*DB
 }
 
+func (bd backupData) FindAll() ([]*model.Backup, error) {
+	panic("implement me")
+}
+
+func (bd backupData) FindById(backupID int) (*model.Backup, error) {
+	panic("implement me")
+}
+
+func (bd backupData) Create(bm *model.Backup) error {
+	panic("implement me")
+}
+
+// Transaction support.
 type BackupDataTx struct {
 	backupData
 }
 
-func (b BackupDataTx) Rollback() error {
-	return b.backupData.Rollback().Error
+func (bdtx BackupDataTx) Rollback() error {
+	return bdtx.backupData.Rollback().Error
 }
 
-func (b BackupDataTx) Commit() error {
-	return b.backupData.Commit().Error
+func (bdtx BackupDataTx) Commit() error {
+	return bdtx.backupData.Commit().Error
 }
 
 func (bd backupData) BeginTx() repository.BackupRepositoryTx {

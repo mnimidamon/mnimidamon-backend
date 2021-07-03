@@ -1,5 +1,10 @@
 package modelsql
 
+import (
+	"mnimidamonbackend/domain/model"
+	"time"
+)
+
 type User struct {
 	Entity
 
@@ -7,4 +12,44 @@ type User struct {
 	PasswordHash string
 
 	Computers []Computer `gorm:"foreignKey:OwnerID"`
+}
+
+func NewUserFromBusinessModel(um *model.User) *User {
+	if um == nil {
+		return nil
+	}
+
+	return &User{
+		Entity:       Entity{
+			ID:        um.ID,
+			CreatedAt: time.Time{},
+			UpdatedAt: time.Time{},
+		},
+		Username:     um.Username,
+		PasswordHash: um.PasswordHash,
+		Computers:    nil,
+	}
+}
+
+func (u *User) NewBusinessModel()  *model.User {
+	if u == nil {
+		return nil
+	}
+
+	return &model.User{
+		Entity:       model.Entity{ID: u.ID},
+		Username:     u.Username,
+		PasswordHash: u.PasswordHash,
+	}
+}
+
+func (u *User) CopyToBusinessModel(um *model.User)  {
+	if u == nil {
+		um = nil
+		return
+	}
+
+	um.PasswordHash = u.PasswordHash
+	um.Username = u.Username
+	um.ID = u.ID
 }

@@ -38,7 +38,11 @@ func Initialize(databaseFilePath string, opts gorm.Option, dropTable bool)  (*go
 
 	// Drop the tables if this is specified.
 	if dropTable {
-		err := db.Migrator().DropTable(models...)
+
+		err := db.
+			Migrator().
+			DropTable(models...)
+
 		if err != nil {
 			return nil, err
 		}

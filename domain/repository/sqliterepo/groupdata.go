@@ -2,6 +2,7 @@ package sqliterepo
 
 import (
 	. "gorm.io/gorm"
+	"mnimidamonbackend/domain/model"
 	"mnimidamonbackend/domain/repository"
 )
 
@@ -14,16 +15,33 @@ type groupData struct {
 	*DB
 }
 
+func (gd groupData) FindAll() ([]*model.Group, error) {
+	panic("implement me")
+}
+
+func (gd groupData) FindById(groupID int) (*model.Group, error) {
+	panic("implement me")
+}
+
+func (gd groupData) FindByName(username string) (*model.Group, error) {
+	panic("implement me")
+}
+
+func (gd groupData) Create(gm *model.Group) error {
+	panic("implement me")
+}
+
+// Transaction support.
 type groupDataTx struct {
 	groupData
 }
 
-func (g groupDataTx) Rollback() error{
-	return g.groupData.Rollback().Error
+func (gdtx groupDataTx) Rollback() error{
+	return gdtx.groupData.Rollback().Error
 }
 
-func (g groupDataTx) Commit() error {
-	return g.groupData.Commit().Error
+func (gdtx groupDataTx) Commit() error {
+	return gdtx.groupData.Commit().Error
 }
 
 func (gd groupData) BeginTx() repository.GroupRepositoryTx {

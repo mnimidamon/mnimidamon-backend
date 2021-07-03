@@ -17,6 +17,10 @@ type userData struct {
 	 *DB
 }
 
+func (ud userData) FindById(userID int) (*model.User, error) {
+	panic("implement me")
+}
+
 func (ud userData) FindAll() ([]*model.User, error) {
 	var users []User
 
@@ -45,33 +49,27 @@ func (ud userData) FindByUsername(username string) (*model.User, error) {
 	var user User
 
 	result :=
-		ud.Where("username LIKE ?", fmt.Sprintf("%%%s%%", username)).
+		ud.Where("username LIKE ?", fmt.Sprintf("%s%%", username)).
 		First(&user)
 
 	if err := result.Error; err != nil {
 		return nil, toBusinessLogicError(err)
 	}
 
-	um := new(model.User)
-	um.PasswordHash = user.PasswordHash
-	um.Username = user.Username
-	um.ID = user.ID
+	um := user.NewBusinessModel()
 
 	return um, nil
 }
 
-func (ud userData) Save(user *model.User) error {
-	var u User
+func (ud userData) Create(um *model.User) error {
+	u := NewUserFromBusinessModel(um)
 
-	u.Username = user.Username
-	u.PasswordHash = user.PasswordHash
 
-	if result := ud.Create(&u); result.Error != nil {
+	if result := ud.Omit("id").Create(&u); result.Error != nil {
 		return toBusinessLogicError(result.Error)
 	}
 
-	user.ID = u.ID
-
+	u.CopyToBusinessModel(um)
 	return nil
 }
 
@@ -80,12 +78,12 @@ type userDataTx struct {
 	userData
 }
 
-func (u userDataTx) Rollback() error {
-	return u.userData.Rollback().Error
+func (udtx userDataTx) Rollback() error {
+	return udtx.userData.Rollback().Error
 }
 
-func (u userDataTx) Commit() error {
-	return u.userData.Commit().Error
+func (udtx userDataTx) Commit() error {
+	return udtx.userData.Commit().Error
 }
 
 func (ud userData) BeginTx() repository.UserRepositoryTx {
