@@ -1,18 +1,26 @@
 package sqliterepo
 
 import (
-	. "gorm.io/gorm"
+	"gorm.io/gorm"
 	"mnimidamonbackend/domain/model"
 	"mnimidamonbackend/domain/repository"
 )
 
-func NewComputerRepository(db *DB) repository.ComputerRepository {
+func NewComputerRepository(db *gorm.DB) repository.ComputerRepository {
 	return computerData{db}
 }
 
 // computerData store for SQLite implementation.
 type computerData struct {
-	*DB
+	*gorm.DB
+}
+
+func (cd computerData) Delete(cm *model.Computer) error {
+	panic("implement me")
+}
+
+func (cd computerData) Update(cm *model.Computer) error {
+	panic("implement me")
 }
 
 func (cd computerData) FindAll() ([]*model.Computer, error) {

@@ -2,19 +2,27 @@ package sqliterepo
 
 import (
 	"fmt"
-	. "gorm.io/gorm"
+	"gorm.io/gorm"
 	"mnimidamonbackend/domain/model"
 	"mnimidamonbackend/domain/repository"
 	. "mnimidamonbackend/domain/repository/sqliterepo/modelsql"
 )
 
-func NewGroupRepository(db *DB) repository.GroupRepository {
+func NewGroupRepository(db *gorm.DB) repository.GroupRepository {
 	return groupData{db}
 }
 
 // groupData store for SQLite database.
 type groupData struct {
-	*DB
+	*gorm.DB
+}
+
+func (gd groupData) Delete(gm *model.Group) error {
+	panic("implement me")
+}
+
+func (gd groupData) Update(gm *model.Group) error {
+	panic("implement me")
 }
 
 func (gd groupData) FindAll() ([]*model.Group, error) {

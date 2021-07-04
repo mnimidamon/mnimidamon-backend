@@ -2,19 +2,27 @@ package sqliterepo
 
 import (
 	"fmt"
-	. "gorm.io/gorm"
+	"gorm.io/gorm"
 	"mnimidamonbackend/domain/model"
 	"mnimidamonbackend/domain/repository"
 	. "mnimidamonbackend/domain/repository/sqliterepo/modelsql"
 )
 
-func NewUserRepository(db *DB) repository.UserRepository {
+func NewUserRepository(db *gorm.DB) repository.UserRepository {
 	return userData{db}
 }
 
 // userData store for SQLite database.
 type userData struct {
-	 *DB
+	 *gorm.DB
+}
+
+func (ud userData) Delete(um *model.User) error {
+	panic("implement me")
+}
+
+func (ud userData) Update(um *model.User) error {
+	panic("implement me")
 }
 
 func (ud userData) FindById(userID int) (*model.User, error) {

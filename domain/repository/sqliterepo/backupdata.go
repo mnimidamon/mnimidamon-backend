@@ -1,17 +1,25 @@
 package sqliterepo
 
 import (
-	. "gorm.io/gorm"
+	"gorm.io/gorm"
 	"mnimidamonbackend/domain/model"
 	"mnimidamonbackend/domain/repository"
 )
 
-func NewBackupRepository(db *DB) repository.BackupRepository {
+func NewBackupRepository(db *gorm.DB) repository.BackupRepository {
 	return backupData{db}
 }
 
 type backupData struct {
-	*DB
+	*gorm.DB
+}
+
+func (bd backupData) Delete(bm *model.Backup) error {
+	panic("implement me")
+}
+
+func (bd backupData) Update(bm *model.Backup) error {
+	panic("implement me")
 }
 
 func (bd backupData) FindAll() ([]*model.Backup, error) {

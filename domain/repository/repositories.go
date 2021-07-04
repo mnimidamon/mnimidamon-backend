@@ -10,6 +10,8 @@ type UserRepository interface {
 	FindByUsername(username string) (*model.User, error)
 
 	Create(um *model.User) error
+	Delete(um *model.User) error
+	Update(um *model.User) error
 
 	// TODO: Functionalities
 }
@@ -27,6 +29,8 @@ type GroupRepository interface {
 	FindByName(name string) (*model.Group, error)
 
 	Create(gm *model.Group) error
+	Delete(gm *model.Group) error
+	Update(gm *model.Group) error
 
 	// TODO: Functionalities
 }
@@ -45,6 +49,8 @@ type ComputerRepository interface {
 	FindByName(name string) (*model.Computer, error)
 
 	Create(cm *model.Computer) error
+	Delete(cm *model.Computer) error
+	Update(cm *model.Computer) error
 
 	// TODO: Functionalities
 }
@@ -61,7 +67,8 @@ type BackupRepository interface {
 	FindById(backupID int) (*model.Backup, error)
 
 	Create(bm *model.Backup) error
-
+	Delete(bm *model.Backup) error
+	Update(bm *model.Backup) error
 
 	// TODO: Functionalities
 }
