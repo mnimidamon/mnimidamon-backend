@@ -3,6 +3,7 @@ package sqliterepo
 import (
 	"fmt"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"mnimidamonbackend/domain/model"
 	"mnimidamonbackend/domain/repository"
 	. "mnimidamonbackend/domain/repository/sqliterepo/modelsql"
@@ -28,7 +29,19 @@ func (ud userData) Delete(um *model.User) error {
 }
 
 func (ud userData) Update(um *model.User) error {
-	panic("implement me")
+	u := NewUserFromBusinessModel(um)
+
+	result :=
+		ud.Model(u).
+			Omit("id", clause.Associations).
+			Updates(u)
+
+	if err := result.Error; err != nil {
+		return toBusinessLogicError(err)
+	}
+
+	u.CopyToBusinessModel(um)
+	return nil
 }
 
 func (ud userData) FindById(userID uint) (*model.User, error) {
@@ -85,7 +98,7 @@ func (ud userData) Create(um *model.User) error {
 	u := NewUserFromBusinessModel(um)
 
 
-	if result := ud.Omit("id").Create(&u); result.Error != nil {
+	if result := ud.Omit("id").Create(u); result.Error != nil {
 		return toBusinessLogicError(result.Error)
 	}
 

@@ -90,7 +90,31 @@ func (urt *UserRepositoryTester) FindAfterSaveTests(t *testing.T) {
 
 func (urt *UserRepositoryTester) UpdateTests(t *testing.T) {
 	// TODO
-	t.Skip(unimplemented)
+	user, ur := urt.User, urt.Repo
+
+	user.Username = "markez"
+	user.PasswordHash = "new_password_hash"
+
+	if err := ur.Update(&user); err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	if user.Username != "markez" {
+		t.Errorf("Expected user.Username == markez, got %v", user)
+	}
+
+	if user.PasswordHash != "new_password_hash" {
+		t.Errorf("Expected user.PasswordHash == new_password_hash, got %v", user)
+	}
+
+	u, err := ur.FindById(user.ID);
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	if u.Username != user.Username || u.PasswordHash != user.PasswordHash {
+		t.Errorf("Expected %v, got %v", user, u)
+	}
 }
 
 func (urt *UserRepositoryTester) ConstraintsTest(t *testing.T) {

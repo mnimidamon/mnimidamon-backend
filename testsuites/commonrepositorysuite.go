@@ -14,8 +14,8 @@ type CommonRepositoryTestSuiteInterface interface {
 	FindBeforeSaveTests(t *testing.T) // Find functionalities testing before save.
 	SaveSuccessfulTests(t *testing.T) // Successful saving tests.
 	FindAfterSaveTests(t *testing.T)  // Finding after successful save.
-	UpdateTests(t *testing.T)         // Updating tests.
 	ConstraintsTest(t *testing.T)     // Repository model specific constraint testing.
+	UpdateTests(t *testing.T)         // Updating tests.
 	SpecificTests(t *testing.T)       // Repository specific tests.
 	DeleteTests(t *testing.T)         // Deletion testing.
 }
@@ -48,12 +48,12 @@ func runCommonRepositoryTests(crtsi CommonRepositoryTestSuiteInterface, t *testi
 		crtsi.FindAfterSaveTests(t)
 	})
 
-	t.Run("UpdateTests", func(t *testing.T) {
-		crtsi.UpdateTests(t)
-	})
-
 	t.Run("ConstraintsTest", func(t *testing.T) {
 		crtsi.ConstraintsTest(t)
+	})
+
+	t.Run("UpdateTests", func(t *testing.T) {
+		crtsi.UpdateTests(t)
 	})
 
 	t.Run("SpecificTests", func(t *testing.T) {

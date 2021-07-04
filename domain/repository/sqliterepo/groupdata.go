@@ -3,6 +3,7 @@ package sqliterepo
 import (
 	"fmt"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"mnimidamonbackend/domain/model"
 	"mnimidamonbackend/domain/repository"
 	. "mnimidamonbackend/domain/repository/sqliterepo/modelsql"
@@ -18,11 +19,29 @@ type groupData struct {
 }
 
 func (gd groupData) Delete(gm *model.Group) error {
-	panic("implement me")
+	result := gd.DB.Delete(&Group{}, gm.ID)
+
+	if err := result.Error; err != nil {
+		return toBusinessLogicError(err)
+	}
+
+	return nil
 }
 
 func (gd groupData) Update(gm *model.Group) error {
-	panic("implement me")
+	g := NewGroupFromBusinessModel(gm)
+
+	result :=
+		gd.Model(g).
+			Omit("id", clause.Associations).
+			Updates(g)
+
+	if err := result.Error; err != nil {
+		return toBusinessLogicError(err)
+	}
+
+	g.CopyToBusinessModel(gm)
+	return nil
 }
 
 func (gd groupData) FindAll() ([]*model.Group, error) {
@@ -78,7 +97,7 @@ func (gd groupData) FindByName(name string) (*model.Group, error) {
 func (gd groupData) Create(gm *model.Group) error {
 	g := NewGroupFromBusinessModel(gm)
 
-	if result := gd.Omit("id").Create(&g); result.Error != nil {
+	if result := gd.Omit("id").Create(g); result.Error != nil {
 		return toBusinessLogicError(result.Error)
 	}
 

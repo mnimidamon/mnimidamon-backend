@@ -18,7 +18,7 @@ func initializeDatabase() (*gorm.DB, error) {
 }
 
 func targetDatabasePath() string {
-	return inMemoryDb
+	return fileDB
 }
 
 func TestSQLiteUserRepository(t *testing.T) {

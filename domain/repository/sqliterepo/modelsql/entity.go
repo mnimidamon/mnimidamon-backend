@@ -9,4 +9,7 @@ type Entity struct {
 
 	CreatedAt time.Time
 	UpdatedAt time.Time
+
+	// Uncomment for Soft delete support.
+	// DeletedAt gorm.DeletedAt
 }
