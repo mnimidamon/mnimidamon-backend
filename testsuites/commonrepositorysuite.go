@@ -6,6 +6,9 @@ import (
 	"testing"
 )
 
+// Logging the unimplemented test suites.
+var unimplemented = "Unimplemented Tests"
+
 // For testing common repository procedures. For more consistency and easier code consistency.
 type CommonRepositoryTestSuiteInterface interface {
 	FindBeforeSaveTests(t *testing.T) // Find functionalities testing before save.

@@ -92,6 +92,7 @@ func (grt *GroupRepositoryTester) FindAfterSaveTests(t *testing.T) {
 
 func (grt *GroupRepositoryTester) UpdateTests(t *testing.T) {
 	// TODO
+	t.Skip(unimplemented)
 }
 
 func (grt *GroupRepositoryTester) ConstraintsTest(t *testing.T) {
@@ -106,10 +107,12 @@ func (grt *GroupRepositoryTester) ConstraintsTest(t *testing.T) {
 
 func (grt *GroupRepositoryTester) SpecificTests(t *testing.T) {
 	// TODO
+	t.Skip(unimplemented)
 }
 
 func (grt *GroupRepositoryTester) DeleteTests(t *testing.T) {
 	// TODO
+	t.Skip(unimplemented)
 }
 
 func (grt *GroupRepositoryTester) BeginTx() TransactionSuiteTestTxInterface {

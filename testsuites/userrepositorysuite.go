@@ -90,6 +90,7 @@ func (urt *UserRepositoryTester) FindAfterSaveTests(t *testing.T) {
 
 func (urt *UserRepositoryTester) UpdateTests(t *testing.T) {
 	// TODO
+	t.Skip(unimplemented)
 }
 
 func (urt *UserRepositoryTester) ConstraintsTest(t *testing.T) {
@@ -103,6 +104,7 @@ func (urt *UserRepositoryTester) ConstraintsTest(t *testing.T) {
 
 func (urt *UserRepositoryTester) SpecificTests(t *testing.T) {
 	// TODO
+	t.Skip(unimplemented)
 }
 
 func (urt *UserRepositoryTester) DeleteTests(t *testing.T) {
