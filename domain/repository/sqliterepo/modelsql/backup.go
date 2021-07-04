@@ -11,7 +11,7 @@ type Backup struct {
 	FileName string
 	Size     uint
 
-	UploadRequest bool
+	UploadRequest bool `gorm:"default:0"`
 	DeleteRequest bool
 	OnServer      bool
 

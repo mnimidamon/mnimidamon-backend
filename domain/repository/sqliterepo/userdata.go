@@ -18,7 +18,18 @@ type userData struct {
 }
 
 func (ud userData) FindById(userID int) (*model.User, error) {
-	panic("implement me")
+	var user User
+
+	result :=
+		ud.First(&user, userID)
+
+	if err := result.Error; err != nil {
+		return nil, toBusinessLogicError(err)
+	}
+
+	um := user.NewBusinessModel()
+
+	return um, nil
 }
 
 func (ud userData) FindAll() ([]*model.User, error) {
@@ -33,12 +44,7 @@ func (ud userData) FindAll() ([]*model.User, error) {
 	var mUsers []*model.User
 
 	for _, u := range users {
-		mu := new(model.User)
-
-		mu.ID = u.ID
-		mu.Username = u.Username
-		mu.PasswordHash = u.PasswordHash
-
+		mu := u.NewBusinessModel()
 		mUsers = append(mUsers, mu)
 	}
 

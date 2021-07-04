@@ -1,0 +1,45 @@
+package sqliterepo_test
+
+import (
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
+	"mnimidamonbackend/domain/repository/sqliterepo"
+	"mnimidamonbackend/testsuites"
+	"testing"
+)
+
+var inMemoryDb = "file::memory:?cache=shared"
+var fileDB = "../../../../databasefiles/mnimidamon.db"
+
+func initializeDatabase() (*gorm.DB, error) {
+	return sqliterepo.Initialize(targetDatabasePath(), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Silent),
+	}, true)
+}
+
+func targetDatabasePath() string {
+	return fileDB
+}
+
+func TestSQLiteUserRepository(t *testing.T) {
+	db, err := initializeDatabase()
+
+	if err != nil {
+		t.Errorf("Error occured with new datbase connection: %v", err)
+	}
+
+	ur := sqliterepo.NewUserRepository(db)
+	// Call the interface testing suite.
+	testsuites.UserRepositoryTestSuite(t, ur)
+}
+
+func TestSQLiteGroupRepository(t *testing.T) {
+	db, err := initializeDatabase()
+
+	if err != nil {
+		t.Errorf("Error occured with new datbase connection: %v", err)
+	}
+
+	gr := sqliterepo.NewGroupRepository(db)
+	testsuites.GroupRepositoryTestSuite(t, gr)
+}

@@ -1,9 +1,11 @@
 package sqliterepo
 
 import (
+	"fmt"
 	. "gorm.io/gorm"
 	"mnimidamonbackend/domain/model"
 	"mnimidamonbackend/domain/repository"
+	. "mnimidamonbackend/domain/repository/sqliterepo/modelsql"
 )
 
 func NewGroupRepository(db *DB) repository.GroupRepository {
@@ -16,19 +18,64 @@ type groupData struct {
 }
 
 func (gd groupData) FindAll() ([]*model.Group, error) {
-	panic("implement me")
+	var groups []Group
+
+	result := gd.Find(&groups)
+
+	if err := result.Error; err != nil {
+		return nil, toBusinessLogicError(err)
+	}
+
+	var mGroups []*model.Group
+
+	for _, g := range groups {
+		mg := g.NewBusinessModel()
+		mGroups = append(mGroups, mg)
+	}
+
+	return mGroups, nil
 }
 
 func (gd groupData) FindById(groupID int) (*model.Group, error) {
-	panic("implement me")
+	var group Group
+
+	result :=
+		gd.First(&group, groupID)
+
+	if err := result.Error; err != nil {
+		return nil, toBusinessLogicError(err)
+	}
+
+	gm := group.NewBusinessModel()
+
+	return gm, nil
 }
 
-func (gd groupData) FindByName(username string) (*model.Group, error) {
-	panic("implement me")
+func (gd groupData) FindByName(name string) (*model.Group, error) {
+	var group Group
+
+	result :=
+		gd.Where("name LIKE ?", fmt.Sprintf("%s%%", name)).
+		First(&group)
+
+	if err := result.Error; err != nil {
+		return nil, toBusinessLogicError(err)
+	}
+
+	gm := group.NewBusinessModel()
+
+	return gm, nil
 }
 
 func (gd groupData) Create(gm *model.Group) error {
-	panic("implement me")
+	g := NewGroupFromBusinessModel(gm)
+
+	if result := gd.Omit("id").Create(&g); result.Error != nil {
+		return toBusinessLogicError(result.Error)
+	}
+
+	g.CopyToBusinessModel(gm)
+	return nil
 }
 
 // Transaction support.

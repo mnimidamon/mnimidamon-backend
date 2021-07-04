@@ -24,7 +24,7 @@ type GroupRepository interface {
 
 	FindAll() ([]*model.Group, error)
 	FindById(groupID int) (*model.Group, error)
-	FindByName(username string) (*model.Group, error)
+	FindByName(name string) (*model.Group, error)
 
 	Create(gm *model.Group) error
 

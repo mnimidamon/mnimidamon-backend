@@ -36,11 +36,9 @@ func (u *User) NewBusinessModel()  *model.User {
 		return nil
 	}
 
-	return &model.User{
-		Entity:       model.Entity{ID: u.ID},
-		Username:     u.Username,
-		PasswordHash: u.PasswordHash,
-	}
+	um := new(model.User)
+	u.CopyToBusinessModel(um)
+	return um
 }
 
 func (u *User) CopyToBusinessModel(um *model.User)  {

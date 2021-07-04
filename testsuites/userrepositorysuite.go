@@ -1,8 +1,7 @@
-package testsuite
+package testsuites
 
 import (
 	"errors"
-	"log"
 	"mnimidamonbackend/domain/model"
 	"mnimidamonbackend/domain/repository"
 	"testing"
@@ -36,6 +35,14 @@ func UserRepositoryTestSuite(t *testing.T, ur repository.UserRepository) {
 		}
 	})
 
+	t.Run("FindByIdErrNotFound", func(t *testing.T) {
+		_, err := ur.FindById(1)
+
+		if !errors.Is(repository.ErrNotFound, err) {
+			t.Errorf("Expected %v, recieved %v", repository.ErrNotFound, err)
+		}
+	})
+
 	t.Run("SaveSuccess", func(t *testing.T) {
 		err := ur.Create(&marmiha)
 
@@ -48,7 +55,32 @@ func UserRepositoryTestSuite(t *testing.T, ur repository.UserRepository) {
 		}
 	})
 
-	t.Run("SaveUniqueNameFail", func(t *testing.T) {
+	t.Run("FindByUsernameSuccess", func(t *testing.T) {
+		m, err := ur.FindByUsername("marm")
+
+		if err != nil {
+			t.Errorf("Expected no error, recieved %v", err)
+		}
+
+		if m.Username != marmiha.Username {
+			t.Errorf("Expected %v, got %v", marmiha, m)
+		}
+
+	})
+
+	t.Run("FindByIdSuccess", func(t *testing.T) {
+		m, err := ur.FindById(1)
+
+		if err != nil {
+			t.Errorf("Expected no error, recieved %v", err)
+		}
+
+		if m.ID != marmiha.ID {
+			t.Errorf("Expected %v, got %v", marmiha, m)
+		}
+	})
+
+	t.Run("SaveNonUniqueNameFail", func(t *testing.T) {
 		if err := ur.Create(&marmiha); !errors.Is(repository.ErrUniqueConstraintViolation, err) {
 			t.Errorf("Expected %v, got %v", repository.ErrUniqueConstraintViolation, err)
 		}
@@ -80,7 +112,7 @@ func UserRepositoryTestSuite(t *testing.T, ur repository.UserRepository) {
 			t.Errorf("Expected %v, recieved %v", repository.ErrTxAlreadyRolledBack, err)
 		}
 
-		if _, err := ur.FindByUsername(peter.Username); !errors.Is(repository.ErrNotFound, err){
+		if _, err := ur.FindByUsername(peter.Username); !errors.Is(repository.ErrNotFound, err) {
 			t.Errorf("Expected %v, got %v", repository.ErrNotFound, err)
 		}
 	})
@@ -91,7 +123,6 @@ func UserRepositoryTestSuite(t *testing.T, ur repository.UserRepository) {
 		if err := urx.Create(peter); err != nil {
 			t.Errorf("Expected no error, got %v", err)
 		}
-		log.Printf("Peter %v", peter)
 
 		if peter.ID == 0 {
 			t.Errorf("Expected peter.ID of 0, got %v", peter.ID)
@@ -105,7 +136,7 @@ func UserRepositoryTestSuite(t *testing.T, ur repository.UserRepository) {
 			t.Errorf("Expected %v, recieved %v", repository.ErrTxAlreadyRolledBack, err)
 		}
 
-		if _, err := ur.FindByUsername(peter.Username); err != nil{
+		if _, err := ur.FindByUsername(peter.Username); err != nil {
 			t.Errorf("Expected no error, got %v", err)
 		}
 	})
