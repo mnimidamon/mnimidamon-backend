@@ -7,6 +7,53 @@ import (
 	"testing"
 )
 
+// TransactionSuiteTestInterface implementation for repository.UserRepository
+type UserRepositoryTransactionSuiteImpl struct {
+	Repo repository.UserRepository
+	User model.User
+}
+
+func (u *UserRepositoryTransactionSuiteImpl) BeginTx() TransactionSuiteTestTxInterface {
+	utx := u.Repo.BeginTx()
+	return &UserRepositoryTransactionSuiteTxImpl{
+		Repo: utx,
+		User: u.User,
+	}
+}
+
+func (u *UserRepositoryTransactionSuiteImpl) Find() error {
+	_, err := u.Repo.FindByUsername(u.User.Username)
+	return err
+}
+
+type UserRepositoryTransactionSuiteTxImpl struct {
+	Repo repository.UserRepositoryTx
+	User model.User
+}
+
+func (utx *UserRepositoryTransactionSuiteTxImpl) Rollback() error {
+	return utx.Repo.Rollback()
+}
+
+func (utx *UserRepositoryTransactionSuiteTxImpl) Commit() error {
+	return utx.Repo.Commit()
+}
+
+func (utx *UserRepositoryTransactionSuiteTxImpl) Create() error {
+	return utx.Repo.Create(&utx.User)
+}
+
+func (utx *UserRepositoryTransactionSuiteTxImpl) Find() error {
+	_, err := utx.Repo.FindByUsername(utx.User.Username)
+	return err
+}
+
+func (utx *UserRepositoryTransactionSuiteTxImpl) CorrectCheck(t *testing.T) {
+	if utx.User.ID == 0 {
+		t.Errorf("Expected user.ID > 0, got %v", utx.User)
+	}
+}
+
 // Tests the repository.UserRepository interface implementation against common tests.
 func UserRepositoryTestSuite(t *testing.T, ur repository.UserRepository) {
 	marmiha := model.User{
@@ -87,57 +134,30 @@ func UserRepositoryTestSuite(t *testing.T, ur repository.UserRepository) {
 
 	})
 
+	t.Run("DeleteSuccessful", func(t *testing.T) {
+		if err := ur.Delete(&marmiha); err != nil {
+			t.Errorf("Expected no error, got %v", err)
+		}
+
+		t.Run("FindByIdFail", func(t *testing.T) {
+			if m, err := ur.FindById(marmiha.ID); !errors.Is(repository.ErrNotFound, err) {
+				t.Errorf("Expected %v, got err:%v user:%v", repository.ErrNotFound, err, m)
+			}
+		})
+	})
+
 	peter := &model.User{
 		Entity:       model.Entity{},
 		Username:     "peter",
 		PasswordHash: "peters_hashed_pass",
 	}
 
-	t.Run("TransactionRollbackSuccess", func(t *testing.T) {
-		urx := ur.BeginTx()
+	// Common transaction implementation testing.
+	urts := UserRepositoryTransactionSuiteImpl{
+		Repo: ur,
+		User: *peter,
+	}
 
-		if err := urx.Create(peter); err != nil {
-			t.Errorf("Expected no error, got %v", err)
-		}
-
-		if peter.ID == 0 {
-			t.Errorf("Expected peter.ID of 0, got %v", peter.ID)
-		}
-
-		if err := urx.Rollback(); err != nil {
-			t.Errorf("Expected no error on rollback, got %v", err)
-		}
-
-		if _, err := urx.FindByUsername(peter.Username); !errors.Is(repository.ErrTxAlreadyRolledBack, err) {
-			t.Errorf("Expected %v, recieved %v", repository.ErrTxAlreadyRolledBack, err)
-		}
-
-		if _, err := ur.FindByUsername(peter.Username); !errors.Is(repository.ErrNotFound, err) {
-			t.Errorf("Expected %v, got %v", repository.ErrNotFound, err)
-		}
-	})
-
-	t.Run("TransactionCommitSuccess", func(t *testing.T) {
-		urx := ur.BeginTx()
-
-		if err := urx.Create(peter); err != nil {
-			t.Errorf("Expected no error, got %v", err)
-		}
-
-		if peter.ID == 0 {
-			t.Errorf("Expected peter.ID of 0, got %v", peter.ID)
-		}
-
-		if err := urx.Commit(); err != nil {
-			t.Errorf("Expected no error on rollback, got %v", err)
-		}
-
-		if _, err := urx.FindByUsername(peter.Username); !errors.Is(repository.ErrTxAlreadyRolledBack, err) {
-			t.Errorf("Expected %v, recieved %v", repository.ErrTxAlreadyRolledBack, err)
-		}
-
-		if _, err := ur.FindByUsername(peter.Username); err != nil {
-			t.Errorf("Expected no error, got %v", err)
-		}
-	})
+	runTransactionRollbackSuccessSuite(&urts, t)
+	runTransactionCommitSuccessSuite(&urts, t)
 }

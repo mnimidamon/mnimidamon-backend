@@ -6,7 +6,7 @@ type UserRepository interface {
 	BeginTx() UserRepositoryTx
 
 	FindAll() ([]*model.User, error)
-	FindById(userID int) (*model.User, error)
+	FindById(userID uint) (*model.User, error)
 	FindByUsername(username string) (*model.User, error)
 
 	Create(um *model.User) error
@@ -25,7 +25,7 @@ type GroupRepository interface {
 	BeginTx() GroupRepositoryTx
 
 	FindAll() ([]*model.Group, error)
-	FindById(groupID int) (*model.Group, error)
+	FindById(groupID uint) (*model.Group, error)
 	FindByName(name string) (*model.Group, error)
 
 	Create(gm *model.Group) error
@@ -45,7 +45,7 @@ type ComputerRepository interface {
 
 
 	FindAll() ([]*model.Computer, error)
-	FindById(computerID int) (*model.Computer, error)
+	FindById(computerID uint) (*model.Computer, error)
 	FindByName(name string) (*model.Computer, error)
 
 	Create(cm *model.Computer) error
@@ -64,7 +64,7 @@ type BackupRepository interface {
 	BeginTx() BackupRepositoryTx
 
 	FindAll() ([]*model.Backup, error)
-	FindById(backupID int) (*model.Backup, error)
+	FindById(backupID uint) (*model.Backup, error)
 
 	Create(bm *model.Backup) error
 	Delete(bm *model.Backup) error

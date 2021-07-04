@@ -18,14 +18,20 @@ type userData struct {
 }
 
 func (ud userData) Delete(um *model.User) error {
-	panic("implement me")
+	result := ud.DB.Delete(&User{}, um.ID)
+
+	if err := result.Error; err != nil {
+		return toBusinessLogicError(err)
+	}
+
+	return nil
 }
 
 func (ud userData) Update(um *model.User) error {
 	panic("implement me")
 }
 
-func (ud userData) FindById(userID int) (*model.User, error) {
+func (ud userData) FindById(userID uint) (*model.User, error) {
 	var user User
 
 	result :=

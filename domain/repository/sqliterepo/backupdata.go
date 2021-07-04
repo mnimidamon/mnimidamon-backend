@@ -26,7 +26,7 @@ func (bd backupData) FindAll() ([]*model.Backup, error) {
 	panic("implement me")
 }
 
-func (bd backupData) FindById(backupID int) (*model.Backup, error) {
+func (bd backupData) FindById(backupID uint) (*model.Backup, error) {
 	panic("implement me")
 }
 

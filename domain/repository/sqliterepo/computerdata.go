@@ -27,7 +27,7 @@ func (cd computerData) FindAll() ([]*model.Computer, error) {
 	panic("implement me")
 }
 
-func (cd computerData) FindById(computerID int) (*model.Computer, error) {
+func (cd computerData) FindById(computerID uint) (*model.Computer, error) {
 	panic("implement me")
 }
 

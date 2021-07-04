@@ -44,7 +44,7 @@ func (gd groupData) FindAll() ([]*model.Group, error) {
 	return mGroups, nil
 }
 
-func (gd groupData) FindById(groupID int) (*model.Group, error) {
+func (gd groupData) FindById(groupID uint) (*model.Group, error) {
 	var group Group
 
 	result :=

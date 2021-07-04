@@ -7,6 +7,54 @@ import (
 	"testing"
 )
 
+// TransactionSuiteTestInterface implementation for repository.GroupRepository
+type GroupRepositoryTransactionSuiteImpl struct {
+	Repo repository.GroupRepository
+	Group model.Group
+
+}
+
+func (g *GroupRepositoryTransactionSuiteImpl) BeginTx() TransactionSuiteTestTxInterface {
+	gtx := g.Repo.BeginTx()
+	return &GroupRepositoryTransactionSuiteTxImpl{
+		Repo:  gtx,
+		Group: g.Group,
+	}
+}
+
+func (g *GroupRepositoryTransactionSuiteImpl) Find() error {
+	_, err := g.Repo.FindByName(g.Group.Name)
+	return err
+}
+
+type GroupRepositoryTransactionSuiteTxImpl struct {
+	Repo repository.GroupRepositoryTx
+	Group model.Group
+}
+
+func (gtx *GroupRepositoryTransactionSuiteTxImpl) Create() error {
+	return gtx.Repo.Create(&gtx.Group)
+}
+
+func (gtx *GroupRepositoryTransactionSuiteTxImpl) Find() error {
+	_, err := gtx.Repo.FindByName(gtx.Group.Name)
+	return err
+}
+
+func (gtx *GroupRepositoryTransactionSuiteTxImpl) CorrectCheck(t *testing.T) {
+	if gtx.Group.ID == 0 {
+		t.Errorf("Expected group.ID > 0, got %v", gtx.Group)
+	}
+}
+
+func (gtx *GroupRepositoryTransactionSuiteTxImpl) Rollback() error {
+	return gtx.Repo.Rollback()
+}
+
+func (gtx *GroupRepositoryTransactionSuiteTxImpl) Commit() error {
+	return gtx.Repo.Commit()
+}
+
 // Tests the repository.GroupRepository interface implementation against common tests.
 func GroupRepositoryTestSuite(t *testing.T, gr repository.GroupRepository) {
 	guccigang := model.Group{
@@ -91,51 +139,11 @@ func GroupRepositoryTestSuite(t *testing.T, gr repository.GroupRepository) {
 		Name:     "mnimidamons",
 	}
 
-	t.Run("TransactionRollbackSuccess", func(t *testing.T) {
-		grx := gr.BeginTx()
+	grts := GroupRepositoryTransactionSuiteImpl{
+		Repo:  gr,
+		Group: *mnimidamons,
+	}
 
-		if err := grx.Create(mnimidamons); err != nil {
-			t.Errorf("Expected no error, got %v", err)
-		}
-
-		if mnimidamons.ID == 0 {
-			t.Errorf("Expected mnimidamons.ID of 0, got %v", mnimidamons.ID)
-		}
-
-		if err := grx.Rollback(); err != nil {
-			t.Errorf("Expected no error on rollback, got %v", err)
-		}
-
-		if _, err := grx.FindByName(mnimidamons.Name); !errors.Is(repository.ErrTxAlreadyRolledBack, err) {
-			t.Errorf("Expected %v, recieved %v", repository.ErrTxAlreadyRolledBack, err)
-		}
-
-		if _, err := gr.FindByName(mnimidamons.Name); !errors.Is(repository.ErrNotFound, err) {
-			t.Errorf("Expected %v, got %v", repository.ErrNotFound, err)
-		}
-	})
-
-	t.Run("TransactionCommitSuccess", func(t *testing.T) {
-		grx := gr.BeginTx()
-
-		if err := grx.Create(mnimidamons); err != nil {
-			t.Errorf("Expected no error, got %v", err)
-		}
-
-		if mnimidamons.ID == 0 {
-			t.Errorf("Expected mnimidamons.ID of 0, got %v", mnimidamons.ID)
-		}
-
-		if err := grx.Commit(); err != nil {
-			t.Errorf("Expected no error on rollback, got %v", err)
-		}
-
-		if _, err := grx.FindByName(mnimidamons.Name); !errors.Is(repository.ErrTxAlreadyRolledBack, err) {
-			t.Errorf("Expected %v, recieved %v", repository.ErrTxAlreadyRolledBack, err)
-		}
-
-		if _, err := gr.FindByName(mnimidamons.Name); err != nil {
-			t.Errorf("Expected no error, got %v", err)
-		}
-	})
+	runTransactionRollbackSuccessSuite(&grts, t)
+	runTransactionCommitSuccessSuite(&grts, t)
 }
