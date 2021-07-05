@@ -17,7 +17,8 @@ type backupData struct {
 }
 
 func (bd backupData) Delete(bm *model.Backup) error {
-	result := bd.DB.Delete(&Backup{}, bm.ID)
+	result :=
+		bd.DB.Delete(&Backup{}, bm.ID)
 
 	if err := result.Error; err != nil {
 		return toBusinessLogicError(err)

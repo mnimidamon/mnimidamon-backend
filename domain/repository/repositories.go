@@ -14,6 +14,7 @@ type UserRepository interface {
 	Update(um *model.User) error
 
 	// TODO: Functionalities
+	// 		- this is completed?
 }
 
 type UserRepositoryTx interface {
@@ -32,10 +33,14 @@ type GroupRepository interface {
 	Delete(gm *model.Group) error
 	Update(gm *model.Group) error
 
-	AddMember(userID uint, groupID uint) (*model.User, error) // TODO: Tests, Double join
-	IsMemberOf(userID uint, groupID uint) bool // TODO: Tests, False if not, true if yes
+	AddMember(userID uint, groupID uint) (*model.Group, error)
+	IsMemberOf(userID uint, groupID uint) (bool, error)
 
-	// TODO: Functionalities
+	// TODO: Functionalities:
+	//		- inviting
+	//		- declining invites
+	//		- accepting invites
+	//		- get members
 }
 
 type GroupRepositoryTx interface {
@@ -46,7 +51,6 @@ type GroupRepositoryTx interface {
 type ComputerRepository interface {
 	BeginTx() ComputerServiceTx
 
-
 	FindAll() ([]*model.Computer, error)
 	FindById(computerID uint) (*model.Computer, error)
 	FindByName(name string) (*model.Computer, error)
@@ -56,6 +60,7 @@ type ComputerRepository interface {
 	Update(cm *model.Computer) error
 
 	// TODO: Functionalities
+	// 		- have to think about this little bit
 }
 
 type ComputerServiceTx interface {
@@ -74,6 +79,8 @@ type BackupRepository interface {
 	Update(bm *model.Backup) error
 
 	// TODO: Functionalities
+	//		- field updating
+	//		- deleting works?
 }
 
 type BackupRepositoryTx interface {

@@ -9,7 +9,7 @@ import (
 
 // TransactionSuiteTestInterface implementation for repository.GroupRepository
 type GroupRepositoryTester struct {
-	Repo repository.GroupRepository
+	Repo  repository.GroupRepository
 	URepo repository.UserRepository
 	Group model.Group
 }
@@ -134,7 +134,15 @@ func (grt *GroupRepositoryTester) SpecificTests(t *testing.T) {
 	}, grt.Group
 
 	t.Run("UserIsNotMember", func(t *testing.T) {
-		gr.IsMemberOf(0, g.ID)
+		isMember, err := gr.IsMemberOf(1, g.ID)
+
+		if err != nil {
+			t.Error(expectedNoError(err))
+		}
+
+		if isMember {
+			t.Error("Should return false, got true")
+		}
 	})
 
 	t.Run("UserSavedSuccessfully", func(t *testing.T) {
@@ -144,42 +152,49 @@ func (grt *GroupRepositoryTester) SpecificTests(t *testing.T) {
 	})
 
 	t.Run("UserAddedNonExistentGroupFail", func(t *testing.T) {
-		user, err := gr.AddMember(u.ID, 42)
+		group, err := gr.AddMember(u.ID, 42)
 
 		if err == nil {
-			t.Error(expectedGot("an error", user))
+			t.Error(expectedGot("an error", group))
 		}
 	})
 
 	t.Run("AddUnExistingUserToGroup", func(t *testing.T) {
-		user, err := gr.AddMember(42, g.ID)
+		group, err := gr.AddMember(42, g.ID)
 
 		if err == nil {
-			t.Error(expectedGot("an error", user))
+			t.Error(expectedGot("an error", group))
 		}
 	})
 
 	t.Run("UserAddedAsMemberSuccess", func(t *testing.T) {
-		user, err := gr.AddMember(u.ID, g.ID)
+		group, err := gr.AddMember(u.ID, g.ID)
 
 		if err != nil {
 			t.Error(expectedNoError(err))
 		}
 
-		if user.ID != u.ID {
-			t.Error(expectedGot(u, user))
+		if group.ID != g.ID && group.Name == g.Name	{
+			t.Error(expectedGot(u, group))
 		}
 	})
 
 	t.Run("UserAddedAsMemberSecondTimeFail", func(t *testing.T) {
-		user, err := gr.AddMember(u.ID, g.ID)
+		_, err := gr.AddMember(u.ID, g.ID)
 
 		if !errors.Is(repository.ErrUserAlreadyInGroupViolation, err) {
 			t.Error(expectedGot(repository.ErrUserAlreadyInGroupViolation, err))
 		}
+	})
 
-		if user.ID != u.ID {
-			t.Error(expectedGot(u, user))
+	t.Run("UserIsMember", func(t *testing.T) {
+		isMember, err := gr.IsMemberOf(u.ID, g.ID)
+
+		if err != nil {
+			t.Error(expectedNoError(err))
+		}
+		if !isMember {
+			t.Error("Should return true, got false")
 		}
 	})
 }
@@ -214,7 +229,7 @@ func (grt *GroupRepositoryTester) Find() error {
 }
 
 type GroupRepositoryTesterTx struct {
-	Repo repository.GroupRepositoryTx
+	Repo  repository.GroupRepositoryTx
 	Group model.Group
 }
 
@@ -247,10 +262,9 @@ func GroupRepositoryTestSuite(t *testing.T, gr repository.GroupRepository, ur re
 		Entity: model.Entity{},
 		Name:   "guccigang",
 	}, model.Group{
-		Entity:       model.Entity{},
-		Name:     "mnimidamons",
+		Entity: model.Entity{},
+		Name:   "mnimidamons",
 	}
-
 
 	grt := &GroupRepositoryTester{
 		Repo:  gr,

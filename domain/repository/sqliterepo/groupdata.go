@@ -18,29 +18,27 @@ type groupData struct {
 	*gorm.DB
 }
 
-func (gd groupData) IsMemberOf(userID uint, groupID uint) bool {
-	var user User
-	var group Group
+func (gd groupData) IsMemberOf(userID uint, groupID uint) (bool, error) {
+	count := new(int64)
 
-	group.ID = groupID
-	user.ID = userID
+	result := gd.Table("group_members").
+		Where("user_id = ? AND group_ID = ?", userID, groupID).
+		Count(count)
 
-	count :=
-		gd.Find(&group, groupID).
-			Where("user_id = ?", userID).
-			Association("GroupMembers").
-			Count()
-
-	if count > 0 {
-		return true
+	if result.Error != nil {
+		return false, toBusinessLogicError(result.Error)
 	}
 
-	return false
+	if *count > 0 {
+		return true, nil
+	}
+
+	return false, nil
 }
 
-func (gd groupData) AddMember(userID uint, groupID uint) (*model.User, error) {
+func (gd groupData) AddMember(userID uint, groupID uint) (*model.Group, error) {
 
-	if gd.IsMemberOf(userID, groupID) {
+	if isMember, _ := gd.IsMemberOf(userID, groupID); isMember {
 		return nil, repository.ErrUserAlreadyInGroupViolation
 	}
 
@@ -49,8 +47,6 @@ func (gd groupData) AddMember(userID uint, groupID uint) (*model.User, error) {
 
 	group.ID = groupID
 	user.ID = userID
-
-
 
 	err :=
 		gd.Find(&group, groupID).
@@ -62,12 +58,16 @@ func (gd groupData) AddMember(userID uint, groupID uint) (*model.User, error) {
 		return nil, toBusinessLogicError(err)
 	}
 
-	um := user.NewBusinessModel()
-	return um, nil
+	gm := group.NewBusinessModel()
+	return gm, nil
 }
 
 func (gd groupData) Delete(gm *model.Group) error {
-	result := gd.DB.Delete(&Group{}, gm.ID)
+	g := NewGroupFromBusinessModel(gm)
+
+	result := gd.DB.
+		Select("GroupMembers", "Invites").
+		Delete(g)
 
 	if err := result.Error; err != nil {
 		return toBusinessLogicError(err)
