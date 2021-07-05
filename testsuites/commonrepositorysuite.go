@@ -2,6 +2,7 @@ package testsuites
 
 import (
 	"errors"
+	"fmt"
 	"mnimidamonbackend/domain/repository"
 	"testing"
 )
@@ -116,4 +117,13 @@ func runTransactionCommitSuccessSuite(ti TransactionSuiteTestInterface, t *testi
 			t.Errorf("Expected no error, got %v", err)
 		}
 	})
+}
+
+// Helper functions for errors.
+func expectedGot(exp interface {}, got interface {}) string {
+	return fmt.Sprintf("Expected %v, got %v", exp, got)
+}
+
+func expectedNoError(got interface{}) string {
+	return fmt.Sprintf("Expected no error, got %v", got)
 }

@@ -89,7 +89,6 @@ func (urt *UserRepositoryTester) FindAfterSaveTests(t *testing.T) {
 }
 
 func (urt *UserRepositoryTester) UpdateTests(t *testing.T) {
-	// TODO
 	user, ur := urt.User, urt.Repo
 
 	user.Username = "markez"
@@ -107,7 +106,7 @@ func (urt *UserRepositoryTester) UpdateTests(t *testing.T) {
 		t.Errorf("Expected user.PasswordHash == new_password_hash, got %v", user)
 	}
 
-	u, err := ur.FindById(user.ID);
+	u, err := ur.FindById(user.ID)
 	if err != nil {
 		t.Errorf("Expected no error, got %v", err)
 	}

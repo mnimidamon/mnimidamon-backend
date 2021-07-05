@@ -32,6 +32,9 @@ type GroupRepository interface {
 	Delete(gm *model.Group) error
 	Update(gm *model.Group) error
 
+	AddMember(userID uint, groupID uint) (*model.User, error) // TODO: Tests, Double join
+	IsMemberOf(userID uint, groupID uint) bool // TODO: Tests, False if not, true if yes
+
 	// TODO: Functionalities
 }
 
@@ -63,7 +66,7 @@ type ComputerServiceTx interface {
 type BackupRepository interface {
 	BeginTx() BackupRepositoryTx
 
-	FindAll() ([]*model.Backup, error)
+	FindAll(groupID uint) ([]*model.Backup, error)
 	FindById(backupID uint) (*model.Backup, error)
 
 	Create(bm *model.Backup) error

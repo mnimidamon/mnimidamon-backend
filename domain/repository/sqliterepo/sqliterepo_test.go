@@ -41,5 +41,22 @@ func TestSQLiteGroupRepository(t *testing.T) {
 	}
 
 	gr := sqliterepo.NewGroupRepository(db)
-	testsuites.GroupRepositoryTestSuite(t, gr)
+	ur := sqliterepo.NewUserRepository(db)
+	testsuites.GroupRepositoryTestSuite(t, gr, ur)
 }
+
+/*
+func TestSQLiteBackupRepository(t *testing.T) {
+	db, err := initializeDatabase()
+
+	if err != nil {
+		t.Errorf("Error occured with new datbase connection: %v", err)
+	}
+
+	gr := sqliterepo.NewGroupRepository(db)
+	ur := sqliterepo.NewUserRepository(db)
+	br := sqliterepo.NewBackupRepository(db, gr)
+
+	testsuites.BackupRepositoryTestSuite(t, br, gr, ur)
+}
+*/

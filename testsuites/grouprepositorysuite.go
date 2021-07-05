@@ -10,6 +10,7 @@ import (
 // TransactionSuiteTestInterface implementation for repository.GroupRepository
 type GroupRepositoryTester struct {
 	Repo repository.GroupRepository
+	URepo repository.UserRepository
 	Group model.Group
 }
 
@@ -91,8 +92,26 @@ func (grt *GroupRepositoryTester) FindAfterSaveTests(t *testing.T) {
 }
 
 func (grt *GroupRepositoryTester) UpdateTests(t *testing.T) {
-	// TODO
-	t.Skip(unimplemented)
+	group, gr := grt.Group, grt.Repo
+
+	group.Name = "mangodemons"
+
+	if err := gr.Update(&group); err != nil {
+		t.Error(expectedNoError(err))
+	}
+
+	if group.Name != "mangodemons" {
+		t.Error(expectedGot("Group.Name mangodemons", group))
+	}
+
+	g, err := gr.FindById(group.ID)
+	if err != nil {
+		t.Error(expectedNoError(err))
+	}
+
+	if g.Name != group.Name {
+		t.Error(expectedGot(group, g))
+	}
 }
 
 func (grt *GroupRepositoryTester) ConstraintsTest(t *testing.T) {
@@ -106,13 +125,79 @@ func (grt *GroupRepositoryTester) ConstraintsTest(t *testing.T) {
 }
 
 func (grt *GroupRepositoryTester) SpecificTests(t *testing.T) {
-	// TODO
-	t.Skip(unimplemented)
+	gr, ur := grt.Repo, grt.URepo
+
+	u, g := model.User{
+		Entity:       model.Entity{},
+		Username:     "membertest",
+		PasswordHash: "membertest_hash",
+	}, grt.Group
+
+	t.Run("UserIsNotMember", func(t *testing.T) {
+		gr.IsMemberOf(0, g.ID)
+	})
+
+	t.Run("UserSavedSuccessfully", func(t *testing.T) {
+		if err := ur.Create(&u); err != nil {
+			t.Error(expectedGot("no error", err))
+		}
+	})
+
+	t.Run("UserAddedNonExistentGroupFail", func(t *testing.T) {
+		user, err := gr.AddMember(u.ID, 42)
+
+		if err == nil {
+			t.Error(expectedGot("an error", user))
+		}
+	})
+
+	t.Run("AddUnExistingUserToGroup", func(t *testing.T) {
+		user, err := gr.AddMember(42, g.ID)
+
+		if err == nil {
+			t.Error(expectedGot("an error", user))
+		}
+	})
+
+	t.Run("UserAddedAsMemberSuccess", func(t *testing.T) {
+		user, err := gr.AddMember(u.ID, g.ID)
+
+		if err != nil {
+			t.Error(expectedNoError(err))
+		}
+
+		if user.ID != u.ID {
+			t.Error(expectedGot(u, user))
+		}
+	})
+
+	t.Run("UserAddedAsMemberSecondTimeFail", func(t *testing.T) {
+		user, err := gr.AddMember(u.ID, g.ID)
+
+		if !errors.Is(repository.ErrUserAlreadyInGroupViolation, err) {
+			t.Error(expectedGot(repository.ErrUserAlreadyInGroupViolation, err))
+		}
+
+		if user.ID != u.ID {
+			t.Error(expectedGot(u, user))
+		}
+	})
 }
 
 func (grt *GroupRepositoryTester) DeleteTests(t *testing.T) {
-	// TODO
-	t.Skip(unimplemented)
+	g, gr := grt.Group, grt.Repo
+
+	t.Run("DeleteSuccessful", func(t *testing.T) {
+		if err := gr.Delete(&g); err != nil {
+			t.Error(expectedNoError(err))
+		}
+	})
+
+	t.Run("FindByIdFail", func(t *testing.T) {
+		if m, err := gr.FindById(g.ID); !errors.Is(repository.ErrNotFound, err) {
+			t.Errorf("Expected %v, got err:%v group:%v", repository.ErrNotFound, err, m)
+		}
+	})
 }
 
 func (grt *GroupRepositoryTester) BeginTx() TransactionSuiteTestTxInterface {
@@ -157,7 +242,7 @@ func (gtx *GroupRepositoryTesterTx) Commit() error {
 }
 
 // Tests the repository.GroupRepository interface implementation against common tests.
-func GroupRepositoryTestSuite(t *testing.T, gr repository.GroupRepository) {
+func GroupRepositoryTestSuite(t *testing.T, gr repository.GroupRepository, ur repository.UserRepository) {
 	guccigang, mnimidamons := model.Group{
 		Entity: model.Entity{},
 		Name:   "guccigang",
@@ -169,6 +254,7 @@ func GroupRepositoryTestSuite(t *testing.T, gr repository.GroupRepository) {
 
 	grt := &GroupRepositoryTester{
 		Repo:  gr,
+		URepo: ur,
 		Group: guccigang,
 	}
 

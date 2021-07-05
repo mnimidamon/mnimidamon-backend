@@ -10,6 +10,7 @@ type Backup struct {
 
 	FileName string
 	Size     uint
+	Hash     string
 
 	UploadRequest bool
 	DeleteRequest bool

@@ -18,6 +18,54 @@ type groupData struct {
 	*gorm.DB
 }
 
+func (gd groupData) IsMemberOf(userID uint, groupID uint) bool {
+	var user User
+	var group Group
+
+	group.ID = groupID
+	user.ID = userID
+
+	count :=
+		gd.Find(&group, groupID).
+			Where("user_id = ?", userID).
+			Association("GroupMembers").
+			Count()
+
+	if count > 0 {
+		return true
+	}
+
+	return false
+}
+
+func (gd groupData) AddMember(userID uint, groupID uint) (*model.User, error) {
+
+	if gd.IsMemberOf(userID, groupID) {
+		return nil, repository.ErrUserAlreadyInGroupViolation
+	}
+
+	var user User
+	var group Group
+
+	group.ID = groupID
+	user.ID = userID
+
+
+
+	err :=
+		gd.Find(&group, groupID).
+			Omit("GroupMembers.*").
+			Association("GroupMembers").
+			Append(&user)
+
+	if err != nil {
+		return nil, toBusinessLogicError(err)
+	}
+
+	um := user.NewBusinessModel()
+	return um, nil
+}
+
 func (gd groupData) Delete(gm *model.Group) error {
 	result := gd.DB.Delete(&Group{}, gm.ID)
 
@@ -83,7 +131,7 @@ func (gd groupData) FindByName(name string) (*model.Group, error) {
 
 	result :=
 		gd.Where("name LIKE ?", fmt.Sprintf("%s%%", name)).
-		First(&group)
+			First(&group)
 
 	if err := result.Error; err != nil {
 		return nil, toBusinessLogicError(err)
@@ -110,7 +158,7 @@ type groupDataTx struct {
 	groupData
 }
 
-func (gdtx groupDataTx) Rollback() error{
+func (gdtx groupDataTx) Rollback() error {
 	return gdtx.groupData.Rollback().Error
 }
 

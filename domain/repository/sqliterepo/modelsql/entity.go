@@ -5,7 +5,7 @@ import (
 )
 
 type Entity struct {
-	ID uint `gorm:"primaryKey"`
+	ID uint `gorm:"primaryKey; uniqueIndex"`
 
 	CreatedAt time.Time
 	UpdatedAt time.Time

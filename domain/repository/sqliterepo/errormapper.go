@@ -29,6 +29,8 @@ func toBusinessLogicError(err error) error {
 		case sqlite3.ErrConstraintPrimaryKey:
 			// Unique constraint violation primary key insertion.
 			return repository.ErrUniquePrimaryKeyConstraintViolation
+		case sqlite3.ErrConstraintForeignKey:
+			return repository.ErrForeignKeyConstraintViolation
 		}
 
 		log.Printf("Unknow SQLite error %v: %v", sqliteErr.ExtendedCode, sqliteErr)
