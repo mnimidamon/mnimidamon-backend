@@ -15,7 +15,7 @@ type computerData struct {
 	*gorm.DB
 }
 
-func (cd computerData) Delete(cm *model.Computer) error {
+func (cd computerData) Delete(computerID uint) error {
 	panic("implement me")
 }
 
@@ -42,7 +42,6 @@ func (cd computerData) Create(cm *model.Computer) error {
 // Transaction support.
 type computerDataTx struct {
 	computerData
-
 }
 
 func (cdtx computerDataTx) Rollback() error {
@@ -53,7 +52,7 @@ func (cdtx computerDataTx) Commit() error {
 	return cdtx.computerData.Commit().Error
 }
 
-func (cd computerData) BeginTx() repository.ComputerServiceTx {
+func (cd computerData) BeginTx() repository.ComputerRepositoryTx {
 	return &computerDataTx{
 		computerData{
 			DB: cd.Begin(),

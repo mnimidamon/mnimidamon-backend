@@ -42,6 +42,18 @@ func (urt *UserRepositoryTester) FindBeforeSaveTests(t *testing.T) {
 			t.Errorf("Expected %v, recieved %v", repository.ErrNotFound, err)
 		}
 	})
+
+	t.Run("ExistFalse", func(t *testing.T) {
+		exists, err := ur.Exists(1)
+
+		if err != nil {
+			t.Error(expectedNoError(err))
+		}
+
+		if exists {
+			t.Error("Expected false, got true")
+		}
+	})
 }
 
 func (urt *UserRepositoryTester) SaveSuccessfulTests(t *testing.T) {
@@ -76,7 +88,7 @@ func (urt *UserRepositoryTester) FindAfterSaveTests(t *testing.T) {
 	})
 
 	t.Run("FindByIdSuccess", func(t *testing.T) {
-		m, err := ur.FindById(1)
+		m, err := ur.FindById(urt.User.ID)
 
 		if err != nil {
 			t.Errorf("Expected no error, recieved %v", err)
@@ -84,6 +96,18 @@ func (urt *UserRepositoryTester) FindAfterSaveTests(t *testing.T) {
 
 		if m.ID != urt.User.ID {
 			t.Errorf("Expected %v, got %v", urt.User.ID, m)
+		}
+	})
+
+	t.Run("Exists", func(t *testing.T) {
+		exists, err := ur.Exists(urt.User.ID)
+
+		if err != nil {
+			t.Error(expectedNoError(err))
+		}
+
+		if !exists {
+			t.Error("Expected true, got false")
 		}
 	})
 }
@@ -134,7 +158,7 @@ func (urt *UserRepositoryTester) DeleteTests(t *testing.T) {
 	ur := urt.Repo
 
 	t.Run("DeleteSuccessful", func(t *testing.T) {
-		if err := ur.Delete(&urt.User); err != nil {
+		if err := ur.Delete(urt.User.ID); err != nil {
 			t.Errorf("Expected no error, got %v", err)
 		}
 	})

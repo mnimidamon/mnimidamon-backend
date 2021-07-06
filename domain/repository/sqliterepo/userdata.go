@@ -1,6 +1,7 @@
 package sqliterepo
 
 import (
+	"errors"
 	"fmt"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -18,8 +19,21 @@ type userData struct {
 	 *gorm.DB
 }
 
-func (ud userData) Delete(um *model.User) error {
-	result := ud.DB.Delete(&User{}, um.ID)
+func (ud userData) Exists(userID uint) (bool, error) {
+	_, err := ud.FindById(userID)
+
+	if err != nil  {
+		if  errors.Is(repository.ErrNotFound, err) {
+			return false, nil
+		}
+		return false, toBusinessLogicError(err)
+	}
+
+	return true, nil
+}
+
+func (ud userData) Delete(userID uint) error {
+	result := ud.DB.Delete(&User{}, userID)
 
 	if err := result.Error; err != nil {
 		return toBusinessLogicError(err)

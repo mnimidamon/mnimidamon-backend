@@ -1,6 +1,7 @@
 package sqliterepo
 
 import (
+	"errors"
 	"fmt"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -16,6 +17,19 @@ func NewGroupRepository(db *gorm.DB) repository.GroupRepository {
 // groupData store for SQLite database.
 type groupData struct {
 	*gorm.DB
+}
+
+func (gd groupData) Exists(groupID uint) (bool, error) {
+	_, err := gd.FindById(groupID)
+
+	if err != nil  {
+		if  errors.Is(repository.ErrNotFound, err) {
+			return false, nil
+		}
+		return false, toBusinessLogicError(err)
+	}
+
+	return true, nil
 }
 
 func (gd groupData) IsMemberOf(userID uint, groupID uint) (bool, error) {
@@ -62,8 +76,13 @@ func (gd groupData) AddMember(userID uint, groupID uint) (*model.Group, error) {
 	return gm, nil
 }
 
-func (gd groupData) Delete(gm *model.Group) error {
-	g := NewGroupFromBusinessModel(gm)
+func (gd groupData) Delete(groupID uint) error {
+
+	g, err := gd.FindById(groupID)
+
+	if err != nil {
+		return repository.ErrNotFound
+	}
 
 	result := gd.DB.
 		Select("GroupMembers", "Invites").

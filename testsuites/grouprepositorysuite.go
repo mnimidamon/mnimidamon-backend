@@ -44,6 +44,18 @@ func (grt *GroupRepositoryTester) FindBeforeSaveTests(t *testing.T) {
 			t.Errorf("Expected %v, recieved %v", repository.ErrNotFound, err)
 		}
 	})
+
+	t.Run("ExistFalse", func(t *testing.T) {
+		exists, err := gr.Exists(grt.Group.ID)
+
+		if err != nil {
+			t.Error(expectedNoError(err))
+		}
+
+		if exists {
+			t.Error("Expected false, got true")
+		}
+	})
 }
 
 func (grt *GroupRepositoryTester) SaveSuccessfulTests(t *testing.T) {
@@ -87,6 +99,18 @@ func (grt *GroupRepositoryTester) FindAfterSaveTests(t *testing.T) {
 
 		if gg.ID != grt.Group.ID {
 			t.Errorf("Expected %v, got %v", grt.Group, gg)
+		}
+	})
+
+	t.Run("Exists", func(t *testing.T) {
+		exists, err := gr.Exists(grt.Group.ID)
+
+		if err != nil {
+			t.Error(expectedNoError(err))
+		}
+
+		if !exists {
+			t.Error("Expected true, got false")
 		}
 	})
 }
@@ -197,13 +221,15 @@ func (grt *GroupRepositoryTester) SpecificTests(t *testing.T) {
 			t.Error("Should return true, got false")
 		}
 	})
+
+
 }
 
 func (grt *GroupRepositoryTester) DeleteTests(t *testing.T) {
 	g, gr := grt.Group, grt.Repo
 
 	t.Run("DeleteSuccessful", func(t *testing.T) {
-		if err := gr.Delete(&g); err != nil {
+		if err := gr.Delete(g.ID); err != nil {
 			t.Error(expectedNoError(err))
 		}
 	})
