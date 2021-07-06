@@ -51,26 +51,26 @@ func (brt *BackupRepositoryTester) FindBeforeSaveTests(t *testing.T) {
 func (brt *BackupRepositoryTester) SaveSuccessfulTests(t *testing.T) {
 	br, gr, ur := brt.Repo, brt.GRepo, brt.URepo
 
-	u, g, b := brt.User, brt.Group, brt.Backup
-	us, gs, bs := brt.SecondUser, brt.SecondGroup, brt.SecondBackup
+	u, g, b := &brt.User, &brt.Group, &brt.Backup
+	us, gs, bs := &brt.SecondUser, &brt.SecondGroup, &brt.SecondBackup
 
 
 	t.Run("PreSaveOperations", func(t *testing.T) {
-		err := ur.Create(&u)
+		err := ur.Create(u)
 		if err != nil {
 			t.Error(expectedGot("no error upon creating first user", err))
 		}
 
-		err = ur.Create(&us)
+		err = ur.Create(us)
 		if err != nil {
 			t.Error(expectedGot("no error upon creating second user", err))
 		}
 
-		err = gr.Create(&g)
+		err = gr.Create(g)
 		if err != nil {
 			t.Error(expectedGot("no error upon creating first group", err))
 		}
-		err = gr.Create(&gs)
+		err = gr.Create(gs)
 		if err != nil {
 			t.Error(expectedGot("no error upon creating second group", err))
 		}
@@ -87,11 +87,11 @@ func (brt *BackupRepositoryTester) SaveSuccessfulTests(t *testing.T) {
 	})
 
 	t.Run("SuccessfulSave", func(t *testing.T) {
-		if err := br.Create(&b); err != nil {
+		if err := br.Create(b); err != nil {
 			t.Error(expectedGot("no error on first backup creation", err))
 		}
 
-		if err := br.Create(&bs); err != nil {
+		if err := br.Create(bs); err != nil {
 			t.Error(expectedGot("no error on second backup creation", err))
 		}
 
@@ -102,27 +102,143 @@ func (brt *BackupRepositoryTester) SaveSuccessfulTests(t *testing.T) {
 		if bs.ID == 0 {
 			t.Error(expectedGot("SecondGroup.ID > 0", bs))
 		}
+
+		if bs.OwnerID != us.ID {
+			t.Error(expectedGot("second user as owner", bs))
+		}
+
+		if b.OwnerID != u.ID {
+			t.Error(expectedGot("first user as owner", b))
+		}
+
+		if b.GroupID != g.ID {
+			t.Errorf(expectedGot("first backup should belong to first group", b))
+		}
+
+		if bs.GroupID != g.ID {
+			t.Errorf(expectedGot("second backup should belong to first group", b))
+		}
 	})
 }
 
 func (brt *BackupRepositoryTester) FindAfterSaveTests(t *testing.T) {
-	panic("implement me")
+	br, _, _ := brt.Repo, brt.GRepo, brt.URepo
+
+	u, g, b := &brt.User, &brt.Group, &brt.Backup
+	us, gs, bs := &brt.SecondUser, &brt.SecondGroup, &brt.SecondBackup
+
+	t.Run("FindByIdSuccess", func(t *testing.T) {
+		bb, err := br.FindById(b.ID)
+		if err != nil {
+			t.Error(expectedNoError(err))
+		}
+
+		bbs, err := br.FindById(bs.ID)
+		if err != nil {
+			t.Error(expectedNoError(err))
+		}
+
+		if bb.ID != b.ID {
+			t.Error(expectedGot(b, bb))
+		}
+
+		if bbs.ID != bs.ID {
+			t.Error(expectedGot(bs, bbs))
+		}
+
+		if bbs.OwnerID != us.ID {
+			t.Error(expectedGot("second user as owner", bs))
+		}
+
+		if bb.OwnerID != u.ID {
+			t.Error(expectedGot("first user as owner", b))
+		}
+
+		if bb.GroupID != g.ID {
+			t.Errorf(expectedGot("first backup should belong to first group", b))
+		}
+
+		if bbs.GroupID != g.ID {
+			t.Errorf(expectedGot("second backup should belong to first group", b))
+		}
+	})
+
+	t.Run("FindAllSuccess", func(t *testing.T) {
+		barr, err := br.FindAll(g.ID)
+		if err != nil {
+			t.Error(expectedNoError(err))
+		}
+
+		bsarr, err := br.FindAll(gs.ID)
+		if err != nil {
+			t.Error(expectedNoError(err))
+		}
+
+		if len(barr) != 2 {
+			t.Error(expectedGot("Group.ID == 1, array length of 2", len(barr)))
+		}
+
+		if len(bsarr) != 0 {
+			t.Error(expectedGot("Group.ID == 2, array length of 0", len(barr)))
+		}
+	})
 }
 
 func (brt *BackupRepositoryTester) ConstraintsTest(t *testing.T) {
-	panic("implement me")
+	t.Skip(unimplemented)
 }
 
 func (brt *BackupRepositoryTester) UpdateTests(t *testing.T) {
-	panic("implement me")
+	t.Skip(unimplemented)
 }
 
 func (brt *BackupRepositoryTester) SpecificTests(t *testing.T) {
-	panic("implement me")
+	t.Skip(unimplemented)
 }
 
 func (brt *BackupRepositoryTester) DeleteTests(t *testing.T) {
-	panic("implement me")
+	br, gr, ur := brt.Repo, brt.GRepo, brt.URepo
+
+	u, g, b := &brt.User, &brt.Group, &brt.Backup
+	us, gs, bs := &brt.SecondUser, &brt.SecondGroup, &brt.SecondBackup
+
+	t.Run("DeleteSuccessful", func(t *testing.T) {
+		if err := br.Delete(b.ID); err != nil {
+			t.Error(expectedNoError(err))
+		}
+
+		if err := br.Delete(bs.ID); err != nil {
+			t.Error(expectedNoError(err))
+		}
+	})
+
+	t.Run("FindByIdFail", func(t *testing.T) {
+		if m, err := br.FindById(b.ID); !errors.Is(repository.ErrNotFound, err) {
+			t.Errorf("Expected %v, got err:%v group:%v", repository.ErrNotFound, err, m)
+		}
+
+		if m, err := br.FindById(bs.ID); !errors.Is(repository.ErrNotFound, err) {
+			t.Errorf("Expected %v, got err:%v group:%v", repository.ErrNotFound, err, m)
+		}
+	})
+
+	t.Run("AfterDeleteChecks", func(t *testing.T) {
+		if _, err := gr.FindById(g.ID); err != nil {
+			t.Errorf(expectedNoError(err))
+		}
+
+		if _, err := gr.FindById(gs.ID); err != nil {
+			t.Errorf(expectedNoError(err))
+		}
+
+		if _, err := ur.FindById(u.ID); err != nil {
+			t.Errorf(expectedNoError(err))
+		}
+
+		if _, err := ur.FindById(us.ID); err != nil {
+			t.Errorf(expectedNoError(err))
+		}
+	})
 }
 
 func (brt *BackupRepositoryTester) BeginTx() TransactionSuiteTestTxInterface {
