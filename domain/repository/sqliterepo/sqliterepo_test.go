@@ -55,7 +55,7 @@ func TestSQLiteBackupRepository(t *testing.T) {
 
 	gr := sqliterepo.NewGroupRepository(db)
 	ur := sqliterepo.NewUserRepository(db)
-	br := sqliterepo.NewBackupRepository(db, gr)
+	br := sqliterepo.NewBackupRepository(db)
 	testsuites.BackupRepositoryTestSuite(t, br, gr, ur)
 }
 

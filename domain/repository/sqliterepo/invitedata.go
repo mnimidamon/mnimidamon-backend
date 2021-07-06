@@ -15,7 +15,6 @@ type inviteData struct {
 	*gorm.DB
 }
 
-
 type inviteDataTx struct {
 	inviteData
 }
