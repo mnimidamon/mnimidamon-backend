@@ -7,16 +7,14 @@ import (
 	. "mnimidamonbackend/domain/repository/sqliterepo/modelsql"
 )
 
-func NewBackupRepository(db *gorm.DB, grc repository.GroupRepositoryChecker) repository.BackupRepository {
+func NewBackupRepository(db *gorm.DB) repository.BackupRepository {
 	return backupData{
 		DB: db,
-		GRC: grc,
 	}
 }
 
 type backupData struct {
 	*gorm.DB
-	GRC repository.GroupRepositoryChecker
 }
 
 func (bd backupData) Delete(backupID uint) error {
@@ -115,7 +113,6 @@ func (bd backupData) BeginTx() repository.BackupRepositoryTx {
 	return &BackupDataTx{
 		backupData{
 			DB: bd.Begin(),
-			GRC: bd.GRC,
 		},
 	}
 }

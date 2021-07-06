@@ -5,16 +5,14 @@ import (
 	"mnimidamonbackend/domain/repository"
 )
 
-func NewInviteRepository(db *gorm.DB, grc repository.GroupRepositoryChecker) repository.InviteRepository {
+func NewInviteRepository(db *gorm.DB) repository.InviteRepository {
 	return inviteData {
 		DB: db,
-		GRC: grc,
 	}
 }
 
 type inviteData struct {
 	*gorm.DB
-	GRC repository.GroupRepositoryChecker
 }
 
 
@@ -34,7 +32,6 @@ func (id inviteData) BeginTx() repository.InviteRepositoryTx {
 	return inviteDataTx{
 		inviteData{
 			DB: id.Begin(),
-			GRC: id.GRC,
 		},
 	}
 }

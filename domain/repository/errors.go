@@ -10,5 +10,5 @@ var (
 	ErrUniquePrimaryKeyConstraintViolation = errors.New("ErrUniquePrimaryKeyConstraintViolation")
 	ErrForeignKeyConstraintViolation       = errors.New("ErrForeignKeyConstraintViolation")
 	ErrUserNotGroupMemberViolation         = errors.New("ErrUserNotGroupMemberViolation")
-	ErrUserAlreadyInGroupViolation 			= errors.New("ErrUserAlreadyInGroupViolation")
+	ErrUserAlreadyInGroupViolation         = errors.New("ErrUserAlreadyInGroupViolation")
 )

@@ -19,6 +19,27 @@ type groupData struct {
 	*gorm.DB
 }
 
+func (gd groupData) FindAllMembers(groupID uint) ([]*model.User, error) {
+	var members []User
+
+	err :=
+		gd.Where("group_id = ?", groupID).
+			Association("GroupMembers").
+			Find(&members)
+
+	if err != nil {
+		return nil, toBusinessLogicError(err)
+	}
+
+	var mUsers []*model.User
+	for _, u := range members {
+		mb := u.NewBusinessModel()
+		mUsers = append(mUsers, mb)
+	}
+
+	return mUsers, nil
+}
+
 func (gd groupData) Exists(groupID uint) (bool, error) {
 	_, err := gd.FindById(groupID)
 

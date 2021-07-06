@@ -17,13 +17,9 @@ type UserRepository interface {
 	Delete(userID uint) error
 	Update(um *model.User) error
 
-	UserRepositoryChecker
+	Exists(userID uint) (bool, error)
 	// TODO: Functionalities
 	// 		- this is completed?
-}
-
-type UserRepositoryChecker interface {
-	Exists(userID uint) (bool, error)
 }
 
 type UserRepositoryTx interface {
@@ -35,6 +31,7 @@ type GroupRepository interface {
 	BeginTx() GroupRepositoryTx
 
 	FindAll() ([]*model.Group, error)
+	FindAllMembers(groupID uint) ([]*model.User, error) // TODO: testing
 	FindById(groupID uint) (*model.Group, error)
 	FindByName(name string) (*model.Group, error)
 
@@ -43,15 +40,11 @@ type GroupRepository interface {
 	Update(gm *model.Group) error
 
 	AddMember(userID uint, groupID uint) (*model.Group, error)
-
-	GroupRepositoryChecker
-	// TODO: Functionalities:
-	//		- get members
-}
-
-type GroupRepositoryChecker interface {
 	IsMemberOf(userID uint, groupID uint) (bool, error)
 	Exists(groupID uint) (bool, error)
+
+	// TODO: Functionalities:
+	//		- get members
 }
 
 type GroupRepositoryTx interface {
@@ -70,13 +63,8 @@ type ComputerRepository interface {
 	Delete(computerID uint) error
 	Update(cm *model.Computer) error
 
-	ComputerRepositoryChecker
 	// TODO: Functionalities
 	// 		- have to think about this little bit
-}
-
-type ComputerRepositoryChecker interface {
-
 }
 
 type ComputerRepositoryTx interface {
@@ -94,14 +82,10 @@ type BackupRepository interface {
 	Delete(backupID uint) error
 	Update(bm *model.Backup) error
 
-	BackupRepositoryChecker
 	// TODO: Functionalities
 	//		- field updating
 }
 
-type BackupRepositoryChecker interface {
-
-}
 
 type BackupRepositoryTx interface {
 	BackupRepository
@@ -111,16 +95,12 @@ type BackupRepositoryTx interface {
 type InviteRepository interface {
 	BeginTx() InviteRepositoryTx
 
-	InviteRepositoryChecker
 	// TODO: Functionalities:
 	//		- inviting
 	//		- declining invites
 	//		- accepting invites
 }
 
-type InviteRepositoryChecker interface {
-
-}
 
 type InviteRepositoryTx interface {
 	InviteRepository
