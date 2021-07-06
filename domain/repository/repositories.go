@@ -62,9 +62,9 @@ type GroupRepositoryTx interface {
 type ComputerRepository interface {
 	BeginTx() ComputerRepositoryTx
 
-	FindAll() ([]*model.Computer, error)
+	FindAll(ownerID uint) ([]*model.Computer, error)
 	FindById(computerID uint) (*model.Computer, error)
-	FindByName(name string) (*model.Computer, error)
+	FindByName(name string, ownerID uint) (*model.Computer, error)
 
 	Create(cm *model.Computer) error
 	Delete(computerID uint) error
@@ -97,7 +97,6 @@ type BackupRepository interface {
 	BackupRepositoryChecker
 	// TODO: Functionalities
 	//		- field updating
-	//		- deleting works?
 }
 
 type BackupRepositoryChecker interface {
