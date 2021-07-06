@@ -59,7 +59,7 @@ type ComputerRepository interface {
 	FindById(computerID uint) (*model.Computer, error)
 	FindByName(name string, ownerID uint) (*model.Computer, error)
 
-	Create(cm *model.Computer) error
+	Create(cm *model.Computer, ownerID uint) error
 	Delete(computerID uint) error
 	Update(cm *model.Computer) error
 

@@ -48,7 +48,9 @@ func (ud userData) Update(um *model.User) error {
 	result :=
 		ud.Model(u).
 			Omit("id", clause.Associations).
-			Updates(u)
+			Updates(u).
+			Select("*").
+			First(u)
 
 	if err := result.Error; err != nil {
 		return toBusinessLogicError(err)

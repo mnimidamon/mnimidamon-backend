@@ -23,33 +23,8 @@ type BackupRepositoryTester struct {
 	SecondGroup model.Group
 }
 
-func (brt *BackupRepositoryTester) FindBeforeSaveTests(t *testing.T) {
-	br, _, _ := brt.Repo, brt.GRepo, brt.URepo
-
-	g := brt.Group
-
-	t.Run("FindAllByGroupIdEmpty", func(t *testing.T) {
-		backups, err := br.FindAll(g.ID)
-
-		if err != nil {
-			t.Errorf(expectedGot("empty slice", err))
-		}
-
-		if len(backups) != 0 {
-			t.Errorf(expectedGot("empty slice", backups))
-		}
-	})
-
-	t.Run("FindByIdNotFound", func(t *testing.T) {
-		b, err := br.FindById(1)
-		if !errors.Is(repository.ErrNotFound, err) {
-			t.Errorf(expectedGot(repository.ErrNotFound, fmt.Sprintf("Error: %v, Backup: %v", err, b)))
-		}
-	})
-}
-
-func (brt *BackupRepositoryTester) SaveSuccessfulTests(t *testing.T) {
-	br, gr, ur := brt.Repo, brt.GRepo, brt.URepo
+func (brt *BackupRepositoryTester) Setup(t *testing.T) {
+	_, gr, ur := brt.Repo, brt.GRepo, brt.URepo
 
 	u, g, b := &brt.User, &brt.Group, &brt.Backup
 	us, gs, bs := &brt.SecondUser, &brt.SecondGroup, &brt.SecondBackup
@@ -85,6 +60,39 @@ func (brt *BackupRepositoryTester) SaveSuccessfulTests(t *testing.T) {
 		b.GroupID = g.ID
 		bs.GroupID = g.ID
 	})
+}
+
+func (brt *BackupRepositoryTester) FindBeforeSaveTests(t *testing.T) {
+	br, _, _ := brt.Repo, brt.GRepo, brt.URepo
+
+	g := brt.Group
+
+	t.Run("FindAllByGroupIdEmpty", func(t *testing.T) {
+		backups, err := br.FindAll(g.ID)
+
+		if err != nil {
+			t.Errorf(expectedGot("empty slice", err))
+		}
+
+		if len(backups) != 0 {
+			t.Errorf(expectedGot("empty slice", backups))
+		}
+	})
+
+	t.Run("FindByIdNotFound", func(t *testing.T) {
+		b, err := br.FindById(1)
+		if !errors.Is(repository.ErrNotFound, err) {
+			t.Errorf(expectedGot(repository.ErrNotFound, fmt.Sprintf("Error: %v, Backup: %v", err, b)))
+		}
+	})
+}
+
+func (brt *BackupRepositoryTester) SaveSuccessfulTests(t *testing.T) {
+	br, _, _ := brt.Repo, brt.GRepo, brt.URepo
+
+	u, g, b := &brt.User, &brt.Group, &brt.Backup
+	us, _, bs := &brt.SecondUser, &brt.SecondGroup, &brt.SecondBackup
+
 
 	t.Run("SuccessfulSave", func(t *testing.T) {
 		if err := br.Create(b); err != nil {
@@ -130,12 +138,12 @@ func (brt *BackupRepositoryTester) FindAfterSaveTests(t *testing.T) {
 	t.Run("FindByIdSuccess", func(t *testing.T) {
 		bb, err := br.FindById(b.ID)
 		if err != nil {
-			t.Error(expectedNoError(err))
+			t.Error(unexpectedErr(err))
 		}
 
 		bbs, err := br.FindById(bs.ID)
 		if err != nil {
-			t.Error(expectedNoError(err))
+			t.Error(unexpectedErr(err))
 		}
 
 		if bb.ID != b.ID {
@@ -166,12 +174,12 @@ func (brt *BackupRepositoryTester) FindAfterSaveTests(t *testing.T) {
 	t.Run("FindAllSuccess", func(t *testing.T) {
 		barr, err := br.FindAll(g.ID)
 		if err != nil {
-			t.Error(expectedNoError(err))
+			t.Error(unexpectedErr(err))
 		}
 
 		bsarr, err := br.FindAll(gs.ID)
 		if err != nil {
-			t.Error(expectedNoError(err))
+			t.Error(unexpectedErr(err))
 		}
 
 		if len(barr) != 2 {
@@ -204,11 +212,11 @@ func (brt *BackupRepositoryTester) DeleteTests(t *testing.T) {
 
 	t.Run("DeleteSuccessful", func(t *testing.T) {
 		if err := br.Delete(b.ID); err != nil {
-			t.Error(expectedNoError(err))
+			t.Error(unexpectedErr(err))
 		}
 
 		if err := br.Delete(bs.ID); err != nil {
-			t.Error(expectedNoError(err))
+			t.Error(unexpectedErr(err))
 		}
 	})
 
@@ -224,19 +232,19 @@ func (brt *BackupRepositoryTester) DeleteTests(t *testing.T) {
 
 	t.Run("AfterDeleteChecks", func(t *testing.T) {
 		if _, err := gr.FindById(g.ID); err != nil {
-			t.Errorf(expectedNoError(err))
+			t.Errorf(unexpectedErr(err))
 		}
 
 		if _, err := gr.FindById(gs.ID); err != nil {
-			t.Errorf(expectedNoError(err))
+			t.Errorf(unexpectedErr(err))
 		}
 
 		if _, err := ur.FindById(u.ID); err != nil {
-			t.Errorf(expectedNoError(err))
+			t.Errorf(unexpectedErr(err))
 		}
 
 		if _, err := ur.FindById(us.ID); err != nil {
-			t.Errorf(expectedNoError(err))
+			t.Errorf(unexpectedErr(err))
 		}
 	})
 }
@@ -341,5 +349,4 @@ func BackupRepositoryTestSuite(t *testing.T, br repository.BackupRepository, gr 
 	}
 
 	runCommonRepositoryTests(brt, t)
-	runTransactionTestSuite(brt, t)
 }

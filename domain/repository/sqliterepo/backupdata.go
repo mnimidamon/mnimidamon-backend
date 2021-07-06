@@ -35,7 +35,9 @@ func (bd backupData) Update(bm *model.Backup) error {
 		bd.Model(b).
 			Select("upload_request", "delete_request", "on_server", "file_name", "size", "hash").
 			Omit("id", "owner_id", "group_id").
-			Updates(b)
+			Updates(b).
+			Select("*").
+			First(b)
 
 	if err := result.Error; err != nil {
 		return toBusinessLogicError(err)

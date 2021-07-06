@@ -17,7 +17,9 @@ func NewComputerFromBusinessModel(cm *model.Computer) *Computer {
 	}
 
 	return &Computer{
-		Entity:  Entity{},
+		Entity:  Entity{
+			ID: cm.ID,
+		},
 		OwnerID: cm.OwnerID,
 		Name:    cm.Name,
 		Owner:   *NewUserFromBusinessModel(&cm.Owner),

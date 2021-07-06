@@ -59,3 +59,16 @@ func TestSQLiteBackupRepository(t *testing.T) {
 	testsuites.BackupRepositoryTestSuite(t, br, gr, ur)
 }
 
+func TestSQLiteComputerRepository(t *testing.T) {
+	db, err := initializeDatabase()
+
+	if err != nil {
+		t.Errorf("Error occured with new datbase connection: %v", err)
+	}
+
+	cr := sqliterepo.NewComputerRepository(db)
+	ur := sqliterepo.NewUserRepository(db)
+
+	testsuites.ComputerRepositoryTestSuite(t, cr, ur)
+}
+

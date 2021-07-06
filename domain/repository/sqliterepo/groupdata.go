@@ -122,7 +122,9 @@ func (gd groupData) Update(gm *model.Group) error {
 	result :=
 		gd.Model(g).
 			Omit("id", clause.Associations).
-			Updates(g)
+			Updates(g).
+			Select("*").
+			First(g)
 
 	if err := result.Error; err != nil {
 		return toBusinessLogicError(err)

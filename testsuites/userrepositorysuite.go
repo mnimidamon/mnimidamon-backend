@@ -13,6 +13,10 @@ type UserRepositoryTester struct {
 	User model.User
 }
 
+func (urt *UserRepositoryTester) Setup(t *testing.T) {
+	t.Skip("No specific setup needed")
+}
+
 func (urt *UserRepositoryTester) FindBeforeSaveTests(t *testing.T) {
 	ur := urt.Repo
 	t.Run("FindAllEmpty", func(t *testing.T) {
@@ -47,7 +51,7 @@ func (urt *UserRepositoryTester) FindBeforeSaveTests(t *testing.T) {
 		exists, err := ur.Exists(1)
 
 		if err != nil {
-			t.Error(expectedNoError(err))
+			t.Error(unexpectedErr(err))
 		}
 
 		if exists {
@@ -103,7 +107,7 @@ func (urt *UserRepositoryTester) FindAfterSaveTests(t *testing.T) {
 		exists, err := ur.Exists(urt.User.ID)
 
 		if err != nil {
-			t.Error(expectedNoError(err))
+			t.Error(unexpectedErr(err))
 		}
 
 		if !exists {
@@ -213,14 +217,10 @@ func (utx *UserRepositoryTesterTx) CorrectCheck(t *testing.T) {
 
 // Tests the repository.UserRepository interface implementation against common tests.
 func UserRepositoryTestSuite(t *testing.T, ur repository.UserRepository) {
-	marmiha, marpeter := model.User{
+	marmiha := model.User{
 		Entity:       model.Entity{},
 		Username:     "marmiha",
 		PasswordHash: "marmiha_hashed_pass",
-	}, model.User{
-		Entity:       model.Entity{},
-		Username:     "peter",
-		PasswordHash: "peters_hashed_pass",
 	}
 
 	urt := &UserRepositoryTester{
@@ -230,8 +230,4 @@ func UserRepositoryTestSuite(t *testing.T, ur repository.UserRepository) {
 
 	// Common repository implementation testing.
 	runCommonRepositoryTests(urt, t)
-
-	// Common transaction implementation testing.
-	urt.User = marpeter
-	runTransactionTestSuite(urt, t)
 }

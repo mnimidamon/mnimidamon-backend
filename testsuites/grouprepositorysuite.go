@@ -14,6 +14,10 @@ type GroupRepositoryTester struct {
 	Group model.Group
 }
 
+func (grt *GroupRepositoryTester) Setup(t *testing.T) {
+	t.Skip("No specific setup needed")
+}
+
 func (grt *GroupRepositoryTester) FindBeforeSaveTests(t *testing.T) {
 	gr := grt.Repo
 
@@ -49,7 +53,7 @@ func (grt *GroupRepositoryTester) FindBeforeSaveTests(t *testing.T) {
 		exists, err := gr.Exists(grt.Group.ID)
 
 		if err != nil {
-			t.Error(expectedNoError(err))
+			t.Error(unexpectedErr(err))
 		}
 
 		if exists {
@@ -106,7 +110,7 @@ func (grt *GroupRepositoryTester) FindAfterSaveTests(t *testing.T) {
 		exists, err := gr.Exists(grt.Group.ID)
 
 		if err != nil {
-			t.Error(expectedNoError(err))
+			t.Error(unexpectedErr(err))
 		}
 
 		if !exists {
@@ -121,7 +125,7 @@ func (grt *GroupRepositoryTester) UpdateTests(t *testing.T) {
 	group.Name = "mangodemons"
 
 	if err := gr.Update(&group); err != nil {
-		t.Error(expectedNoError(err))
+		t.Error(unexpectedErr(err))
 	}
 
 	if group.Name != "mangodemons" {
@@ -130,7 +134,7 @@ func (grt *GroupRepositoryTester) UpdateTests(t *testing.T) {
 
 	g, err := gr.FindById(group.ID)
 	if err != nil {
-		t.Error(expectedNoError(err))
+		t.Error(unexpectedErr(err))
 	}
 
 	if g.Name != group.Name {
@@ -161,7 +165,7 @@ func (grt *GroupRepositoryTester) SpecificTests(t *testing.T) {
 		isMember, err := gr.IsMemberOf(1, g.ID)
 
 		if err != nil {
-			t.Error(expectedNoError(err))
+			t.Error(unexpectedErr(err))
 		}
 
 		if isMember {
@@ -195,7 +199,7 @@ func (grt *GroupRepositoryTester) SpecificTests(t *testing.T) {
 		group, err := gr.AddMember(u.ID, g.ID)
 
 		if err != nil {
-			t.Error(expectedNoError(err))
+			t.Error(unexpectedErr(err))
 		}
 
 		if group.ID != g.ID && group.Name == g.Name	{
@@ -215,7 +219,7 @@ func (grt *GroupRepositoryTester) SpecificTests(t *testing.T) {
 		isMember, err := gr.IsMemberOf(u.ID, g.ID)
 
 		if err != nil {
-			t.Error(expectedNoError(err))
+			t.Error(unexpectedErr(err))
 		}
 		if !isMember {
 			t.Error("Should return true, got false")
@@ -230,7 +234,7 @@ func (grt *GroupRepositoryTester) DeleteTests(t *testing.T) {
 
 	t.Run("DeleteSuccessful", func(t *testing.T) {
 		if err := gr.Delete(g.ID); err != nil {
-			t.Error(expectedNoError(err))
+			t.Error(unexpectedErr(err))
 		}
 	})
 
@@ -284,12 +288,9 @@ func (gtx *GroupRepositoryTesterTx) Commit() error {
 
 // Tests the repository.GroupRepository interface implementation against common tests.
 func GroupRepositoryTestSuite(t *testing.T, gr repository.GroupRepository, ur repository.UserRepository) {
-	guccigang, mnimidamons := model.Group{
+	guccigang := model.Group{
 		Entity: model.Entity{},
 		Name:   "guccigang",
-	}, model.Group{
-		Entity: model.Entity{},
-		Name:   "mnimidamons",
 	}
 
 	grt := &GroupRepositoryTester{
@@ -299,7 +300,4 @@ func GroupRepositoryTestSuite(t *testing.T, gr repository.GroupRepository, ur re
 	}
 
 	runCommonRepositoryTests(grt, t)
-
-	grt.Group = mnimidamons
-	runTransactionRollbackSuccessSuite(grt, t)
 }

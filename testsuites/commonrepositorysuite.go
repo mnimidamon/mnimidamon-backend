@@ -12,6 +12,7 @@ var unimplemented = "Unimplemented Tests"
 
 // For testing common repository procedures. For more consistency and easier code consistency.
 type CommonRepositoryTestSuiteInterface interface {
+	Setup(t *testing.T)               // Setting up for the testing, repository initializations, dependent models insertion.
 	FindBeforeSaveTests(t *testing.T) // Find functionalities testing before save.
 	SaveSuccessfulTests(t *testing.T) // Successful saving tests.
 	FindAfterSaveTests(t *testing.T)  // Finding after successful save.
@@ -19,6 +20,8 @@ type CommonRepositoryTestSuiteInterface interface {
 	UpdateTests(t *testing.T)         // Updating tests.
 	SpecificTests(t *testing.T)       // Repository specific tests.
 	DeleteTests(t *testing.T)         // Deletion testing.
+
+	TransactionSuiteTestInterface
 }
 
 // For testing the common Transaction implementation.
@@ -37,6 +40,10 @@ type TransactionSuiteTestTxInterface interface {
 
 // Run common repository testing suite.
 func runCommonRepositoryTests(crtsi CommonRepositoryTestSuiteInterface, t *testing.T) {
+	t.Run("TestingSuiteSetup", func(t *testing.T) {
+		crtsi.Setup(t)
+	})
+
 	t.Run("FindBeforeSaveTests", func(t *testing.T) {
 		crtsi.FindBeforeSaveTests(t)
 	})
@@ -63,6 +70,10 @@ func runCommonRepositoryTests(crtsi CommonRepositoryTestSuiteInterface, t *testi
 
 	t.Run("DeleteTests", func(t *testing.T) {
 		crtsi.DeleteTests(t)
+	})
+
+	t.Run("TransactionTests", func(t *testing.T) {
+		runTransactionTestSuite(crtsi, t)
 	})
 }
 
@@ -120,10 +131,10 @@ func runTransactionCommitSuccessSuite(ti TransactionSuiteTestInterface, t *testi
 }
 
 // Helper functions for errors.
-func expectedGot(exp interface {}, got interface {}) string {
+func expectedGot(exp interface{}, got interface{}) string {
 	return fmt.Sprintf("Expected %v, got %v", exp, got)
 }
 
-func expectedNoError(got interface{}) string {
+func unexpectedErr(got interface{}) string {
 	return fmt.Sprintf("Expected no error, got %v", got)
 }

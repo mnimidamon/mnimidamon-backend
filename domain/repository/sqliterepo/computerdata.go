@@ -33,7 +33,9 @@ func (cd computerData) Update(cm *model.Computer) error {
 	result :=
 		cd.Model(c).
 			Select("name").
-			Updates(c)
+			Updates(c).
+			Select("*").
+			First(c)
 
 	if err := result.Error; err != nil {
 		return toBusinessLogicError(err)
@@ -83,7 +85,7 @@ func (cd computerData) FindByName(name string, ownerID uint) (*model.Computer, e
 
 	result :=
 		cd.Where("name = ? AND owner_id = ?", name, ownerID).
-			Find(&computer)
+			First(&computer)
 
 	if result.Error != nil {
 		return nil, toBusinessLogicError(result.Error)
@@ -93,12 +95,19 @@ func (cd computerData) FindByName(name string, ownerID uint) (*model.Computer, e
 	return cm, nil
 }
 
-func (cd computerData) Create(cm *model.Computer) error {
+func (cd computerData) Create(cm *model.Computer, ownerID uint) error {
 	c := NewComputerFromBusinessModel(cm)
+	c.OwnerID = ownerID
+
+	// Unique names for computers based on owners.
+	if _, err := cd.FindByName(cm.Name, ownerID); err == nil {
+		return repository.ErrUniqueConstraintViolation
+	}
 
 	result :=
 		cd.Omit("id").
 			Create(c)
+
 
 	if err := result.Error; err != nil {
 		return toBusinessLogicError(err)
