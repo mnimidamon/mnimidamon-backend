@@ -3,7 +3,6 @@ package repository
 import "mnimidamonbackend/domain/model"
 
 // Repositories are used for reading and writing models.
-// Checkers are used for checking common conditions that other repositories need for constraints checking.
 // Repositories Tx objects are used for when a transaction is initiated.
 
 type UserRepository interface {
@@ -20,11 +19,6 @@ type UserRepository interface {
 	Exists(userID uint) (bool, error)
 	// TODO: Functionalities
 	// 		- this is completed?
-}
-
-type UserRepositoryTx interface {
-	UserRepository
-	Transaction
 }
 
 type GroupRepository interface {
@@ -47,11 +41,6 @@ type GroupRepository interface {
 	//		- get members
 }
 
-type GroupRepositoryTx interface {
-	GroupRepository
-	Transaction
-}
-
 type ComputerRepository interface {
 	BeginTx() ComputerRepositoryTx
 
@@ -65,11 +54,6 @@ type ComputerRepository interface {
 
 	// TODO: Functionalities
 	// 		- have to think about this little bit
-}
-
-type ComputerRepositoryTx interface {
-	ComputerRepository
-	Transaction
 }
 
 type BackupRepository interface {
@@ -86,12 +70,6 @@ type BackupRepository interface {
 	//		- field updating
 }
 
-
-type BackupRepositoryTx interface {
-	BackupRepository
-	Transaction
-}
-
 type InviteRepository interface {
 	BeginTx() InviteRepositoryTx
 
@@ -101,6 +79,25 @@ type InviteRepository interface {
 	//		- accepting invites
 }
 
+type BackupRepositoryTx interface {
+	BackupRepository
+	Transaction
+}
+
+type ComputerRepositoryTx interface {
+	ComputerRepository
+	Transaction
+}
+
+type UserRepositoryTx interface {
+	UserRepository
+	Transaction
+}
+
+type GroupRepositoryTx interface {
+	GroupRepository
+	Transaction
+}
 
 type InviteRepositoryTx interface {
 	InviteRepository
