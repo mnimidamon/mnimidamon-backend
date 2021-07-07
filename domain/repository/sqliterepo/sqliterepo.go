@@ -11,7 +11,7 @@ import (
 var models = []interface{} {
 	&Group{},
 	&GroupComputer{},
-	&GroupComputerBackup{},
+	&ComputerBackup{},
 	&Computer{},
 	&Invite{},
 	&User{},

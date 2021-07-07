@@ -97,6 +97,24 @@ type GroupComputerRepository interface {
 	Exists(groupID uint, computerID uint) (bool, error)
 }
 
+type ComputerBackupRepository interface {
+	BeginTx() ComputerBackupRepositoryTx
+
+	FindById(computerID uint, backupID uint) (*model.ComputerBackup, error)
+	FindAllOfComputer(computerID uint) ([]*model.ComputerBackup, error)
+	FindAllOfBackup(backupID uint) ([]*model.ComputerBackup, error)
+
+	Create(cbm *model.ComputerBackup) error
+	Delete(computerID uint, backupID uint) error
+
+	Exists(computerID uint, backupID uint) (bool, error)
+}
+
+type ComputerBackupRepositoryTx interface {
+	ComputerBackupRepository
+	Transaction
+}
+
 type GroupComputerRepositoryTx interface {
 	GroupComputerRepository
 	Transaction
