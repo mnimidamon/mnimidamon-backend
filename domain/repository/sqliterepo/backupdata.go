@@ -29,15 +29,20 @@ func (bd backupData) Delete(backupID uint) error {
 }
 
 func (bd backupData) Update(bm *model.Backup) error {
+	if bm.OnServer && bm.UploadRequest {
+		return repository.ErrInvalidUpdateViolation
+	}
+
 	b := NewBackupFromBusinessModel(bm)
 
 	result :=
 		bd.Model(b).
-			Select("upload_request", "delete_request", "on_server", "file_name", "size", "hash").
+			Select( "file_name", "size", "hash").
 			Omit("id", "owner_id", "group_id").
 			Updates(b).
 			Select("*").
 			First(b)
+
 
 	if err := result.Error; err != nil {
 		return toBusinessLogicError(err)

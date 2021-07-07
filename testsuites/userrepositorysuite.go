@@ -154,8 +154,7 @@ func (urt *UserRepositoryTester) ConstraintsTest(t *testing.T) {
 }
 
 func (urt *UserRepositoryTester) SpecificTests(t *testing.T) {
-	// TODO
-	t.Skip(unimplemented)
+	t.Skip("No specific tests")
 }
 
 func (urt *UserRepositoryTester) DeleteTests(t *testing.T) {

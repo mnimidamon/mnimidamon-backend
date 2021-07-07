@@ -11,4 +11,5 @@ var (
 	ErrForeignKeyConstraintViolation       = errors.New("ErrForeignKeyConstraintViolation")
 	ErrUserNotGroupMemberViolation         = errors.New("ErrUserNotGroupMemberViolation")
 	ErrUserAlreadyInGroupViolation         = errors.New("ErrUserAlreadyInGroupViolation")
+	ErrInvalidUpdateViolation              = errors.New("ErrInvalidUpdateViolation")
 )

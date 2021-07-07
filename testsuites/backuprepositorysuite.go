@@ -193,15 +193,39 @@ func (brt *BackupRepositoryTester) FindAfterSaveTests(t *testing.T) {
 }
 
 func (brt *BackupRepositoryTester) ConstraintsTest(t *testing.T) {
-	t.Skip(unimplemented)
+	t.Skip("No specific constraints")
 }
 
 func (brt *BackupRepositoryTester) UpdateTests(t *testing.T) {
-	t.Skip(unimplemented)
+	br := brt.Repo
+	b := &brt.Backup
+
+	t.Run("UpdateFlagsSuccess", func(t *testing.T) {
+		b.OnServer = false
+		err := br.Update(b)
+
+		if err != nil {
+			t.Errorf(unexpectedErr(err))
+		}
+
+		if b.OnServer != false {
+			t.Errorf(expectedGot("onServer false", b))
+		}
+	})
+
+	t.Run("UpdateOnServerAndRequestUploadFail", func(t *testing.T) {
+		b.OnServer = true
+		b.UploadRequest = true
+		err := br.Update(b)
+
+		if !errors.Is(repository.ErrInvalidUpdateViolation, err) {
+			t.Errorf(expectedGot(repository.ErrInvalidUpdateViolation, err))
+		}
+	})
 }
 
 func (brt *BackupRepositoryTester) SpecificTests(t *testing.T) {
-	t.Skip(unimplemented)
+	t.Skip("No specific tests")
 }
 
 func (brt *BackupRepositoryTester) DeleteTests(t *testing.T) {
