@@ -12,4 +12,5 @@ var (
 	ErrUserNotGroupMemberViolation         = errors.New("ErrUserNotGroupMemberViolation")
 	ErrUserAlreadyInGroupViolation         = errors.New("ErrUserAlreadyInGroupViolation")
 	ErrInvalidUpdateViolation              = errors.New("ErrInvalidUpdateViolation")
+	ErrAlreadyExists                       = errors.New("ErrAlreadyExists")
 )

@@ -41,6 +41,20 @@ type GroupRepository interface {
 	//		- get members
 }
 
+type BackupRepository interface {
+	BeginTx() BackupRepositoryTx
+
+	FindAll(groupID uint) ([]*model.Backup, error)
+	FindById(backupID uint) (*model.Backup, error)
+
+	Create(bm *model.Backup) error
+	Delete(backupID uint) error
+	Update(bm *model.Backup) error
+
+	// TODO: Functionalities
+	//		- field updating
+}
+
 type ComputerRepository interface {
 	BeginTx() ComputerRepositoryTx
 
@@ -56,27 +70,17 @@ type ComputerRepository interface {
 	// 		- have to think about this little bit
 }
 
-type BackupRepository interface {
-	BeginTx() BackupRepositoryTx
-
-	FindAll(groupID uint) ([]*model.Backup, error)
-	FindById(backupID uint) (*model.Backup, error)
-
-	Create(bm *model.Backup) error
-	Delete(backupID uint) error
-	Update(bm *model.Backup) error
-
-	// TODO: Functionalities
-	//		- field updating
-}
-
 type InviteRepository interface {
 	BeginTx() InviteRepositoryTx
 
-	// TODO: Functionalities:
-	//		- inviting
-	//		- declining invites
-	//		- accepting invites
+	Create(im *model.Invite) error
+	Delete(userID uint, groupID uint) error
+
+	FindAllOfGroup(groupID uint) ([]*model.Invite, error)
+	FindAllOfUser(userID uint) ([]*model.Invite, error)
+	FindById(userID uint, groupID uint) (*model.Invite, error)
+
+	Exists(userID uint, groupID uint) (bool, error)
 }
 
 type BackupRepositoryTx interface {
