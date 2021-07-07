@@ -1,9 +1,12 @@
 package sqliterepo
 
 import (
+	"errors"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"mnimidamonbackend/domain/model"
 	"mnimidamonbackend/domain/repository"
+	. "mnimidamonbackend/domain/repository/sqliterepo/modelsql"
 )
 
 func NewComputerDataRepository(db *gorm.DB) repository.GroupComputerRepository {
@@ -16,78 +19,146 @@ type groupComputerData struct {
 	*gorm.DB
 }
 
-func (g groupComputerData) BeginTx() repository.GroupComputerRepositoryTx {
-	panic("implement me")
+func (gcd groupComputerData) FindById(groupID uint, computerID uint) (*model.GroupComputer, error) {
+	var c GroupComputer
+
+	result :=
+		gcd.Model(&GroupComputer{}).
+			Where("group_id = ? AND computer_id = ?", groupID, computerID).
+			First(&c)
+
+	if err := result.Error; err != nil {
+		return nil, toBusinessLogicError(err)
+	}
+
+	cm := c.NewBusinessModel()
+	return cm, nil
 }
 
-func (g groupComputerData) FindOwner(groupID uint, computerID uint) (*model.User, error) {
-	panic("implement me")
+func (gcd groupComputerData) FindAllOfGroup(groupID uint) ([]*model.GroupComputer, error) {
+	var computers []GroupComputer
+
+	result :=
+		gcd.Where("group_id = ?", groupID).
+			Find(&computers)
+
+	if result.Error != nil {
+		return nil, toBusinessLogicError(result.Error)
+	}
+
+	var mGComputers []*model.GroupComputer
+	for _, c := range computers {
+		cm := c.NewBusinessModel()
+		mGComputers = append(mGComputers, cm)
+	}
+
+	return mGComputers, nil
 }
 
-func (g groupComputerData) FindById(groupID uint, computerID uint) (*model.GroupComputer, error) {
-	panic("implement me")
+func (gcd groupComputerData) FindAllOfComputer(computerID uint) ([]*model.GroupComputer, error) {
+	var computers []GroupComputer
+
+	result :=
+		gcd.Where("computer_id = ?", computerID).
+			Find(&computers)
+
+	if result.Error != nil {
+		return nil, toBusinessLogicError(result.Error)
+	}
+
+	var mGComputers []*model.GroupComputer
+	for _, c := range computers {
+		cm := c.NewBusinessModel()
+		mGComputers = append(mGComputers, cm)
+	}
+
+	return mGComputers, nil
 }
 
-func (g groupComputerData) FindAllOfGroup(groupID uint) ([]*model.GroupComputer, error) {
-	panic("implement me")
+func (gcd groupComputerData) Create(cm *model.GroupComputer) error {
+	c := NewGroupComputerFromBusinessModel(cm)
+
+	if exists, _ := gcd.Exists(c.GroupID, c.ComputerID); exists {
+		return repository.ErrAlreadyExists
+	}
+
+	result :=
+		gcd.Omit("id").
+			Create(c)
+
+	if result.Error != nil {
+		return toBusinessLogicError(result.Error)
+	}
+
+	c.CopyToBusinessModel(cm)
+	return nil
 }
 
-func (g groupComputerData) FindAllOfComputer(computerID uint) ([]*model.GroupComputer, error) {
-	panic("implement me")
+func (gcd groupComputerData) Delete(groupID uint, computerID uint) error {
+	result :=
+		gcd.DB.
+			Where("group_id = ? AND computer_id = ?", groupID, computerID).
+			Delete(&GroupComputer{})
+
+	if result.Error != nil {
+		return toBusinessLogicError(result.Error)
+	}
+
+	return nil
 }
 
-func (g groupComputerData) Create(cm *model.GroupComputer) (*model.GroupComputer, error) {
-	panic("implement me")
+func (gcd groupComputerData) Update(cm *model.GroupComputer) error {
+	c := NewGroupComputerFromBusinessModel(cm)
+
+	if cm.StorageSize < 0 {
+		return repository.ErrInvalidUpdateViolation
+	}
+
+	result :=
+		gcd.Model(c).
+			Omit("id", "group_id", "computer_id", clause.Associations).
+			Updates(c).
+			Select("*").
+			First(c)
+
+	if err := result.Error; err != nil {
+		return toBusinessLogicError(err)
+	}
+
+	c.CopyToBusinessModel(cm)
+	return nil
 }
 
-func (g groupComputerData) Delete(groupID uint, computerID uint) error {
-	panic("implement me")
-}
+func (gcd groupComputerData) Exists(groupID uint, computerID uint) (bool, error) {
+	_, err := gcd.FindById(computerID, groupID)
 
-func (g groupComputerData) Update(cm *model.GroupComputer) (*model.GroupComputer, error) {
-	panic("implement me")
-}
+	if err != nil {
+		if  errors.Is(repository.ErrNotFound, err) {
+			return false, nil
+		}
+		return false, toBusinessLogicError(err)
+	}
 
-func (g groupComputerData) Exists(userID uint, groupID uint) (bool, error) {
-	panic("implement me")
+	return true, nil
 }
 
 type groupComputerDataTx struct {
-	inviteData
+	groupComputerData
 }
 
-func (g groupComputerDataTx) BeginTx() repository.GroupComputerRepositoryTx {
-	panic("implement me")
+func (gcdtx groupComputerDataTx) Rollback() error {
+	return gcdtx.groupComputerData.DB.Rollback().Error
 }
 
-func (g groupComputerDataTx) FindOwner(groupID uint, computerID uint) (*model.User, error) {
-	panic("implement me")
+func (gcdtx groupComputerDataTx) Commit() error {
+	return gcdtx.groupComputerData.DB.Commit().Error
 }
 
-func (g groupComputerDataTx) FindById(groupID uint, computerID uint) (*model.GroupComputer, error) {
-	panic("implement me")
+func (gcd groupComputerData) BeginTx() repository.GroupComputerRepositoryTx {
+	return groupComputerDataTx{
+		groupComputerData{
+			DB: gcd.Begin(),
+		},
+	}
 }
 
-func (g groupComputerDataTx) FindAllOfGroup(groupID uint) ([]*model.GroupComputer, error) {
-	panic("implement me")
-}
-
-func (g groupComputerDataTx) FindAllOfComputer(computerID uint) ([]*model.GroupComputer, error) {
-	panic("implement me")
-}
-
-func (g groupComputerDataTx) Create(cm *model.GroupComputer) (*model.GroupComputer, error) {
-	panic("implement me")
-}
-
-func (g groupComputerDataTx) Update(cm *model.GroupComputer) (*model.GroupComputer, error) {
-	panic("implement me")
-}
-
-func (g groupComputerDataTx) Rollback() error {
-	panic("implement me")
-}
-
-func (g groupComputerDataTx) Commit() error {
-	panic("implement me")
-}

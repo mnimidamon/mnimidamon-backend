@@ -86,17 +86,15 @@ type ComputerRepository interface {
 type GroupComputerRepository interface {
 	BeginTx() GroupComputerRepositoryTx
 
-	FindOwner(groupID uint, computerID uint) (*model.User, error)
-
 	FindById(groupID uint, computerID uint) (*model.GroupComputer, error)
 	FindAllOfGroup(groupID uint) ([]*model.GroupComputer, error)
 	FindAllOfComputer(computerID uint) ([]*model.GroupComputer, error)
 
-	Create(cm *model.GroupComputer) (*model.GroupComputer, error)
+	Create(cm *model.GroupComputer) error
 	Delete(groupID uint, computerID uint) error
-	Update(cm *model.GroupComputer) (*model.GroupComputer, error)
+	Update(cm *model.GroupComputer) error
 
-	Exists(userID uint, groupID uint) (bool, error)
+	Exists(groupID uint, computerID uint) (bool, error)
 }
 
 type GroupComputerRepositoryTx interface {
