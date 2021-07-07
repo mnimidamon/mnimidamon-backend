@@ -55,6 +55,19 @@ type BackupRepository interface {
 	//		- field updating
 }
 
+type InviteRepository interface {
+	BeginTx() InviteRepositoryTx
+
+	Create(im *model.Invite) error
+	Delete(userID uint, groupID uint) error
+
+	FindAllOfGroup(groupID uint) ([]*model.Invite, error)
+	FindAllOfUser(userID uint) ([]*model.Invite, error)
+	FindById(userID uint, groupID uint) (*model.Invite, error)
+
+	Exists(userID uint, groupID uint) (bool, error)
+}
+
 type ComputerRepository interface {
 	BeginTx() ComputerRepositoryTx
 
@@ -70,17 +83,25 @@ type ComputerRepository interface {
 	// 		- have to think about this little bit
 }
 
-type InviteRepository interface {
-	BeginTx() InviteRepositoryTx
+type GroupComputerRepository interface {
+	BeginTx() GroupComputerRepositoryTx
 
-	Create(im *model.Invite) error
-	Delete(userID uint, groupID uint) error
+	FindOwner(groupID uint, computerID uint) (*model.User, error)
 
-	FindAllOfGroup(groupID uint) ([]*model.Invite, error)
-	FindAllOfUser(userID uint) ([]*model.Invite, error)
-	FindById(userID uint, groupID uint) (*model.Invite, error)
+	FindById(groupID uint, computerID uint) (*model.GroupComputer, error)
+	FindAllOfGroup(groupID uint) ([]*model.GroupComputer, error)
+	FindAllOfComputer(computerID uint) ([]*model.GroupComputer, error)
+
+	Create(cm *model.GroupComputer) (*model.GroupComputer, error)
+	Delete(groupID uint, computerID uint) error
+	Update(cm *model.GroupComputer) (*model.GroupComputer, error)
 
 	Exists(userID uint, groupID uint) (bool, error)
+}
+
+type GroupComputerRepositoryTx interface {
+	GroupComputerRepository
+	Transaction
 }
 
 type BackupRepositoryTx interface {
