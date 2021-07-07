@@ -9,7 +9,7 @@ import (
 	. "mnimidamonbackend/domain/repository/sqliterepo/modelsql"
 )
 
-func NewComputerDataRepository(db *gorm.DB) repository.GroupComputerRepository {
+func NewGroupComputerRepository(db *gorm.DB) repository.GroupComputerRepository {
 	return groupComputerData {
 		DB: db,
 	}
