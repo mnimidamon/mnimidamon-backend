@@ -1,6 +1,8 @@
 package testsuites
 
 import (
+	"errors"
+	"fmt"
 	"mnimidamonbackend/domain/model"
 	"mnimidamonbackend/domain/repository"
 	"testing"
@@ -44,31 +46,197 @@ func (grct *GroupComputerRepositoryTester) Setup(t *testing.T) {
 }
 
 func (grct *GroupComputerRepositoryTester) FindBeforeSaveTests(t *testing.T) {
-	panic("implement me")
+	gcr := grct.Repo
+	g, c := grct.Group, grct.Computer
+
+	t.Run("FindByIdFail", func(t *testing.T) {
+		gc, err := gcr.FindById(g.ID, c.ID)
+
+		if !errors.Is(repository.ErrNotFound, err) {
+			t.Errorf(expectedGot(repository.ErrNotFound, fmt.Sprintf("Error: %v, Invite: %v", err, gc)))
+		}
+	})
+
+	t.Run("FindAllOfGroupEmpty", func(t *testing.T) {
+		computers, err := gcr.FindAllOfGroup(g.ID)
+
+		if err != nil {
+			t.Errorf(expectedGot("empty slice", err))
+		}
+
+		if len(computers) != 0 {
+			t.Errorf(expectedGot("empty slice", computers))
+		}
+	})
+
+	t.Run("FindAllOfUserEmpty", func(t *testing.T) {
+		computers, err := gcr.FindAllOfComputer(c.ID)
+
+		if err != nil {
+			t.Errorf(expectedGot("empty slice", err))
+		}
+
+		if len(computers) != 0 {
+			t.Errorf(expectedGot("empty slice", computers))
+		}
+	})
+
+	t.Run("ExistsNot", func(t *testing.T) {
+		exists, err := gcr.Exists(g.ID, c.ID)
+
+		if err != nil {
+			t.Error(unexpectedErr(err))
+		}
+
+		if exists {
+			t.Error("Expected false, got true")
+		}
+	})
 }
 
 func (grct *GroupComputerRepositoryTester) SaveSuccessfulTests(t *testing.T) {
-	panic("implement me")
+	gcr := grct.Repo
+	gc, g, c := grct.GroupComputer, grct.Group, grct.Computer
+
+	t.Run("SaveSuccess", func(t *testing.T) {
+		gc.GroupID = g.ID
+		gc.ComputerID = c.ID
+
+		if err := gcr.Create(gc); err != nil {
+			t.Error(unexpectedErr(err))
+		}
+
+		if gc.GroupID != g.ID {
+			t.Error(expectedGot("right group_id", gc))
+		}
+
+		if gc.ComputerID != c.ID {
+			t.Error(expectedGot("right computer_id", gc))
+		}
+	})
+
+	t.Run("Exists", func(t *testing.T) {
+		exists, err := gcr.Exists(g.ID, c.ID)
+
+		if err != nil {
+			t.Error(unexpectedErr(err))
+		}
+
+		if !exists {
+			t.Error("Expected true, got false")
+		}
+	})
 }
 
 func (grct *GroupComputerRepositoryTester) FindAfterSaveTests(t *testing.T) {
-	panic("implement me")
+	gcr := grct.Repo
+	_, g, c := grct.GroupComputer, grct.Group, grct.Computer
+
+	t.Run("FindByIdSuccess", func(t *testing.T) {
+		cn, err := gcr.FindById(g.ID, c.ID)
+
+		if err != nil {
+			t.Error(unexpectedErr(err))
+		}
+
+		if cn.ComputerID != c.ID {
+			t.Error(expectedGot("right computer_id", cn))
+		}
+
+		if cn.GroupID != g.ID {
+			t.Error(expectedGot("right group_id", cn))
+		}
+	})
+
+	t.Run("FindAllOfGroupSuccess", func(t *testing.T) {
+		computers, err := gcr.FindAllOfGroup(g.ID)
+
+		if err != nil {
+			t.Errorf(expectedGot("slice", err))
+		}
+
+		if len(computers) != 1 {
+			t.Errorf(expectedGot("slice of 1", computers))
+		}
+	})
+
+	t.Run("FindAllOfUserSuccess", func(t *testing.T) {
+		computers, err := gcr.FindAllOfComputer(c.ID)
+
+		if err != nil {
+			t.Errorf(expectedGot("slice of 1", err))
+		}
+
+		if len(computers) != 1 {
+			t.Errorf(expectedGot("empty slice", computers))
+		}
+	})
 }
 
 func (grct *GroupComputerRepositoryTester) ConstraintsTest(t *testing.T) {
-	panic("implement me")
+	gcr := grct.Repo
+	gc :=  grct.GroupComputer
+
+	t.Run("DuplicateInviteSaveFail", func(t *testing.T) {
+		if err := gcr.Create(gc); !errors.Is(repository.ErrAlreadyExists, err) {
+			t.Error(expectedGot(repository.ErrAlreadyExists, err))
+		} else if err != nil && !errors.Is(repository.ErrAlreadyExists, err){
+			t.Error(unexpectedErr(err))
+		}
+	})
 }
 
 func (grct *GroupComputerRepositoryTester) UpdateTests(t *testing.T) {
-	panic("implement me")
+	gcr := grct.Repo
+	cn, g, c := grct.GroupComputer, grct.Group, grct.Computer
+
+	t.Run("UpdateSize", func(t *testing.T) {
+		cn.ComputerID = 200
+		cn.GroupID = 10
+
+		cn.StorageSize = 200
+
+		if err := gcr.Update(cn); err != nil {
+			t.Error(unexpectedErr(err))
+		}
+
+		if cn.ComputerID != c.ID {
+			t.Error(expectedGot("right computer_id", cn))
+		}
+
+		if cn.GroupID != g.ID {
+			t.Error(expectedGot("right group_id", cn))
+		}
+
+		if cn.StorageSize != 200 {
+			t.Error(expectedGot("storage size of 200", cn))
+		}
+	})
 }
 
 func (grct *GroupComputerRepositoryTester) SpecificTests(t *testing.T) {
-	panic("implement me")
+	t.Skip("No specific tests")
 }
 
 func (grct *GroupComputerRepositoryTester) DeleteTests(t *testing.T) {
-	panic("implement me")
+	gcr := grct.Repo
+	cn := grct.GroupComputer
+
+	t.Run("DeleteSuccess", func(t *testing.T) {
+		err := gcr.Delete(cn.GroupID, cn.ComputerID)
+
+		if err != nil {
+			t.Error(unexpectedErr(err))
+		}
+	})
+
+	t.Run("FindByIdFail", func(t *testing.T) {
+		ggg, err := gcr.FindById(cn.GroupID, cn.ComputerID)
+
+		if !errors.Is(repository.ErrNotFound, err) {
+			t.Errorf(expectedGot(repository.ErrNotFound, fmt.Sprintf("Error: %v, GroupComputer: %v", err, ggg)))
+		}
+	})
 }
 
 func (grct *GroupComputerRepositoryTester) BeginTx() TransactionSuiteTestTxInterface {
