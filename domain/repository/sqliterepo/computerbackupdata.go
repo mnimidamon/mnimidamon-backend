@@ -34,7 +34,7 @@ func (cbd computerBackupData) FindById(groupComputerID uint, backupID uint) (*mo
 	return cbm, nil
 }
 
-func (cbd computerBackupData) FindAllOfComputer(groupComputerID uint) ([]*model.ComputerBackup, error) {
+func (cbd computerBackupData) FindAllOfGroupComputer(groupComputerID uint) ([]*model.ComputerBackup, error) {
 	var cbackups []ComputerBackup
 
 	result :=

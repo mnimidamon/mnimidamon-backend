@@ -25,8 +25,8 @@ func (grct *GroupComputerRepositoryTester) Setup(t *testing.T) {
 	_, gr, ur, cr := grct.Repo, grct.GRepo, grct.URepo, grct.CRepo
 	_, u, g, c := grct.GroupComputer, grct.User, grct.Group, grct.Computer
 	/*
-		gcr, gr, ur, cr := grct.Repo, grct.GRepo, grct.URepo, grct.CRepo
-		gc, u, g, c := grct.GroupComputer, grct.User, grct.Group, grct.Computer
+	gcr, gr, ur, cr := grct.Repo, grct.GRepo, grct.URepo, grct.CRepo
+	gc, u, g, c := grct.GroupComputer, grct.User, grct.Group, grct.Computer
 	*/
 
 	t.Run("PreSaveOperations", func(t *testing.T) {
@@ -164,11 +164,11 @@ func (grct *GroupComputerRepositoryTester) FindAfterSaveTests(t *testing.T) {
 		computers, err := gcr.FindAllOfComputer(c.ID)
 
 		if err != nil {
-			t.Errorf(expectedGot("slice of 1", err))
+			t.Errorf(expectedGot("slice", err))
 		}
 
 		if len(computers) != 1 {
-			t.Errorf(expectedGot("empty slice", computers))
+			t.Errorf(expectedGot("slice of 1", computers))
 		}
 	})
 }

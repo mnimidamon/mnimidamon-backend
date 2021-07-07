@@ -101,7 +101,7 @@ type ComputerBackupRepository interface {
 	BeginTx() ComputerBackupRepositoryTx
 
 	FindById(groupComputerID uint, backupID uint) (*model.ComputerBackup, error)
-	FindAllOfComputer(groupComputerID uint) ([]*model.ComputerBackup, error)
+	FindAllOfGroupComputer(groupComputerID uint) ([]*model.ComputerBackup, error)
 	FindAllOfBackup(backupID uint) ([]*model.ComputerBackup, error)
 
 	Create(cbm *model.ComputerBackup) error
