@@ -1,9 +1,11 @@
 package sqliterepo
 
 import (
+	"errors"
 	"gorm.io/gorm"
 	"mnimidamonbackend/domain/model"
 	"mnimidamonbackend/domain/repository"
+	. "mnimidamonbackend/domain/repository/sqliterepo/modelsql"
 )
 
 func NewComputerBackupRepository(db *gorm.DB) repository.ComputerBackupRepository {
@@ -16,28 +18,106 @@ type computerBackupData struct {
 	*gorm.DB
 }
 
-func (cbd computerBackupData) FindById(computerID uint, backupID uint) (*model.ComputerBackup, error) {
-	panic("implement me")
+func (cbd computerBackupData) FindById(groupComputerID uint, backupID uint) (*model.ComputerBackup, error) {
+	var cb ComputerBackup
+
+	err :=
+		cbd.Model(&ComputerBackup{}).
+			Where("group_computer_id = ? AND backup_id = ?", groupComputerID, backupID).
+			First(&cb).Error
+
+	if err != nil {
+		return nil, toBusinessLogicError(err)
+	}
+
+	cbm := cb.NewBusinessModel()
+	return cbm, nil
 }
 
-func (cbd computerBackupData) FindAllOfComputer(computerID uint) ([]*model.ComputerBackup, error) {
-	panic("implement me")
+func (cbd computerBackupData) FindAllOfComputer(groupComputerID uint) ([]*model.ComputerBackup, error) {
+	var cbackups []ComputerBackup
+
+	result :=
+		cbd.Where("group_computer_id = ?", groupComputerID).
+			Find(&cbackups)
+
+	if result.Error != nil {
+		return nil, toBusinessLogicError(result.Error)
+	}
+
+	var mCBackups []*model.ComputerBackup
+	for _, c := range cbackups {
+		cm := c.NewBusinessModel()
+		mCBackups = append(mCBackups, cm)
+	}
+
+	return mCBackups, nil
 }
 
 func (cbd computerBackupData) FindAllOfBackup(backupID uint) ([]*model.ComputerBackup, error) {
-	panic("implement me")
+	var cbackups []ComputerBackup
+
+	result :=
+		cbd.Where("backup_id = ?", backupID).
+			Find(&cbackups)
+
+	if result.Error != nil {
+		return nil, toBusinessLogicError(result.Error)
+	}
+
+	var mCBackups []*model.ComputerBackup
+	for _, c := range cbackups {
+		cm := c.NewBusinessModel()
+		mCBackups = append(mCBackups, cm)
+	}
+
+	return mCBackups, nil
 }
 
 func (cbd computerBackupData) Create(cbm *model.ComputerBackup) error {
-	panic("implement me")
+	cb := NewComputerBackupFromBusinessModel(cbm)
+
+	if exists, _ := cbd.Exists(cb.GroupComputerID, cb.BackupID); exists {
+		return repository.ErrAlreadyExists
+	}
+
+	result :=
+		cbd.Omit("id").
+			Create(cbm)
+
+	if result.Error != nil {
+		return toBusinessLogicError(result.Error)
+	}
+
+	cb.CopyToBusinessModel(cbm)
+	return nil
+
 }
 
-func (cbd computerBackupData) Delete(computerID uint, backupID uint) error {
-	panic("implement me")
+func (cbd computerBackupData) Delete(groupComputerID uint, backupID uint) error {
+	result :=
+		cbd.DB.
+			Where("group_computer_id = ? AND backup_id = ?", groupComputerID, backupID).
+			Delete(&ComputerBackup{})
+
+	if result.Error != nil {
+		return toBusinessLogicError(result.Error)
+	}
+
+	return nil
 }
 
-func (cbd computerBackupData) Exists(computerID uint, backupID uint) (bool, error) {
-	panic("implement me")
+func (cbd computerBackupData) Exists(groupComputerID uint, backupID uint) (bool, error) {
+	_, err := cbd.FindById(groupComputerID, backupID)
+
+	if err != nil  {
+		if  errors.Is(repository.ErrNotFound, err) {
+			return false, nil
+		}
+		return false, toBusinessLogicError(err)
+	}
+
+	return true, nil
 }
 
 type computerBackupDataTx struct {

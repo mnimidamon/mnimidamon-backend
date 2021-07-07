@@ -100,14 +100,14 @@ type GroupComputerRepository interface {
 type ComputerBackupRepository interface {
 	BeginTx() ComputerBackupRepositoryTx
 
-	FindById(computerID uint, backupID uint) (*model.ComputerBackup, error)
-	FindAllOfComputer(computerID uint) ([]*model.ComputerBackup, error)
+	FindById(groupComputerID uint, backupID uint) (*model.ComputerBackup, error)
+	FindAllOfComputer(groupComputerID uint) ([]*model.ComputerBackup, error)
 	FindAllOfBackup(backupID uint) ([]*model.ComputerBackup, error)
 
 	Create(cbm *model.ComputerBackup) error
-	Delete(computerID uint, backupID uint) error
+	Delete(groupComputerID uint, backupID uint) error
 
-	Exists(computerID uint, backupID uint) (bool, error)
+	Exists(groupComputerID uint, backupID uint) (bool, error)
 }
 
 type ComputerBackupRepositoryTx interface {
