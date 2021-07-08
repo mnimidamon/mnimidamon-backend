@@ -96,7 +96,7 @@ func init() {
               "$ref": "#/definitions/RegisterResponse"
             }
           },
-          "404": {
+          "400": {
             "$ref": "#/responses/BadRequest"
           }
         }
@@ -676,11 +676,11 @@ func init() {
               "$ref": "#/definitions/Invite"
             }
           },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
           "401": {
             "$ref": "#/responses/Unauthorized"
-          },
-          "404": {
-            "$ref": "#/responses/BadRequest"
           }
         }
       },
@@ -1412,7 +1412,7 @@ func init() {
               "$ref": "#/definitions/RegisterResponse"
             }
           },
-          "404": {
+          "400": {
             "description": "Supplied parameters were not okay.",
             "schema": {
               "$ref": "#/definitions/Error"
@@ -2118,14 +2118,14 @@ func init() {
               "$ref": "#/definitions/Invite"
             }
           },
-          "401": {
-            "description": "Unauthorized.",
+          "400": {
+            "description": "Supplied parameters were not okay.",
             "schema": {
               "$ref": "#/definitions/Error"
             }
           },
-          "404": {
-            "description": "Supplied parameters were not okay.",
+          "401": {
+            "description": "Unauthorized.",
             "schema": {
               "$ref": "#/definitions/Error"
             }

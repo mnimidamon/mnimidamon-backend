@@ -57,6 +57,50 @@ func (o *InviteUserToGroupOK) WriteResponse(rw http.ResponseWriter, producer run
 	}
 }
 
+// InviteUserToGroupBadRequestCode is the HTTP code returned for type InviteUserToGroupBadRequest
+const InviteUserToGroupBadRequestCode int = 400
+
+/*InviteUserToGroupBadRequest Supplied parameters were not okay.
+
+swagger:response inviteUserToGroupBadRequest
+*/
+type InviteUserToGroupBadRequest struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *models.Error `json:"body,omitempty"`
+}
+
+// NewInviteUserToGroupBadRequest creates InviteUserToGroupBadRequest with default headers values
+func NewInviteUserToGroupBadRequest() *InviteUserToGroupBadRequest {
+
+	return &InviteUserToGroupBadRequest{}
+}
+
+// WithPayload adds the payload to the invite user to group bad request response
+func (o *InviteUserToGroupBadRequest) WithPayload(payload *models.Error) *InviteUserToGroupBadRequest {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the invite user to group bad request response
+func (o *InviteUserToGroupBadRequest) SetPayload(payload *models.Error) {
+	o.Payload = payload
+}
+
+// WriteResponse to the client
+func (o *InviteUserToGroupBadRequest) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.WriteHeader(400)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
+}
+
 // InviteUserToGroupUnauthorizedCode is the HTTP code returned for type InviteUserToGroupUnauthorized
 const InviteUserToGroupUnauthorizedCode int = 401
 
@@ -93,50 +137,6 @@ func (o *InviteUserToGroupUnauthorized) SetPayload(payload *models.Error) {
 func (o *InviteUserToGroupUnauthorized) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(401)
-	if o.Payload != nil {
-		payload := o.Payload
-		if err := producer.Produce(rw, payload); err != nil {
-			panic(err) // let the recovery middleware deal with this
-		}
-	}
-}
-
-// InviteUserToGroupNotFoundCode is the HTTP code returned for type InviteUserToGroupNotFound
-const InviteUserToGroupNotFoundCode int = 404
-
-/*InviteUserToGroupNotFound Supplied parameters were not okay.
-
-swagger:response inviteUserToGroupNotFound
-*/
-type InviteUserToGroupNotFound struct {
-
-	/*
-	  In: Body
-	*/
-	Payload *models.Error `json:"body,omitempty"`
-}
-
-// NewInviteUserToGroupNotFound creates InviteUserToGroupNotFound with default headers values
-func NewInviteUserToGroupNotFound() *InviteUserToGroupNotFound {
-
-	return &InviteUserToGroupNotFound{}
-}
-
-// WithPayload adds the payload to the invite user to group not found response
-func (o *InviteUserToGroupNotFound) WithPayload(payload *models.Error) *InviteUserToGroupNotFound {
-	o.Payload = payload
-	return o
-}
-
-// SetPayload sets the payload to the invite user to group not found response
-func (o *InviteUserToGroupNotFound) SetPayload(payload *models.Error) {
-	o.Payload = payload
-}
-
-// WriteResponse to the client
-func (o *InviteUserToGroupNotFound) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
-
-	rw.WriteHeader(404)
 	if o.Payload != nil {
 		payload := o.Payload
 		if err := producer.Produce(rw, payload); err != nil {

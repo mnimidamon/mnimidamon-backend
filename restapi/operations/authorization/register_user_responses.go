@@ -57,14 +57,14 @@ func (o *RegisterUserOK) WriteResponse(rw http.ResponseWriter, producer runtime.
 	}
 }
 
-// RegisterUserNotFoundCode is the HTTP code returned for type RegisterUserNotFound
-const RegisterUserNotFoundCode int = 404
+// RegisterUserBadRequestCode is the HTTP code returned for type RegisterUserBadRequest
+const RegisterUserBadRequestCode int = 400
 
-/*RegisterUserNotFound Supplied parameters were not okay.
+/*RegisterUserBadRequest Supplied parameters were not okay.
 
-swagger:response registerUserNotFound
+swagger:response registerUserBadRequest
 */
-type RegisterUserNotFound struct {
+type RegisterUserBadRequest struct {
 
 	/*
 	  In: Body
@@ -72,27 +72,27 @@ type RegisterUserNotFound struct {
 	Payload *models.Error `json:"body,omitempty"`
 }
 
-// NewRegisterUserNotFound creates RegisterUserNotFound with default headers values
-func NewRegisterUserNotFound() *RegisterUserNotFound {
+// NewRegisterUserBadRequest creates RegisterUserBadRequest with default headers values
+func NewRegisterUserBadRequest() *RegisterUserBadRequest {
 
-	return &RegisterUserNotFound{}
+	return &RegisterUserBadRequest{}
 }
 
-// WithPayload adds the payload to the register user not found response
-func (o *RegisterUserNotFound) WithPayload(payload *models.Error) *RegisterUserNotFound {
+// WithPayload adds the payload to the register user bad request response
+func (o *RegisterUserBadRequest) WithPayload(payload *models.Error) *RegisterUserBadRequest {
 	o.Payload = payload
 	return o
 }
 
-// SetPayload sets the payload to the register user not found response
-func (o *RegisterUserNotFound) SetPayload(payload *models.Error) {
+// SetPayload sets the payload to the register user bad request response
+func (o *RegisterUserBadRequest) SetPayload(payload *models.Error) {
 	o.Payload = payload
 }
 
 // WriteResponse to the client
-func (o *RegisterUserNotFound) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+func (o *RegisterUserBadRequest) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
-	rw.WriteHeader(404)
+	rw.WriteHeader(400)
 	if o.Payload != nil {
 		payload := o.Payload
 		if err := producer.Produce(rw, payload); err != nil {

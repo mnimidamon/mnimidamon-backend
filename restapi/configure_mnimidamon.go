@@ -213,7 +213,7 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 			if errors2.Is(err, domain.ErrUserWithUsernameAlreadyExists) {
 				msg := "username is taken"
 				errm := domain.ErrUserWithUsernameAlreadyExists.Error()
-				return authorization.NewRegisterUserNotFound().WithPayload(&models.Error{
+				return authorization.NewRegisterUserBadRequest().WithPayload(&models.Error{
 					Code:    &errm,
 					Message: &msg,
 				})
