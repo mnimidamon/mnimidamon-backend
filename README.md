@@ -20,8 +20,7 @@ which are defined in `./public/spec/swagger.yml`. Client and Server communicatio
 
 Generate endpoints code:
 
-``swagger generate server -A mnimidamon -f ./public/spec/swagger.yaml -C swagger-layout.yml -t ./adapter/restapi -s endpoints -m modelap
-i
+``swagger generate server -A mnimidamon -f ./public/spec/swagger.yaml -C swagger-layout.yml -t ./adapter/restapi -s endpoints -m modelapi
 ``
 
 Generate clients code:
