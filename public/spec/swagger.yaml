@@ -89,7 +89,7 @@ paths:
           description: Authorization successful. Access token and created user response.
           schema:
             $ref: "#/definitions/RegisterResponse"
-        404:
+        400:
           $ref: "#/responses/BadRequest"
 
 
@@ -415,7 +415,7 @@ paths:
           description: The newly created invite object.
           schema:
             $ref: "#/definitions/Invite"
-        404:
+        400:
           # User is in group, or user already has been invited
           $ref: "#/responses/BadRequest"
         401:

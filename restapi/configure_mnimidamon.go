@@ -4,6 +4,14 @@ package restapi
 
 import (
 	"crypto/tls"
+	errors2 "errors"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
+	"mnimidamonbackend/domain"
+	"mnimidamonbackend/domain/payload"
+	"mnimidamonbackend/domain/repository/sqliterepo"
+	"mnimidamonbackend/domain/usecase/userregistration"
+	"mnimidamonbackend/models"
 	"net/http"
 
 	"github.com/go-openapi/errors"
@@ -27,9 +35,8 @@ func configureFlags(api *operations.MnimidamonAPI) {
 }
 
 func configureAPI(api *operations.MnimidamonAPI) http.Handler {
-	/*
 	///////////////
-	db, err := sqliterepo.Initialize("../../databasefiles/mnimidamon.db", &gorm.Config{
+	db, err := sqliterepo.Initialize("../databasefiles/mnimidamon.db", &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
 	}, false)
 
@@ -40,7 +47,6 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 	ud := sqliterepo.NewUserRepository(db)
 	ur := userregistration.NewUseCase(ud)
 	///////////////
-	*/
 
 	// configure the api here
 	api.ServeError = errors.ServeError
@@ -199,7 +205,27 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 
 	if api.AuthorizationRegisterUserHandler == nil {
 		api.AuthorizationRegisterUserHandler = authorization.RegisterUserHandlerFunc(func(params authorization.RegisterUserParams) middleware.Responder {
-			return middleware.NotImplemented("operation authorization.RegisterUser has not yet been implemented")
+			user, err := ur.RegisterUser(payload.UserCredentialsPayload{
+				Username: *params.Body.Username,
+				Password: params.Body.Password.String(),
+			})
+
+			if errors2.Is(err, domain.ErrUserWithUsernameAlreadyExists) {
+				msg := "username is taken"
+				errm := domain.ErrUserWithUsernameAlreadyExists.Error()
+				return authorization.NewRegisterUserNotFound().WithPayload(&models.Error{
+					Code:    &errm,
+					Message: &msg,
+				})
+			}
+
+			return authorization.NewRegisterUserOK().WithPayload(&models.RegisterResponse{
+				APIKey: new(string),
+				User:   &models.User{
+					UserID:   int64(user.ID),
+					Username: user.Username,
+				},
+			})
 		})
 	}
 	if api.BackupRequestBackupUploadHandler == nil {
