@@ -27,6 +27,21 @@ func configureFlags(api *operations.MnimidamonAPI) {
 }
 
 func configureAPI(api *operations.MnimidamonAPI) http.Handler {
+	/*
+	///////////////
+	db, err := sqliterepo.Initialize("../../databasefiles/mnimidamon.db", &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Silent),
+	}, false)
+
+	if err != nil {
+		panic(err)
+	}
+
+	ud := sqliterepo.NewUserRepository(db)
+	ur := userregistration.NewUseCase(ud)
+	///////////////
+	*/
+
 	// configure the api here
 	api.ServeError = errors.ServeError
 
@@ -181,6 +196,7 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 			return middleware.NotImplemented("operation authorization.RegisterComputer has not yet been implemented")
 		})
 	}
+
 	if api.AuthorizationRegisterUserHandler == nil {
 		api.AuthorizationRegisterUserHandler = authorization.RegisterUserHandlerFunc(func(params authorization.RegisterUserParams) middleware.Responder {
 			return middleware.NotImplemented("operation authorization.RegisterUser has not yet been implemented")

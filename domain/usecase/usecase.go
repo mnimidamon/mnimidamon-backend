@@ -1,7 +1,6 @@
 package usecase
 
 import (
-	. "mnimidamonbackend/domain"
 	"mnimidamonbackend/domain/model"
 	"mnimidamonbackend/domain/payload"
 )
