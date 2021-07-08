@@ -29,7 +29,7 @@ func NewAcceptCurrentUserInvite(ctx *middleware.Context, handler AcceptCurrentUs
 	return &AcceptCurrentUserInvite{Context: ctx, Handler: handler}
 }
 
-/* AcceptCurrentUserInvite swagger:route POST /users/current/invites/{invite_id}/accept invite acceptCurrentUserInvite
+/* AcceptCurrentUserInvite swagger:route POST /users/current/invites/{group_id}/accept invite acceptCurrentUserInvite
 
 Accept a group invite
 

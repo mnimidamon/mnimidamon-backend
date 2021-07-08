@@ -718,7 +718,7 @@ func init() {
         }
       }
     },
-    "/users/current/invites/{invite_id}": {
+    "/users/current/invites/{group_id}": {
       "get": {
         "security": [
           {
@@ -764,11 +764,11 @@ func init() {
       },
       "parameters": [
         {
-          "$ref": "#/parameters/PathInviteId"
+          "$ref": "#/parameters/PathGroupInviteId"
         }
       ]
     },
-    "/users/current/invites/{invite_id}/accept": {
+    "/users/current/invites/{group_id}/accept": {
       "post": {
         "security": [
           {
@@ -794,7 +794,7 @@ func init() {
       },
       "parameters": [
         {
-          "$ref": "#/parameters/PathInviteId"
+          "$ref": "#/parameters/PathGroupInviteId"
         }
       ]
     },
@@ -1242,10 +1242,10 @@ func init() {
       "in": "path",
       "required": true
     },
-    "PathInviteId": {
+    "PathGroupInviteId": {
       "type": "integer",
       "description": "Numeric ID of the Invite.",
-      "name": "invite_id",
+      "name": "group_id",
       "in": "path",
       "required": true
     },
@@ -2173,7 +2173,7 @@ func init() {
         }
       }
     },
-    "/users/current/invites/{invite_id}": {
+    "/users/current/invites/{group_id}": {
       "get": {
         "security": [
           {
@@ -2227,13 +2227,13 @@ func init() {
         {
           "type": "integer",
           "description": "Numeric ID of the Invite.",
-          "name": "invite_id",
+          "name": "group_id",
           "in": "path",
           "required": true
         }
       ]
     },
-    "/users/current/invites/{invite_id}/accept": {
+    "/users/current/invites/{group_id}/accept": {
       "post": {
         "security": [
           {
@@ -2264,7 +2264,7 @@ func init() {
         {
           "type": "integer",
           "description": "Numeric ID of the Invite.",
-          "name": "invite_id",
+          "name": "group_id",
           "in": "path",
           "required": true
         }
@@ -2724,10 +2724,10 @@ func init() {
       "in": "path",
       "required": true
     },
-    "PathInviteId": {
+    "PathGroupInviteId": {
       "type": "integer",
       "description": "Numeric ID of the Invite.",
-      "name": "invite_id",
+      "name": "group_id",
       "in": "path",
       "required": true
     },

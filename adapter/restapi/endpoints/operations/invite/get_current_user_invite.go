@@ -29,7 +29,7 @@ func NewGetCurrentUserInvite(ctx *middleware.Context, handler GetCurrentUserInvi
 	return &GetCurrentUserInvite{Context: ctx, Handler: handler}
 }
 
-/* GetCurrentUserInvite swagger:route GET /users/current/invites/{invite_id} invite getCurrentUserInvite
+/* GetCurrentUserInvite swagger:route GET /users/current/invites/{group_id} invite getCurrentUserInvite
 
 Get an invite
 

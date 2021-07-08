@@ -35,7 +35,7 @@ type AcceptCurrentUserInviteParams struct {
 	  Required: true
 	  In: path
 	*/
-	InviteID int64
+	GroupID int64
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -47,8 +47,8 @@ func (o *AcceptCurrentUserInviteParams) BindRequest(r *http.Request, route *midd
 
 	o.HTTPRequest = r
 
-	rInviteID, rhkInviteID, _ := route.Params.GetOK("invite_id")
-	if err := o.bindInviteID(rInviteID, rhkInviteID, route.Formats); err != nil {
+	rGroupID, rhkGroupID, _ := route.Params.GetOK("group_id")
+	if err := o.bindGroupID(rGroupID, rhkGroupID, route.Formats); err != nil {
 		res = append(res, err)
 	}
 	if len(res) > 0 {
@@ -57,8 +57,8 @@ func (o *AcceptCurrentUserInviteParams) BindRequest(r *http.Request, route *midd
 	return nil
 }
 
-// bindInviteID binds and validates parameter InviteID from path.
-func (o *AcceptCurrentUserInviteParams) bindInviteID(rawData []string, hasKey bool, formats strfmt.Registry) error {
+// bindGroupID binds and validates parameter GroupID from path.
+func (o *AcceptCurrentUserInviteParams) bindGroupID(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
@@ -69,9 +69,9 @@ func (o *AcceptCurrentUserInviteParams) bindInviteID(rawData []string, hasKey bo
 
 	value, err := swag.ConvertInt64(raw)
 	if err != nil {
-		return errors.InvalidType("invite_id", "path", "int64", raw)
+		return errors.InvalidType("group_id", "path", "int64", raw)
 	}
-	o.InviteID = value
+	o.GroupID = value
 
 	return nil
 }

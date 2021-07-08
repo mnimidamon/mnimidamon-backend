@@ -513,11 +513,11 @@ func (o *MnimidamonAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/users/current/invites/{invite_id}/accept"] = invite.NewAcceptCurrentUserInvite(o.context, o.InviteAcceptCurrentUserInviteHandler)
+	o.handlers["POST"]["/users/current/invites/{group_id}/accept"] = invite.NewAcceptCurrentUserInvite(o.context, o.InviteAcceptCurrentUserInviteHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/users/current/invites/{invite_id}"] = invite.NewDeclineCurrentUserInvite(o.context, o.InviteDeclineCurrentUserInviteHandler)
+	o.handlers["DELETE"]["/users/current/invites/{group_id}"] = invite.NewDeclineCurrentUserInvite(o.context, o.InviteDeclineCurrentUserInviteHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
@@ -553,7 +553,7 @@ func (o *MnimidamonAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/users/current/invites/{invite_id}"] = invite.NewGetCurrentUserInvite(o.context, o.InviteGetCurrentUserInviteHandler)
+	o.handlers["GET"]["/users/current/invites/{group_id}"] = invite.NewGetCurrentUserInvite(o.context, o.InviteGetCurrentUserInviteHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

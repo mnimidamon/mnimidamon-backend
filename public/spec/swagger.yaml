@@ -260,9 +260,9 @@ paths:
           $ref: "#/responses/Unauthorized"
 
 
-  /users/current/invites/{invite_id}:
+  /users/current/invites/{group_id}:
     parameters:
-      - $ref: "#/parameters/PathInviteId"
+      - $ref: "#/parameters/PathGroupInviteId"
 
     # Get the invite denoted by invite_id
     get:
@@ -295,9 +295,9 @@ paths:
           $ref: "#/responses/Unauthorized"
 
 
-  /users/current/invites/{invite_id}/accept:
+  /users/current/invites/{group_id}/accept:
     parameters:
-      - $ref: "#/parameters/PathInviteId"
+      - $ref: "#/parameters/PathGroupInviteId"
 
     # Accept invite
     post:
@@ -944,9 +944,9 @@ parameters:
     type: integer
     required: true
 
-  PathInviteId:
+  PathGroupInviteId:
     description: Numeric ID of the Invite.
-    name: invite_id
+    name: group_id
     in: path
     type: integer
     required: true

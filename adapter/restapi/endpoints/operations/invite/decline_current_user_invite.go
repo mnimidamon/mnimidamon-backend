@@ -29,7 +29,7 @@ func NewDeclineCurrentUserInvite(ctx *middleware.Context, handler DeclineCurrent
 	return &DeclineCurrentUserInvite{Context: ctx, Handler: handler}
 }
 
-/* DeclineCurrentUserInvite swagger:route DELETE /users/current/invites/{invite_id} invite declineCurrentUserInvite
+/* DeclineCurrentUserInvite swagger:route DELETE /users/current/invites/{group_id} invite declineCurrentUserInvite
 
 Decline a group invite
 
