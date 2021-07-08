@@ -10,23 +10,25 @@ import (
 
 var inMemoryDb = "file::memory:?cache=shared"
 var fileDB = "../../../../databasefiles/mnimidamon.db"
+var fileName = "mnimidamon.db"
 
-func initializeDatabase() (*gorm.DB, error) {
-	return sqliterepo.Initialize(targetDatabasePath(), &gorm.Config{
+func initializeDatabase(t *testing.T) (*gorm.DB, error) {
+	return sqliterepo.Initialize(targetDatabasePath(t), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
 	}, true)
 }
 
-func targetDatabasePath() string {
-	return fileDB
+func targetDatabasePath(t *testing.T) string {
+	return t.TempDir() +"/"+ fileName
 }
 
 func TestSQLiteUserRepository(t *testing.T) {
-	db, err := initializeDatabase()
-
+	db, err := initializeDatabase(t)
 	if err != nil {
 		t.Errorf("Error occured with new datbase connection: %v", err)
 	}
+	sqlconn, _ := db.DB()
+	defer sqlconn.Close()
 
 	ur := sqliterepo.NewUserRepository(db)
 	// Call the interface testing suite.
@@ -34,11 +36,13 @@ func TestSQLiteUserRepository(t *testing.T) {
 }
 
 func TestSQLiteGroupRepository(t *testing.T) {
-	db, err := initializeDatabase()
+	db, err := initializeDatabase(t)
 
 	if err != nil {
 		t.Errorf("Error occured with new datbase connection: %v", err)
 	}
+	sqlconn, _ := db.DB()
+	defer sqlconn.Close()
 
 	gr := sqliterepo.NewGroupRepository(db)
 	ur := sqliterepo.NewUserRepository(db)
@@ -46,11 +50,13 @@ func TestSQLiteGroupRepository(t *testing.T) {
 }
 
 func TestSQLiteBackupRepository(t *testing.T) {
-	db, err := initializeDatabase()
+	db, err := initializeDatabase(t)
 
 	if err != nil {
 		t.Errorf("Error occured with new datbase connection: %v", err)
 	}
+	sqlconn, _ := db.DB()
+	defer sqlconn.Close()
 
 	gr := sqliterepo.NewGroupRepository(db)
 	ur := sqliterepo.NewUserRepository(db)
@@ -59,11 +65,13 @@ func TestSQLiteBackupRepository(t *testing.T) {
 }
 
 func TestSQLiteComputerRepository(t *testing.T) {
-	db, err := initializeDatabase()
+	db, err := initializeDatabase(t)
 
 	if err != nil {
 		t.Errorf("Error occured with new datbase connection: %v", err)
 	}
+	sqlconn, _ := db.DB()
+	defer sqlconn.Close()
 
 	cr := sqliterepo.NewComputerRepository(db)
 	ur := sqliterepo.NewUserRepository(db)
@@ -72,11 +80,13 @@ func TestSQLiteComputerRepository(t *testing.T) {
 }
 
 func TestSQLiteInviteRepository(t *testing.T) {
-	db, err := initializeDatabase()
+	db, err := initializeDatabase(t)
 
 	if err != nil {
 		t.Errorf("Error occured with new datbase connection: %v", err)
 	}
+	sqlconn, _ := db.DB()
+	defer sqlconn.Close()
 
 	ur := sqliterepo.NewUserRepository(db)
 	gr := sqliterepo.NewGroupRepository(db)
@@ -86,11 +96,14 @@ func TestSQLiteInviteRepository(t *testing.T) {
 }
 
 func TestSQLiteGroupComputerRepository(t *testing.T) {
-	db, err := initializeDatabase()
+	db, err := initializeDatabase(t)
 
 	if err != nil {
 		t.Errorf("Error occured with new datbase connection: %v", err)
 	}
+
+	sqlconn, _ := db.DB()
+	defer sqlconn.Close()
 
 	ur := sqliterepo.NewUserRepository(db)
 	gr := sqliterepo.NewGroupRepository(db)
@@ -101,11 +114,13 @@ func TestSQLiteGroupComputerRepository(t *testing.T) {
 }
 
 func TestSQLiteComputerBackupRepository(t *testing.T) {
-	db, err := initializeDatabase()
+	db, err := initializeDatabase(t)
 
 	if err != nil {
 		t.Errorf("Error occured with new datbase connection: %v", err)
 	}
+	sqlconn, _ := db.DB()
+	defer sqlconn.Close()
 
 	cbr := sqliterepo.NewComputerBackupRepository(db)
 	ur := sqliterepo.NewUserRepository(db)

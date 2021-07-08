@@ -9,7 +9,6 @@ var (
 	ErrUniqueConstraintViolation           = errors.New("ErrUniqueConstraintViolation")
 	ErrUniquePrimaryKeyConstraintViolation = errors.New("ErrUniquePrimaryKeyConstraintViolation")
 	ErrForeignKeyConstraintViolation       = errors.New("ErrForeignKeyConstraintViolation")
-	ErrUserNotGroupMemberViolation         = errors.New("ErrUserNotGroupMemberViolation")
 	ErrUserAlreadyInGroupViolation         = errors.New("ErrUserAlreadyInGroupViolation")
 	ErrInvalidUpdateViolation              = errors.New("ErrInvalidUpdateViolation")
 	ErrAlreadyExists                       = errors.New("ErrAlreadyExists")
