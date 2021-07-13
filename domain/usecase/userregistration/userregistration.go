@@ -5,9 +5,9 @@ import (
 	"errors"
 	"mnimidamonbackend/domain"
 	"mnimidamonbackend/domain/model"
-	"mnimidamonbackend/domain/payload"
 	"mnimidamonbackend/domain/repository"
 	"mnimidamonbackend/domain/usecase"
+	"mnimidamonbackend/domain/usecase/payload"
 )
 
 

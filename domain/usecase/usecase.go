@@ -2,7 +2,7 @@ package usecase
 
 import (
 	"mnimidamonbackend/domain/model"
-	"mnimidamonbackend/domain/payload"
+	"mnimidamonbackend/domain/usecase/payload"
 	"os"
 )
 
