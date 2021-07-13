@@ -47,7 +47,7 @@ type GroupInviteInterface interface {
 }
 
 type ListInviteInterface interface {
-	FindById(userID uint, groupID uint) ([]*model.Invite, error)
+	FindById(userID uint, groupID uint) (*model.Invite, error)
 	FindAllOfUser(userID uint) ([]*model.Invite, error)
 	FindAllOfGroup(groupID uint) ([]*model.Invite, error)
 }

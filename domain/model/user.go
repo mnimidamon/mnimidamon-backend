@@ -2,7 +2,6 @@ package model
 
 import (
 	"golang.org/x/crypto/bcrypt"
-	"mnimidamonbackend/domain"
 )
 
 type User struct {
@@ -15,7 +14,7 @@ type User struct {
 func NewUser(username string, password string) (*User, error) {
 	hash, err := hashPassword(password)
 	if err != nil {
-		return nil, domain.ErrPasswordHash
+		return nil, ErrPasswordHash
 	}
 
 	return &User{
