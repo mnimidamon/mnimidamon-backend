@@ -13,6 +13,7 @@ var (
 	ErrPasswordHash                            = errors.New("ErrPasswordHash")
 	ErrInternalDomain                          = errors.New("ErrInternalDomain")
 	ErrInvalidCredentials                      = errors.New("ErrInvalidCredentials")
+	ErrUserNotGroupMember                      = errors.New("ErrUserNotGroupMember")
 )
 
 func ToDomainError(err error) error {

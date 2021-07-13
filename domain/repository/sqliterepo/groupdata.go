@@ -19,6 +19,29 @@ type groupData struct {
 	*gorm.DB
 }
 
+func (gd groupData) FindAllOfUser(userID uint) ([]*model.Group, error) {
+	var groups []Group
+
+	result :=
+		gd.Where("group_id IN (?)",
+			gd.Table("group_members").
+			Where("user_id = ?", userID),
+		).Find(&groups)
+
+	if result.Error != nil {
+		return nil, toBusinessLogicError(result.Error)
+	}
+
+	var mGroups []*model.Group
+
+	for _, g := range groups {
+		mg := g.NewBusinessModel()
+		mGroups = append(mGroups, mg)
+	}
+
+	return mGroups, nil
+}
+
 func (gd groupData) FindAllMembers(groupID uint) ([]*model.User, error) {
 	var members []User
 

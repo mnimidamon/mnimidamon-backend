@@ -26,6 +26,7 @@ type GroupRepository interface {
 
 	FindAll() ([]*model.Group, error)
 	FindAllMembers(groupID uint) ([]*model.User, error) // TODO: testing
+	FindAllOfUser(userID uint) ([]*model.Group, error) // TODO: testing
 	FindById(groupID uint) (*model.Group, error)
 	FindByName(name string) (*model.Group, error)
 

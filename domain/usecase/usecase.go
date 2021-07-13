@@ -18,6 +18,10 @@ type ListUserInterface interface {
 	FindByUsername(username string) (*model.User, error)
 }
 
+type ListGroupMemberInterface interface {
+	FindAllMembersOfGroup(groupID uint) ([]*model.User, error)
+}
+
 type ComputerRegistrationInterface interface {
 	RegisterComputer(p payload.ComputerCredentialsPayload) (*model.Computer, error)
 }
