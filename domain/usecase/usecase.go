@@ -54,7 +54,8 @@ type ListGroupInterface interface {
 }
 
 type ListBackupInterface interface {
-	GetGroupBackups(groupID uint) ([]*model.Backup, error)
+	FindGroupBackups(groupID uint) ([]*model.Backup, error)
+	FindById(backupID uint) (*model.Backup, error)
 }
 
 type ManageBackupInterface interface {
