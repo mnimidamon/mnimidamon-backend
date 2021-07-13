@@ -1,6 +1,9 @@
 package domain
 
-import "errors"
+import (
+	"errors"
+	"mnimidamonbackend/domain/repository"
+)
 
 type ErrDomain error
 
@@ -11,3 +14,13 @@ var (
 	ErrInternalDomain                          = errors.New("ErrInternalDomain")
 	ErrInvalidCredentials                      = errors.New("ErrInvalidCredentials")
 )
+
+func ToDomainError(err error) error {
+	if errors.Is(repository.ErrNotFound, err) {
+		return ErrNotFound
+	}
+
+	// Unexpected error.
+	// TODO logging.
+	return ErrInternalDomain
+}

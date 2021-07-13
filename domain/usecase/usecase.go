@@ -24,9 +24,8 @@ type ComputerRegistrationInterface interface {
 
 type ListComputerInterface interface {
 	FindById(computerID uint) (*model.Computer, error)
-
-	FindAllOfGroup(groupID uint) (*model.Computer, error)
-	FindAllOfUser(userID uint) (*model.Computer, error)
+	FindAllOfUser(ownerID uint) ([]*model.Computer, error)
+	FindByName(ownerID uint, name string) (*model.Computer, error)
 }
 
 type ListGroupComputerInterface interface {

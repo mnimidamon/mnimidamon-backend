@@ -31,12 +31,12 @@ func (ur userRegistrationUseCase) RegisterUser(p payload.UserCredentialsPayload)
 	// New User creation.
 	user, err := model.NewUser(p.Username, p.Password)
 	if err != nil {
-		return nil, domain.ErrInternalDomain
+		return nil, domain.ToDomainError(err)
 	}
 
 	err = ur.URepo.Create(user)
 	if err != nil {
-		return nil, domain.ErrInternalDomain
+		return nil, domain.ToDomainError(err)
 	}
 
 	return user, nil
