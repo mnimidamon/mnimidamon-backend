@@ -15,9 +15,9 @@ type userRegistrationUseCase struct {
 	URepo repository.UserRepository
 }
 
-func NewUseCase(ud repository.UserRepository) usecase.UserRegistrationInterface {
+func NewUseCase(ur repository.UserRepository) usecase.UserRegistrationInterface {
 	return userRegistrationUseCase{
-		URepo: ud,
+		URepo: ur,
 	}
 }
 
