@@ -26,6 +26,12 @@ type ComputerRegistrationInterface interface {
 	RegisterComputer(p payload.ComputerCredentialsPayload) (*model.Computer, error)
 }
 
+type ManageGroupComputerInterface interface {
+	Update(groupComputerID uint, size uint) (*model.GroupComputer, error)
+	JoinGroup(computerID uint, size uint) (*model.GroupComputer, error)
+	LeaveGroup(computerID uint, size uint) error
+}
+
 type ListComputerInterface interface {
 	FindById(computerID uint) (*model.Computer, error)
 	FindAllOfUser(ownerID uint) ([]*model.Computer, error)
@@ -64,11 +70,11 @@ type ListBackupInterface interface {
 
 type ManageBackupInterface interface {
 	InitializeBackup(p payload.InitializeBackupPayload) (*model.Backup, error)
-	UploadRequest(backupID uint) (*model.Backup, error)
-	DeleteRequest(backupID uint) (*model.Backup, error)
+	UploadRequest(ownerID uint, backupID uint) (*model.Backup, error)
+	DeleteRequest(ownerID uint, backupID uint) (*model.Backup, error)
 }
 
 type ManageFileInterface interface {
 	UploadBackup(backupID uint, data []byte) (*model.Backup, error)
-	DownloadBackup(backupID uint) (os.File, error)
+	DownloadBackup(ownerID uint, backupID uint) (os.File, error)
 }
