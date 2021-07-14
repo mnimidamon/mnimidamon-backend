@@ -83,7 +83,7 @@ func (gi groupInviteUseCase) AcceptInvite(userID uint, groupID uint) (*model.Gro
 }
 
 func (gi groupInviteUseCase) DeclineInvite(userID uint, groupID uint) error {
-	_, g, err := gi.findUserAndGroup(userID, groupID)
+	_, _, err := gi.findUserAndGroup(userID, groupID)
 	if err != nil {
 		return err
 	}
