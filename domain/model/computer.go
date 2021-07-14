@@ -6,5 +6,5 @@ type Computer struct {
 	OwnerID uint
 	Name    string
 
-	Owner User
+	Owner *User
 }

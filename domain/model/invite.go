@@ -6,8 +6,8 @@ type Invite struct {
 	UserID uint
 	GroupID uint
 
-	User User
-	Group Group
+	User *User
+	Group *Group
 
 	CreatedAt time.Time
 }

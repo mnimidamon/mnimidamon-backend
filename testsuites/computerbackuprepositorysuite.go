@@ -299,15 +299,15 @@ func ComputerBackupRepositoryTestSuite(t *testing.T, cbr repository.ComputerBack
 		Entity:  model.Entity{},
 		OwnerID: 0,
 		Name:    "thinkpad",
-		Owner:   model.User{},
+		Owner:   nil,
 	}
 
 	mnimidamons_thinkpad := &model.GroupComputer{
 		Entity:      model.Entity{},
 		GroupID:     0,
 		ComputerID:  0,
-		Group:       model.Group{},
-		Computer:    model.Computer{},
+		Group:       nil,
+		Computer:    nil,
 		StorageSize: 1024,
 	}
 
@@ -321,15 +321,15 @@ func ComputerBackupRepositoryTestSuite(t *testing.T, cbr repository.ComputerBack
 		OnServer:      false,
 		OwnerID:       0,
 		GroupID:       0,
-		Owner:         model.User{},
-		Group:         model.Group{},
+		Owner:         nil,
+		Group:         nil,
 	}
 
 	documents_mnimidamons_thinkpad := &model.ComputerBackup{
 		BackupID:        0,
 		GroupComputerID: 0,
-		Backup:          model.Backup{},
-		GroupComputer:   model.GroupComputer{},
+		Backup:          nil,
+		GroupComputer:   nil,
 		CreatedAt:       time.Time{},
 	}
 

@@ -41,9 +41,9 @@ type ListComputerBackupInterface interface {
 }
 
 type GroupInviteInterface interface {
-	AcceptInvite(userID uint, groupID uint) ([]*model.Group, error)
-	DeclineInvite(userID uint, groupID uint) ([]*model.Group, error)
-	InviteUser(userID uint, groupID uint) ([]*model.Invite, error)
+	AcceptInvite(userID uint, groupID uint) (*model.Group, error)
+	DeclineInvite(userID uint, groupID uint) error
+	InviteUser(userID uint, groupID uint) (*model.Invite, error)
 }
 
 type ListInviteInterface interface {

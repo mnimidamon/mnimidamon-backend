@@ -303,15 +303,15 @@ func GroupComputerRepositoryTestSuite(t *testing.T, gcr repository.GroupComputer
 		Entity:  model.Entity{},
 		OwnerID: 0,
 		Name:    "thinkpad",
-		Owner:   model.User{},
+		Owner:   nil,
 	}
 
 	mnimidamons_thinkpad := &model.GroupComputer{
 		Entity:      model.Entity{},
 		GroupID:     0,
 		ComputerID:  0,
-		Group:       model.Group{},
-		Computer:    model.Computer{},
+		Group:       nil,
+		Computer:    nil,
 		StorageSize: 1024,
 	}
 

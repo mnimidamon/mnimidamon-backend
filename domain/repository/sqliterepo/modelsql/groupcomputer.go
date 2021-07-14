@@ -12,8 +12,8 @@ type GroupComputer struct {
 	GroupID    uint
 	ComputerID uint
 
-	Group    Group    `gorm:"foreignKey:GroupID"`
-	Computer Computer `gorm:"foreignKey:ComputerID"`
+	Group    *Group    `gorm:"foreignKey:GroupID"`
+	Computer *Computer `gorm:"foreignKey:ComputerID"`
 
 	StorageSize uint
 }
@@ -32,8 +32,8 @@ func NewGroupComputerFromBusinessModel(gcm *model.GroupComputer) *GroupComputer 
 		},
 		GroupID:     gcm.GroupID,
 		ComputerID:  gcm.ComputerID,
-		Group:       *NewGroupFromBusinessModel(&gcm.Group),
-		Computer:    *NewComputerFromBusinessModel(&gcm.Computer),
+		Group:       NewGroupFromBusinessModel(gcm.Group),
+		Computer:    NewComputerFromBusinessModel(gcm.Computer),
 		StorageSize: gcm.StorageSize,
 	}
 
@@ -59,7 +59,7 @@ func (gc *GroupComputer) CopyToBusinessModel(gcm *model.GroupComputer) {
 	gcm.ID = gc.ID
 	gcm.GroupID = gc.GroupID
 	gcm.ComputerID = gc.ComputerID
-	gcm.Group = *gc.Group.NewBusinessModel()
-	gcm.Computer = *gc.Computer.NewBusinessModel()
+	gcm.Group = gc.Group.NewBusinessModel()
+	gcm.Computer = gc.Computer.NewBusinessModel()
 	gcm.StorageSize = gc.StorageSize
 }

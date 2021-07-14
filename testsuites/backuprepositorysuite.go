@@ -344,8 +344,8 @@ func BackupRepositoryTestSuite(t *testing.T, br repository.BackupRepository, gr 
 		OnServer:      false,
 		OwnerID:       0,
 		GroupID:       0,
-		Owner:         model.User{},
-		Group:         model.Group{},
+		Owner:         nil,
+		Group:         nil,
 	}, model.Backup{
 		Entity:        model.Entity{},
 		FileName:      "documents",
@@ -356,8 +356,8 @@ func BackupRepositoryTestSuite(t *testing.T, br repository.BackupRepository, gr 
 		OnServer:      false,
 		OwnerID:       0,
 		GroupID:       0,
-		Owner:         model.User{},
-		Group:         model.Group{},
+		Owner:         nil,
+		Group:         nil,
 	}
 
 	brt := &BackupRepositoryTester{

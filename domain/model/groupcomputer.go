@@ -7,8 +7,8 @@ type GroupComputer struct {
 	GroupID    uint
 	ComputerID uint
 
-	Group    Group
-	Computer Computer
+	Group    *Group
+	Computer *Computer
 
 	StorageSize uint
 }

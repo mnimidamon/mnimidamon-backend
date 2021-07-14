@@ -19,6 +19,6 @@ type Backup struct {
 	OwnerID uint
 	GroupID uint
 
-	Owner User
-	Group Group
+	Owner *User
+	Group *Group
 }

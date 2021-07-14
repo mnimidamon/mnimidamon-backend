@@ -229,7 +229,7 @@ func ComputerRepositoryTestSuite(t *testing.T, cr repository.ComputerRepository,
 		Entity:  model.Entity{},
 		OwnerID: 0,
 		Name:    "thinkpad",
-		Owner:   model.User{},
+		Owner:   nil,
 	}
 
 	brt := &ComputerRepositoryTester{

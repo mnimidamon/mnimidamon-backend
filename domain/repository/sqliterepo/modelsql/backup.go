@@ -24,8 +24,8 @@ type Backup struct {
 	OwnerID uint
 	GroupID uint
 
-	Owner User  `gorm:"foreignKey:OwnerID"`
-	Group Group `gorm:"foreignKey:GroupID"`
+	Owner *User  `gorm:"foreignKey:OwnerID"`
+	Group *Group `gorm:"foreignKey:GroupID"`
 }
 
 func NewBackupFromBusinessModel(bm *model.Backup) *Backup {
@@ -47,8 +47,8 @@ func NewBackupFromBusinessModel(bm *model.Backup) *Backup {
 		OnServer:      bm.OnServer,
 		OwnerID:       bm.OwnerID,
 		GroupID:       bm.GroupID,
-		Owner:         *NewUserFromBusinessModel(&bm.Owner),
-		Group:         *NewGroupFromBusinessModel(&bm.Group),
+		Owner:         NewUserFromBusinessModel(bm.Owner),
+		Group:         NewGroupFromBusinessModel(bm.Group),
 	}
 }
 
@@ -77,6 +77,6 @@ func (b *Backup) CopyToBusinessModel(bm *model.Backup) {
 	bm.OnServer = b.OnServer
 	bm.OwnerID = b.OwnerID
 	bm.GroupID = b.GroupID
-	b.Owner.CopyToBusinessModel(&bm.Owner)
-	b.Group.CopyToBusinessModel(&bm.Group)
+	b.Owner.CopyToBusinessModel(bm.Owner)
+	b.Group.CopyToBusinessModel(bm.Group)
 }

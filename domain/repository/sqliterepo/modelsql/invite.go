@@ -10,8 +10,8 @@ type Invite struct {
 	UserID  uint `gorm:"primaryKey"`
 	GroupID uint `gorm:"primaryKey"`
 
-	User  User  `gorm:"foreignKey:UserID"`
-	Group Group `gorm:"foreignKey:GroupID"`
+	User  *User  `gorm:"foreignKey:UserID"`
+	Group *Group `gorm:"foreignKey:GroupID"`
 
 	CreatedAt time.Time
 }
@@ -25,8 +25,8 @@ func NewInviteFromBusinessModel(im *model.Invite) *Invite {
 	return &Invite{
 		UserID:    im.UserID,
 		GroupID:   im.GroupID,
-		User:      *NewUserFromBusinessModel(&im.User),
-		Group:     *NewGroupFromBusinessModel(&im.Group),
+		User:      NewUserFromBusinessModel(im.User),
+		Group:     NewGroupFromBusinessModel(im.Group),
 		CreatedAt: time.Time{},
 	}
 }
@@ -51,6 +51,6 @@ func (i *Invite) CopyToBusinessModel(im  *model.Invite) {
 	im.GroupID = i.GroupID
 	im.UserID = i.UserID
 
-	im.Group = *i.Group.NewBusinessModel()
-	im.User = *i.User.NewBusinessModel()
+	im.Group = i.Group.NewBusinessModel()
+	im.User = i.User.NewBusinessModel()
 }

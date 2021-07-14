@@ -253,8 +253,8 @@ func InviteRepositoryTestSuite(t *testing.T, ir repository.InviteRepository, gr 
 	invite := &model.Invite{
 		UserID:    0,
 		GroupID:   0,
-		User:      model.User{},
-		Group:     model.Group{},
+		User:      nil,
+		Group:     nil,
 		CreatedAt: time.Time{},
 	}
 

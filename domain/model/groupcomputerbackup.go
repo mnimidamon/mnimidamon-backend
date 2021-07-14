@@ -7,8 +7,8 @@ type ComputerBackup struct {
 	BackupID        uint
 	GroupComputerID uint
 
-	Backup        Backup
-	GroupComputer GroupComputer
+	Backup        *Backup
+	GroupComputer *GroupComputer
 
 	CreatedAt time.Time
 }

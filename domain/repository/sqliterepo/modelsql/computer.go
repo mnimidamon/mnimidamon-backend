@@ -8,7 +8,7 @@ type Computer struct {
 	OwnerID uint   `gorm:"uniqueIndex:idx_user_computers"`
 	Name    string `gorm:"uniqueIndex:idx_user_computers; size:15"`
 
-	Owner User `gorm:"foreignKey:OwnerID"`
+	Owner *User `gorm:"foreignKey:OwnerID"`
 }
 
 func NewComputerFromBusinessModel(cm *model.Computer) *Computer {
@@ -22,7 +22,7 @@ func NewComputerFromBusinessModel(cm *model.Computer) *Computer {
 		},
 		OwnerID: cm.OwnerID,
 		Name:    cm.Name,
-		Owner:   *NewUserFromBusinessModel(&cm.Owner),
+		Owner:   NewUserFromBusinessModel(cm.Owner),
 	}
 }
 
@@ -45,5 +45,5 @@ func (c *Computer) CopyToBusinessModel(cm *model.Computer)  {
 	cm.Name = c.Name
 	cm.OwnerID = c.OwnerID
 	cm.ID = c.ID
-	cm.Owner = *c.Owner.NewBusinessModel()
+	cm.Owner = c.Owner.NewBusinessModel()
 }

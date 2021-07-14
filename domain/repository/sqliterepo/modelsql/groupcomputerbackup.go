@@ -10,8 +10,8 @@ type ComputerBackup struct {
 	BackupID        uint `gorm:"primaryKey"`
 	GroupComputerID uint `gorm:"primaryKey"`
 
-	Backup        Backup        `gorm:"foreignKey:BackupID"`
-	GroupComputer GroupComputer `gorm:"foreignKey:GroupComputerID"`
+	Backup        *Backup        `gorm:"foreignKey:BackupID"`
+	GroupComputer *GroupComputer `gorm:"foreignKey:GroupComputerID"`
 
 	CreatedAt time.Time
 }
@@ -24,8 +24,8 @@ func NewComputerBackupFromBusinessModel(cbm *model.ComputerBackup) *ComputerBack
 	gc := &ComputerBackup{
 		BackupID:        cbm.BackupID,
 		GroupComputerID: cbm.GroupComputerID,
-		Backup:          *NewBackupFromBusinessModel(&cbm.Backup),
-		GroupComputer:   *NewGroupComputerFromBusinessModel(&cbm.GroupComputer),
+		Backup:          NewBackupFromBusinessModel(cbm.Backup),
+		GroupComputer:   NewGroupComputerFromBusinessModel(cbm.GroupComputer),
 		CreatedAt:       time.Time{},
 	}
 
@@ -50,6 +50,6 @@ func (cb *ComputerBackup) CopyToBusinessModel(cbm *model.ComputerBackup) {
 
 	cbm.BackupID = cb.BackupID
 	cbm.GroupComputerID = cb.GroupComputerID
-	cbm.Backup = *cb.Backup.NewBusinessModel()
-	cbm.GroupComputer = *cb.GroupComputer.NewBusinessModel()
+	cbm.Backup = cb.Backup.NewBusinessModel()
+	cbm.GroupComputer = cb.GroupComputer.NewBusinessModel()
 }
