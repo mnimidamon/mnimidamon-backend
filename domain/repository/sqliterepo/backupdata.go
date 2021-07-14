@@ -22,7 +22,7 @@ func (bd backupData) Delete(backupID uint) error {
 		bd.DB.Delete(&Backup{}, backupID)
 
 	if err := result.Error; err != nil {
-		return toBusinessLogicError(err)
+		return toRepositoryError(err)
 	}
 
 	return nil
@@ -45,7 +45,7 @@ func (bd backupData) Update(bm *model.Backup) error {
 
 
 	if err := result.Error; err != nil {
-		return toBusinessLogicError(err)
+		return toRepositoryError(err)
 	}
 
 	b.CopyToBusinessModel(bm)
@@ -60,7 +60,7 @@ func (bd backupData) FindAll(groupID uint) ([]*model.Backup, error) {
 			Find(&backups)
 
 	if result.Error != nil {
-		return nil, toBusinessLogicError(result.Error)
+		return nil, toRepositoryError(result.Error)
 	}
 
 	var mBackups []*model.Backup
@@ -80,7 +80,7 @@ func (bd backupData) FindById(backupID uint) (*model.Backup, error) {
 
 
 	if err := result.Error; err != nil {
-		return nil, toBusinessLogicError(err)
+		return nil, toRepositoryError(err)
 	}
 
 	bm := backup.NewBusinessModel()
@@ -96,7 +96,7 @@ func (bd backupData) Create(bm *model.Backup) error {
 			Create(b)
 
 	if err := result.Error; err != nil {
-		return toBusinessLogicError(err)
+		return toRepositoryError(err)
 	}
 
 	b.CopyToBusinessModel(bm)

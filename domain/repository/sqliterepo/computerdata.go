@@ -21,7 +21,7 @@ func (cd computerData) Delete(computerID uint) error {
 		cd.DB.Delete(&Computer{}, computerID)
 
 	if err := result.Error; err != nil {
-		return toBusinessLogicError(err)
+		return toRepositoryError(err)
 	}
 
 	return nil
@@ -38,7 +38,7 @@ func (cd computerData) Update(cm *model.Computer) error {
 			First(c)
 
 	if err := result.Error; err != nil {
-		return toBusinessLogicError(err)
+		return toRepositoryError(err)
 	}
 
 	c.CopyToBusinessModel(cm)
@@ -53,7 +53,7 @@ func (cd computerData) FindAll(ownerID uint) ([]*model.Computer, error) {
 			Find(&computers)
 
 	if result.Error != nil {
-		return nil, toBusinessLogicError(result.Error)
+		return nil, toRepositoryError(result.Error)
 	}
 
 	var mComputers []*model.Computer
@@ -72,7 +72,7 @@ func (cd computerData) FindById(computerID uint) (*model.Computer, error) {
 		cd.First(&computer, computerID)
 
 	if err := result.Error; err != nil {
-		return nil, toBusinessLogicError(err)
+		return nil, toRepositoryError(err)
 	}
 
 	cm := computer.NewBusinessModel()
@@ -88,7 +88,7 @@ func (cd computerData) FindByName(name string, ownerID uint) (*model.Computer, e
 			First(&computer)
 
 	if result.Error != nil {
-		return nil, toBusinessLogicError(result.Error)
+		return nil, toRepositoryError(result.Error)
 	}
 
 	cm := computer.NewBusinessModel()
@@ -110,7 +110,7 @@ func (cd computerData) Create(cm *model.Computer, ownerID uint) error {
 
 
 	if err := result.Error; err != nil {
-		return toBusinessLogicError(err)
+		return toRepositoryError(err)
 	}
 
 	c.CopyToBusinessModel(cm)

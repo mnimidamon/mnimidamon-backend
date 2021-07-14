@@ -29,7 +29,7 @@ func (gd groupData) FindAllOfUser(userID uint) ([]*model.Group, error) {
 		).Find(&groups)
 
 	if result.Error != nil {
-		return nil, toBusinessLogicError(result.Error)
+		return nil, toRepositoryError(result.Error)
 	}
 
 	var mGroups []*model.Group
@@ -51,7 +51,7 @@ func (gd groupData) FindAllMembers(groupID uint) ([]*model.User, error) {
 			Find(&members)
 
 	if err != nil {
-		return nil, toBusinessLogicError(err)
+		return nil, toRepositoryError(err)
 	}
 
 	var mUsers []*model.User
@@ -70,7 +70,7 @@ func (gd groupData) Exists(groupID uint) (bool, error) {
 		if  errors.Is(repository.ErrNotFound, err) {
 			return false, nil
 		}
-		return false, toBusinessLogicError(err)
+		return false, toRepositoryError(err)
 	}
 
 	return true, nil
@@ -84,7 +84,7 @@ func (gd groupData) IsMemberOf(userID uint, groupID uint) (bool, error) {
 		Count(count)
 
 	if result.Error != nil {
-		return false, toBusinessLogicError(result.Error)
+		return false, toRepositoryError(result.Error)
 	}
 
 	if *count > 0 {
@@ -113,7 +113,7 @@ func (gd groupData) AddMember(userID uint, groupID uint) (*model.Group, error) {
 			Append(&user)
 
 	if err != nil {
-		return nil, toBusinessLogicError(err)
+		return nil, toRepositoryError(err)
 	}
 
 	gm := group.NewBusinessModel()
@@ -133,7 +133,7 @@ func (gd groupData) Delete(groupID uint) error {
 		Delete(g)
 
 	if err := result.Error; err != nil {
-		return toBusinessLogicError(err)
+		return toRepositoryError(err)
 	}
 
 	return nil
@@ -150,7 +150,7 @@ func (gd groupData) Update(gm *model.Group) error {
 			First(g)
 
 	if err := result.Error; err != nil {
-		return toBusinessLogicError(err)
+		return toRepositoryError(err)
 	}
 
 	g.CopyToBusinessModel(gm)
@@ -163,7 +163,7 @@ func (gd groupData) FindAll() ([]*model.Group, error) {
 	result := gd.Find(&groups)
 
 	if err := result.Error; err != nil {
-		return nil, toBusinessLogicError(err)
+		return nil, toRepositoryError(err)
 	}
 
 	var mGroups []*model.Group
@@ -183,7 +183,7 @@ func (gd groupData) FindById(groupID uint) (*model.Group, error) {
 		gd.First(&group, groupID)
 
 	if err := result.Error; err != nil {
-		return nil, toBusinessLogicError(err)
+		return nil, toRepositoryError(err)
 	}
 
 	gm := group.NewBusinessModel()
@@ -199,7 +199,7 @@ func (gd groupData) FindByName(name string) (*model.Group, error) {
 			First(&group)
 
 	if err := result.Error; err != nil {
-		return nil, toBusinessLogicError(err)
+		return nil, toRepositoryError(err)
 	}
 
 	gm := group.NewBusinessModel()
@@ -211,7 +211,7 @@ func (gd groupData) Create(gm *model.Group) error {
 	g := NewGroupFromBusinessModel(gm)
 
 	if result := gd.Omit("id").Create(g); result.Error != nil {
-		return toBusinessLogicError(result.Error)
+		return toRepositoryError(result.Error)
 	}
 
 	g.CopyToBusinessModel(gm)

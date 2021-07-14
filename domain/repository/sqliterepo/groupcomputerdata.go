@@ -28,7 +28,7 @@ func (gcd groupComputerData) FindById(groupID uint, computerID uint) (*model.Gro
 			First(&c)
 
 	if err := result.Error; err != nil {
-		return nil, toBusinessLogicError(err)
+		return nil, toRepositoryError(err)
 	}
 
 	cm := c.NewBusinessModel()
@@ -43,7 +43,7 @@ func (gcd groupComputerData) FindAllOfGroup(groupID uint) ([]*model.GroupCompute
 			Find(&computers)
 
 	if result.Error != nil {
-		return nil, toBusinessLogicError(result.Error)
+		return nil, toRepositoryError(result.Error)
 	}
 
 	var mGComputers []*model.GroupComputer
@@ -63,7 +63,7 @@ func (gcd groupComputerData) FindAllOfComputer(computerID uint) ([]*model.GroupC
 			Find(&computers)
 
 	if result.Error != nil {
-		return nil, toBusinessLogicError(result.Error)
+		return nil, toRepositoryError(result.Error)
 	}
 
 	var mGComputers []*model.GroupComputer
@@ -87,7 +87,7 @@ func (gcd groupComputerData) Create(cm *model.GroupComputer) error {
 			Create(c)
 
 	if result.Error != nil {
-		return toBusinessLogicError(result.Error)
+		return toRepositoryError(result.Error)
 	}
 
 	c.CopyToBusinessModel(cm)
@@ -101,7 +101,7 @@ func (gcd groupComputerData) Delete(groupID uint, computerID uint) error {
 			Delete(&GroupComputer{})
 
 	if result.Error != nil {
-		return toBusinessLogicError(result.Error)
+		return toRepositoryError(result.Error)
 	}
 
 	return nil
@@ -122,7 +122,7 @@ func (gcd groupComputerData) Update(cm *model.GroupComputer) error {
 			First(c)
 
 	if err := result.Error; err != nil {
-		return toBusinessLogicError(err)
+		return toRepositoryError(err)
 	}
 
 	c.CopyToBusinessModel(cm)
@@ -136,7 +136,7 @@ func (gcd groupComputerData) Exists(groupID uint, computerID uint) (bool, error)
 		if  errors.Is(repository.ErrNotFound, err) {
 			return false, nil
 		}
-		return false, toBusinessLogicError(err)
+		return false, toRepositoryError(err)
 	}
 
 	return true, nil

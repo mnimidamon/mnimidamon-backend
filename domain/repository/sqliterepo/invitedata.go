@@ -25,7 +25,7 @@ func (id inviteData) Exists(userID uint, groupID uint) (bool, error) {
 		if  errors.Is(repository.ErrNotFound, err) {
 			return false, nil
 		}
-		return false, toBusinessLogicError(err)
+		return false, toRepositoryError(err)
 	}
 
 	return true, nil
@@ -43,7 +43,7 @@ func (id inviteData) Create(im *model.Invite) error {
 			Create(i)
 
 	if result.Error != nil {
-		return toBusinessLogicError(result.Error)
+		return toRepositoryError(result.Error)
 	}
 
 	i.CopyToBusinessModel(im)
@@ -57,7 +57,7 @@ func (id inviteData) Delete(userID uint, groupID uint) error {
 			Delete(&Invite{})
 
 	if result.Error != nil {
-		return toBusinessLogicError(result.Error)
+		return toRepositoryError(result.Error)
 	}
 
 	return nil
@@ -71,7 +71,7 @@ func (id inviteData) FindAllOfGroup(groupID uint) ([]*model.Invite, error) {
 			Find(&invites)
 
 	if result.Error != nil {
-		return nil, toBusinessLogicError(result.Error)
+		return nil, toRepositoryError(result.Error)
 	}
 
 	var mInvites []*model.Invite
@@ -91,7 +91,7 @@ func (id inviteData) FindAllOfUser(userID uint) ([]*model.Invite, error) {
 			Find(&invites)
 
 	if result.Error != nil {
-		return nil, toBusinessLogicError(result.Error)
+		return nil, toRepositoryError(result.Error)
 	}
 
 	var mInvites []*model.Invite
@@ -112,7 +112,7 @@ func (id inviteData) FindById(userID uint, groupID uint) (*model.Invite, error) 
 			First(&invite)
 
 	if err := result.Error; err != nil {
-		return nil, toBusinessLogicError(err)
+		return nil, toRepositoryError(err)
 	}
 
 	im := invite.NewBusinessModel()

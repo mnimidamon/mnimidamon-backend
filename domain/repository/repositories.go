@@ -1,6 +1,8 @@
 package repository
 
-import "mnimidamonbackend/domain/model"
+import (
+	"mnimidamonbackend/domain/model"
+)
 
 // Repositories are used for reading and writing models.
 // Repositories Tx objects are used for when a transaction is initiated.

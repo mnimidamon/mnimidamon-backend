@@ -9,7 +9,7 @@ import (
 	"mnimidamonbackend/domain/repository"
 )
 
-func toBusinessLogicError(err error) repository.ErrRepo {
+func toRepositoryError(err error) repository.ErrRepo {
 	// No record found.
 	if errors.Is(gorm.ErrRecordNotFound, err) {
 		return repository.ErrNotFound

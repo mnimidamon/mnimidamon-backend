@@ -27,7 +27,7 @@ func (cbd computerBackupData) FindById(groupComputerID uint, backupID uint) (*mo
 			First(&cb).Error
 
 	if err != nil {
-		return nil, toBusinessLogicError(err)
+		return nil, toRepositoryError(err)
 	}
 
 	cbm := cb.NewBusinessModel()
@@ -42,7 +42,7 @@ func (cbd computerBackupData) FindAllOfGroupComputer(groupComputerID uint) ([]*m
 			Find(&cbackups)
 
 	if result.Error != nil {
-		return nil, toBusinessLogicError(result.Error)
+		return nil, toRepositoryError(result.Error)
 	}
 
 	var mCBackups []*model.ComputerBackup
@@ -62,7 +62,7 @@ func (cbd computerBackupData) FindAllOfBackup(backupID uint) ([]*model.ComputerB
 			Find(&cbackups)
 
 	if result.Error != nil {
-		return nil, toBusinessLogicError(result.Error)
+		return nil, toRepositoryError(result.Error)
 	}
 
 	var mCBackups []*model.ComputerBackup
@@ -86,7 +86,7 @@ func (cbd computerBackupData) Create(cbm *model.ComputerBackup) error {
 			Create(cbm)
 
 	if result.Error != nil {
-		return toBusinessLogicError(result.Error)
+		return toRepositoryError(result.Error)
 	}
 
 	cb.CopyToBusinessModel(cbm)
@@ -101,7 +101,7 @@ func (cbd computerBackupData) Delete(groupComputerID uint, backupID uint) error 
 			Delete(&ComputerBackup{})
 
 	if result.Error != nil {
-		return toBusinessLogicError(result.Error)
+		return toRepositoryError(result.Error)
 	}
 
 	return nil
@@ -114,7 +114,7 @@ func (cbd computerBackupData) Exists(groupComputerID uint, backupID uint) (bool,
 		if  errors.Is(repository.ErrNotFound, err) {
 			return false, nil
 		}
-		return false, toBusinessLogicError(err)
+		return false, toRepositoryError(err)
 	}
 
 	return true, nil

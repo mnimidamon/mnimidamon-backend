@@ -4,14 +4,18 @@ import "errors"
 
 type ErrRepo error
 
+func NewError(msg string) ErrRepo {
+	return errors.New(msg)
+}
+
 var (
-	ErrNotFound                            ErrRepo = errors.New("ErrNotFound")
-	UnknownRepositoryError                         = errors.New("UnknownRepositoryError")
-	ErrTxAlreadyRolledBack                         = errors.New("ErrTxAlreadyRolledBack")
-	ErrUniqueConstraintViolation                   = errors.New("ErrUniqueConstraintViolation")
-	ErrUniquePrimaryKeyConstraintViolation         = errors.New("ErrUniquePrimaryKeyConstraintViolation")
-	ErrForeignKeyConstraintViolation               = errors.New("ErrForeignKeyConstraintViolation")
-	ErrUserAlreadyInGroupViolation                 = errors.New("ErrUserAlreadyInGroupViolation")
-	ErrInvalidUpdateViolation                      = errors.New("ErrInvalidUpdateViolation")
-	ErrAlreadyExists                               = errors.New("ErrAlreadyExists")
+	ErrNotFound                            = NewError("ErrNotFound")
+	UnknownRepositoryError                 = NewError("UnknownRepositoryError")
+	ErrTxAlreadyRolledBack                 = NewError("ErrTxAlreadyRolledBack")
+	ErrUniqueConstraintViolation           = NewError("ErrUniqueConstraintViolation")
+	ErrUniquePrimaryKeyConstraintViolation = NewError("ErrUniquePrimaryKeyConstraintViolation")
+	ErrForeignKeyConstraintViolation       = NewError("ErrForeignKeyConstraintViolation")
+	ErrUserAlreadyInGroupViolation         = NewError("ErrUserAlreadyInGroupViolation")
+	ErrInvalidUpdateViolation              = NewError("ErrInvalidUpdateViolation")
+	ErrAlreadyExists                       = NewError("ErrAlreadyExists")
 )

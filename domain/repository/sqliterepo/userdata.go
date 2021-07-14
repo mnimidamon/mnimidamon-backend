@@ -26,7 +26,7 @@ func (ud userData) Exists(userID uint) (bool, error) {
 		if  errors.Is(repository.ErrNotFound, err) {
 			return false, nil
 		}
-		return false, toBusinessLogicError(err)
+		return false, toRepositoryError(err)
 	}
 
 	return true, nil
@@ -36,7 +36,7 @@ func (ud userData) Delete(userID uint) error {
 	result := ud.DB.Delete(&User{}, userID)
 
 	if err := result.Error; err != nil {
-		return toBusinessLogicError(err)
+		return toRepositoryError(err)
 	}
 
 	return nil
@@ -53,7 +53,7 @@ func (ud userData) Update(um *model.User) error {
 			First(u)
 
 	if err := result.Error; err != nil {
-		return toBusinessLogicError(err)
+		return toRepositoryError(err)
 	}
 
 	u.CopyToBusinessModel(um)
@@ -67,7 +67,7 @@ func (ud userData) FindById(userID uint) (*model.User, error) {
 		ud.First(&user, userID)
 
 	if err := result.Error; err != nil {
-		return nil, toBusinessLogicError(err)
+		return nil, toRepositoryError(err)
 	}
 
 	um := user.NewBusinessModel()
@@ -81,7 +81,7 @@ func (ud userData) FindAll() ([]*model.User, error) {
 	result := ud.Find(&users)
 
 	if err := result.Error; err != nil {
-		return nil, toBusinessLogicError(err)
+		return nil, toRepositoryError(err)
 	}
 
 	var mUsers []*model.User
@@ -102,7 +102,7 @@ func (ud userData) FindByUsername(username string) (*model.User, error) {
 		First(&user)
 
 	if err := result.Error; err != nil {
-		return nil, toBusinessLogicError(err)
+		return nil, toRepositoryError(err)
 	}
 
 	um := user.NewBusinessModel()
@@ -115,7 +115,7 @@ func (ud userData) Create(um *model.User) error {
 
 
 	if result := ud.Omit("id").Create(u); result.Error != nil {
-		return toBusinessLogicError(result.Error)
+		return toRepositoryError(result.Error)
 	}
 
 	u.CopyToBusinessModel(um)
