@@ -13,15 +13,21 @@ func NewError(msg string) ErrDomain {
 
 var (
 	ErrNotFound                      = NewError("ErrNotFound")
-	ErrAlreadyExists                 = NewError("ErrAlreadyExists")
 	ErrUserNotFound                  = NewError("ErrUserNotFound")
 	ErrGroupNotFound                 = NewError("ErrGroupNotFound")
+	ErrBackupNotFound                = NewError("ErrBackupNotFound")
+	ErrBackupAlreadyOnServer         = NewError("ErrBackupAlreadyOnServer")
+	ErrBackupWaitingForDeletion      = NewError("ErrBackupWaitingForDeletion")
+	ErrAlreadyExists                 = NewError("ErrAlreadyExists")
 	ErrUserWithUsernameAlreadyExists = NewError("ErrUserWithUsernameAlreadyExists")
 	ErrInternalDomain                = NewError("ErrInternalDomain")
 	ErrInvalidCredentials            = NewError("ErrInvalidCredentials")
 	ErrUserNotGroupMember            = NewError("ErrUserNotGroupMember")
 	ErrUserNotInvited                = NewError("ErrUserNotInvited")
+	ErrUserNotOwner                  = NewError("ErrUserNotOwner")
 	ErrUserAlreadyGroupMember        = NewError("ErrUserAlreadyGroupMember")
+	ErrInvalidBackupSize             = NewError("ErrInvalidBackupSize")
+	ErrInvalidFileName               = NewError("ErrInvalidFileName")
 )
 
 func ToDomainError(err error) ErrDomain {

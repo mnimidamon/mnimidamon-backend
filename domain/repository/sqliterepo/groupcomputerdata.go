@@ -10,13 +10,33 @@ import (
 )
 
 func NewGroupComputerRepository(db *gorm.DB) repository.GroupComputerRepository {
-	return groupComputerData {
+	return groupComputerData{
 		DB: db,
 	}
 }
 
 type groupComputerData struct {
 	*gorm.DB
+}
+
+func (gcd groupComputerData) FindAllOfGroupAndComputers(groupID uint, computerIDS ...uint) ([]*model.GroupComputer, error) {
+	var groupComputers []*GroupComputer
+
+	result :=
+		gcd.Model(&GroupComputer{}).
+			Where("group_id = ? AND computer_id IN (?)", groupID, computerIDS).
+			Find(&groupComputers)
+
+	if err := result.Error; err != nil {
+		return nil, toRepositoryError(err)
+	}
+
+	var mGComputers []*model.GroupComputer
+	for _, c := range groupComputers {
+		cm := c.NewBusinessModel()
+		mGComputers = append(mGComputers, cm)
+	}
+	return mGComputers, nil
 }
 
 func (gcd groupComputerData) FindById(groupID uint, computerID uint) (*model.GroupComputer, error) {
@@ -133,7 +153,7 @@ func (gcd groupComputerData) Exists(groupID uint, computerID uint) (bool, error)
 	_, err := gcd.FindById(computerID, groupID)
 
 	if err != nil {
-		if  errors.Is(repository.ErrNotFound, err) {
+		if errors.Is(repository.ErrNotFound, err) {
 			return false, nil
 		}
 		return false, toRepositoryError(err)
@@ -161,4 +181,3 @@ func (gcd groupComputerData) BeginTx() repository.GroupComputerRepositoryTx {
 		},
 	}
 }
-

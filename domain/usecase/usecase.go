@@ -71,7 +71,7 @@ type ListBackupInterface interface {
 type ManageBackupInterface interface {
 	InitializeBackup(p payload.InitializeBackupPayload) (*model.Backup, error)
 	UploadRequest(ownerID uint, backupID uint) (*model.Backup, error)
-	DeleteRequest(ownerID uint, backupID uint) (*model.Backup, error)
+	DeleteRequest(userID uint, backupID uint) (*model.Backup, error)
 }
 
 type ManageFileInterface interface {

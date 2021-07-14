@@ -92,6 +92,7 @@ type GroupComputerRepository interface {
 	FindById(groupID uint, computerID uint) (*model.GroupComputer, error)
 	FindAllOfGroup(groupID uint) ([]*model.GroupComputer, error)
 	FindAllOfComputer(computerID uint) ([]*model.GroupComputer, error)
+	FindAllOfGroupAndComputers(groupID uint, computerIDS ...uint) ([]*model.GroupComputer, error) // TODO Testing
 
 	Create(cm *model.GroupComputer) error
 	Delete(groupID uint, computerID uint) error
