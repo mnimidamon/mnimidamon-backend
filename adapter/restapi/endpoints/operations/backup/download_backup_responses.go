@@ -187,3 +187,47 @@ func (o *DownloadBackupNotFound) WriteResponse(rw http.ResponseWriter, producer 
 		}
 	}
 }
+
+// DownloadBackupInternalServerErrorCode is the HTTP code returned for type DownloadBackupInternalServerError
+const DownloadBackupInternalServerErrorCode int = 500
+
+/*DownloadBackupInternalServerError Internal server error.
+
+swagger:response downloadBackupInternalServerError
+*/
+type DownloadBackupInternalServerError struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *modelapi.Error `json:"body,omitempty"`
+}
+
+// NewDownloadBackupInternalServerError creates DownloadBackupInternalServerError with default headers values
+func NewDownloadBackupInternalServerError() *DownloadBackupInternalServerError {
+
+	return &DownloadBackupInternalServerError{}
+}
+
+// WithPayload adds the payload to the download backup internal server error response
+func (o *DownloadBackupInternalServerError) WithPayload(payload *modelapi.Error) *DownloadBackupInternalServerError {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the download backup internal server error response
+func (o *DownloadBackupInternalServerError) SetPayload(payload *modelapi.Error) {
+	o.Payload = payload
+}
+
+// WriteResponse to the client
+func (o *DownloadBackupInternalServerError) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.WriteHeader(500)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
+}

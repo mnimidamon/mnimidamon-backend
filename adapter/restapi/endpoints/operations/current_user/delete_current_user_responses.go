@@ -80,3 +80,47 @@ func (o *DeleteCurrentUserUnauthorized) WriteResponse(rw http.ResponseWriter, pr
 		}
 	}
 }
+
+// DeleteCurrentUserInternalServerErrorCode is the HTTP code returned for type DeleteCurrentUserInternalServerError
+const DeleteCurrentUserInternalServerErrorCode int = 500
+
+/*DeleteCurrentUserInternalServerError Internal server error.
+
+swagger:response deleteCurrentUserInternalServerError
+*/
+type DeleteCurrentUserInternalServerError struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *modelapi.Error `json:"body,omitempty"`
+}
+
+// NewDeleteCurrentUserInternalServerError creates DeleteCurrentUserInternalServerError with default headers values
+func NewDeleteCurrentUserInternalServerError() *DeleteCurrentUserInternalServerError {
+
+	return &DeleteCurrentUserInternalServerError{}
+}
+
+// WithPayload adds the payload to the delete current user internal server error response
+func (o *DeleteCurrentUserInternalServerError) WithPayload(payload *modelapi.Error) *DeleteCurrentUserInternalServerError {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the delete current user internal server error response
+func (o *DeleteCurrentUserInternalServerError) SetPayload(payload *modelapi.Error) {
+	o.Payload = payload
+}
+
+// WriteResponse to the client
+func (o *DeleteCurrentUserInternalServerError) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.WriteHeader(500)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
+}

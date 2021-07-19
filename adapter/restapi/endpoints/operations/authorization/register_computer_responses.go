@@ -144,3 +144,47 @@ func (o *RegisterComputerUnauthorized) WriteResponse(rw http.ResponseWriter, pro
 		}
 	}
 }
+
+// RegisterComputerInternalServerErrorCode is the HTTP code returned for type RegisterComputerInternalServerError
+const RegisterComputerInternalServerErrorCode int = 500
+
+/*RegisterComputerInternalServerError Internal server error.
+
+swagger:response registerComputerInternalServerError
+*/
+type RegisterComputerInternalServerError struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *modelapi.Error `json:"body,omitempty"`
+}
+
+// NewRegisterComputerInternalServerError creates RegisterComputerInternalServerError with default headers values
+func NewRegisterComputerInternalServerError() *RegisterComputerInternalServerError {
+
+	return &RegisterComputerInternalServerError{}
+}
+
+// WithPayload adds the payload to the register computer internal server error response
+func (o *RegisterComputerInternalServerError) WithPayload(payload *modelapi.Error) *RegisterComputerInternalServerError {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the register computer internal server error response
+func (o *RegisterComputerInternalServerError) SetPayload(payload *modelapi.Error) {
+	o.Payload = payload
+}
+
+// WriteResponse to the client
+func (o *RegisterComputerInternalServerError) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.WriteHeader(500)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
+}

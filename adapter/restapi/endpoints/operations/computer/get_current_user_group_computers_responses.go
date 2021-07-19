@@ -103,3 +103,47 @@ func (o *GetCurrentUserGroupComputersUnauthorized) WriteResponse(rw http.Respons
 		}
 	}
 }
+
+// GetCurrentUserGroupComputersInternalServerErrorCode is the HTTP code returned for type GetCurrentUserGroupComputersInternalServerError
+const GetCurrentUserGroupComputersInternalServerErrorCode int = 500
+
+/*GetCurrentUserGroupComputersInternalServerError Internal server error.
+
+swagger:response getCurrentUserGroupComputersInternalServerError
+*/
+type GetCurrentUserGroupComputersInternalServerError struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *modelapi.Error `json:"body,omitempty"`
+}
+
+// NewGetCurrentUserGroupComputersInternalServerError creates GetCurrentUserGroupComputersInternalServerError with default headers values
+func NewGetCurrentUserGroupComputersInternalServerError() *GetCurrentUserGroupComputersInternalServerError {
+
+	return &GetCurrentUserGroupComputersInternalServerError{}
+}
+
+// WithPayload adds the payload to the get current user group computers internal server error response
+func (o *GetCurrentUserGroupComputersInternalServerError) WithPayload(payload *modelapi.Error) *GetCurrentUserGroupComputersInternalServerError {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the get current user group computers internal server error response
+func (o *GetCurrentUserGroupComputersInternalServerError) SetPayload(payload *modelapi.Error) {
+	o.Payload = payload
+}
+
+// WriteResponse to the client
+func (o *GetCurrentUserGroupComputersInternalServerError) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.WriteHeader(500)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
+}

@@ -100,3 +100,47 @@ func (o *LoginUserUnauthorized) WriteResponse(rw http.ResponseWriter, producer r
 		}
 	}
 }
+
+// LoginUserInternalServerErrorCode is the HTTP code returned for type LoginUserInternalServerError
+const LoginUserInternalServerErrorCode int = 500
+
+/*LoginUserInternalServerError Internal server error.
+
+swagger:response loginUserInternalServerError
+*/
+type LoginUserInternalServerError struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *modelapi.Error `json:"body,omitempty"`
+}
+
+// NewLoginUserInternalServerError creates LoginUserInternalServerError with default headers values
+func NewLoginUserInternalServerError() *LoginUserInternalServerError {
+
+	return &LoginUserInternalServerError{}
+}
+
+// WithPayload adds the payload to the login user internal server error response
+func (o *LoginUserInternalServerError) WithPayload(payload *modelapi.Error) *LoginUserInternalServerError {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the login user internal server error response
+func (o *LoginUserInternalServerError) SetPayload(payload *modelapi.Error) {
+	o.Payload = payload
+}
+
+// WriteResponse to the client
+func (o *LoginUserInternalServerError) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.WriteHeader(500)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
+}

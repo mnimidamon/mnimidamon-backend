@@ -68,6 +68,9 @@ func init() {
                 "$ref": "#/definitions/User"
               }
             }
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
           }
         }
       },
@@ -98,6 +101,9 @@ func init() {
           },
           "400": {
             "$ref": "#/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
           }
         }
       }
@@ -140,6 +146,9 @@ func init() {
           },
           "401": {
             "$ref": "#/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
           }
         }
       }
@@ -171,6 +180,9 @@ func init() {
           },
           "401": {
             "$ref": "#/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
           }
         }
       },
@@ -200,6 +212,9 @@ func init() {
             "schema": {
               "$ref": "#/definitions/Error"
             }
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
           }
         }
       },
@@ -236,6 +251,9 @@ func init() {
           },
           "404": {
             "$ref": "#/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
           }
         }
       },
@@ -262,6 +280,9 @@ func init() {
           },
           "404": {
             "$ref": "#/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
           }
         }
       },
@@ -288,6 +309,9 @@ func init() {
           },
           "404": {
             "$ref": "#/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
           }
         }
       },
@@ -327,6 +351,9 @@ func init() {
           },
           "404": {
             "$ref": "#/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
           }
         }
       },
@@ -370,6 +397,9 @@ func init() {
           },
           "404": {
             "$ref": "#/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
           }
         }
       },
@@ -432,6 +462,9 @@ func init() {
           },
           "404": {
             "$ref": "#/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
           }
         }
       },
@@ -468,6 +501,9 @@ func init() {
           },
           "401": {
             "$ref": "#/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
           }
         }
       },
@@ -506,6 +542,9 @@ func init() {
           },
           "401": {
             "$ref": "#/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
           }
         }
       }
@@ -531,6 +570,9 @@ func init() {
           },
           "401": {
             "$ref": "#/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
           }
         }
       },
@@ -564,6 +606,9 @@ func init() {
           },
           "401": {
             "$ref": "#/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
           }
         }
       }
@@ -589,6 +634,9 @@ func init() {
           },
           "401": {
             "$ref": "#/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
           }
         }
       },
@@ -622,6 +670,9 @@ func init() {
           },
           "401": {
             "$ref": "#/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
           }
         }
       },
@@ -655,6 +706,9 @@ func init() {
           },
           "401": {
             "$ref": "#/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
           }
         }
       },
@@ -681,6 +735,9 @@ func init() {
           },
           "401": {
             "$ref": "#/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
           }
         }
       },
@@ -714,6 +771,9 @@ func init() {
           },
           "401": {
             "$ref": "#/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
           }
         }
       }
@@ -739,6 +799,9 @@ func init() {
           },
           "401": {
             "$ref": "#/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
           }
         }
       },
@@ -759,6 +822,9 @@ func init() {
           },
           "401": {
             "$ref": "#/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
           }
         }
       },
@@ -789,6 +855,9 @@ func init() {
           },
           "401": {
             "$ref": "#/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
           }
         }
       },
@@ -828,6 +897,9 @@ func init() {
             "schema": {
               "$ref": "#/definitions/Error"
             }
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
           }
         }
       }
@@ -856,6 +928,9 @@ func init() {
           },
           "404": {
             "$ref": "#/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
           }
         }
       },
@@ -972,18 +1047,10 @@ func init() {
     },
     "Error": {
       "type": "object",
-      "required": [
-        "code",
-        "message"
-      ],
       "properties": {
         "code": {
           "type": "string",
           "example": "CodeOfTheError"
-        },
-        "message": {
-          "type": "string",
-          "example": "description of the error"
         }
       }
     },
@@ -1271,6 +1338,12 @@ func init() {
         "$ref": "#/definitions/Error"
       }
     },
+    "Internal": {
+      "description": "Internal server error.",
+      "schema": {
+        "$ref": "#/definitions/Error"
+      }
+    },
     "NotFound": {
       "description": "The specified resource was not found.",
       "schema": {
@@ -1384,6 +1457,12 @@ func init() {
                 "$ref": "#/definitions/User"
               }
             }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       },
@@ -1414,6 +1493,12 @@ func init() {
           },
           "400": {
             "description": "Supplied parameters were not okay.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
             "schema": {
               "$ref": "#/definitions/Error"
             }
@@ -1462,6 +1547,12 @@ func init() {
             "schema": {
               "$ref": "#/definitions/Error"
             }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       }
@@ -1496,6 +1587,12 @@ func init() {
             "schema": {
               "$ref": "#/definitions/Error"
             }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       },
@@ -1525,6 +1622,12 @@ func init() {
           },
           "404": {
             "description": "If the backup is too big or there is any other problem.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
             "schema": {
               "$ref": "#/definitions/Error"
             }
@@ -1574,6 +1677,12 @@ func init() {
             "schema": {
               "$ref": "#/definitions/Error"
             }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       },
@@ -1609,6 +1718,12 @@ func init() {
             "schema": {
               "$ref": "#/definitions/Error"
             }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       },
@@ -1638,6 +1753,12 @@ func init() {
           },
           "404": {
             "description": "The specified resource was not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
             "schema": {
               "$ref": "#/definitions/Error"
             }
@@ -1691,6 +1812,12 @@ func init() {
           },
           "404": {
             "description": "The specified resource was not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
             "schema": {
               "$ref": "#/definitions/Error"
             }
@@ -1751,6 +1878,12 @@ func init() {
           },
           "404": {
             "description": "The specified resource was not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
             "schema": {
               "$ref": "#/definitions/Error"
             }
@@ -1830,6 +1963,12 @@ func init() {
             "schema": {
               "$ref": "#/definitions/Error"
             }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       },
@@ -1877,6 +2016,12 @@ func init() {
             "schema": {
               "$ref": "#/definitions/Error"
             }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       },
@@ -1921,6 +2066,12 @@ func init() {
             "schema": {
               "$ref": "#/definitions/Error"
             }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       }
@@ -1946,6 +2097,12 @@ func init() {
           },
           "401": {
             "description": "Unauthorized.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
             "schema": {
               "$ref": "#/definitions/Error"
             }
@@ -1989,6 +2146,12 @@ func init() {
             "schema": {
               "$ref": "#/definitions/Error"
             }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       }
@@ -2014,6 +2177,12 @@ func init() {
           },
           "401": {
             "description": "Unauthorized.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
             "schema": {
               "$ref": "#/definitions/Error"
             }
@@ -2057,6 +2226,12 @@ func init() {
             "schema": {
               "$ref": "#/definitions/Error"
             }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       },
@@ -2097,6 +2272,12 @@ func init() {
             "schema": {
               "$ref": "#/definitions/Error"
             }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       },
@@ -2126,6 +2307,12 @@ func init() {
           },
           "401": {
             "description": "Unauthorized.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
             "schema": {
               "$ref": "#/definitions/Error"
             }
@@ -2169,6 +2356,12 @@ func init() {
             "schema": {
               "$ref": "#/definitions/Error"
             }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       }
@@ -2197,6 +2390,12 @@ func init() {
             "schema": {
               "$ref": "#/definitions/Error"
             }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       },
@@ -2217,6 +2416,12 @@ func init() {
           },
           "401": {
             "description": "Unauthorized.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
             "schema": {
               "$ref": "#/definitions/Error"
             }
@@ -2254,6 +2459,12 @@ func init() {
           },
           "401": {
             "description": "Unauthorized.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
             "schema": {
               "$ref": "#/definitions/Error"
             }
@@ -2300,6 +2511,12 @@ func init() {
             "schema": {
               "$ref": "#/definitions/Error"
             }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       }
@@ -2328,6 +2545,12 @@ func init() {
           },
           "404": {
             "description": "The specified resource was not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
             "schema": {
               "$ref": "#/definitions/Error"
             }
@@ -2451,18 +2674,10 @@ func init() {
     },
     "Error": {
       "type": "object",
-      "required": [
-        "code",
-        "message"
-      ],
       "properties": {
         "code": {
           "type": "string",
           "example": "CodeOfTheError"
-        },
-        "message": {
-          "type": "string",
-          "example": "description of the error"
         }
       }
     },
@@ -2749,6 +2964,12 @@ func init() {
   "responses": {
     "BadRequest": {
       "description": "Supplied parameters were not okay.",
+      "schema": {
+        "$ref": "#/definitions/Error"
+      }
+    },
+    "Internal": {
+      "description": "Internal server error.",
       "schema": {
         "$ref": "#/definitions/Error"
       }

@@ -168,3 +168,47 @@ func (o *RequestBackupUploadNotFound) WriteResponse(rw http.ResponseWriter, prod
 		}
 	}
 }
+
+// RequestBackupUploadInternalServerErrorCode is the HTTP code returned for type RequestBackupUploadInternalServerError
+const RequestBackupUploadInternalServerErrorCode int = 500
+
+/*RequestBackupUploadInternalServerError Internal server error.
+
+swagger:response requestBackupUploadInternalServerError
+*/
+type RequestBackupUploadInternalServerError struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *modelapi.Error `json:"body,omitempty"`
+}
+
+// NewRequestBackupUploadInternalServerError creates RequestBackupUploadInternalServerError with default headers values
+func NewRequestBackupUploadInternalServerError() *RequestBackupUploadInternalServerError {
+
+	return &RequestBackupUploadInternalServerError{}
+}
+
+// WithPayload adds the payload to the request backup upload internal server error response
+func (o *RequestBackupUploadInternalServerError) WithPayload(payload *modelapi.Error) *RequestBackupUploadInternalServerError {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the request backup upload internal server error response
+func (o *RequestBackupUploadInternalServerError) SetPayload(payload *modelapi.Error) {
+	o.Payload = payload
+}
+
+// WriteResponse to the client
+func (o *RequestBackupUploadInternalServerError) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.WriteHeader(500)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
+}

@@ -68,6 +68,8 @@ paths:
             type: array
             items:
               $ref: "#/definitions/User"
+        500:
+          $ref: "#/responses/Internal"
 
     # Registraion.
     post:
@@ -91,6 +93,8 @@ paths:
             $ref: "#/definitions/RegisterResponse"
         400:
           $ref: "#/responses/BadRequest"
+        500:
+          $ref: "#/responses/Internal"
 
 
   # For logging in.
@@ -117,6 +121,8 @@ paths:
           description: Bad credentials.
           schema:
             $ref: "#/definitions/Error"
+        500:
+          $ref: "#/responses/Internal"
 
 
   # Get user.
@@ -143,6 +149,8 @@ paths:
             $ref: "#/definitions/User"
         404:
           $ref: "#/responses/NotFound"
+        500:
+          $ref: "#/responses/Internal"
 
 
   /users/current:
@@ -172,6 +180,8 @@ paths:
           description: Successfuly deleted current user account.
         401:
           $ref: "#/responses/Unauthorized"
+        500:
+          $ref: "#/responses/Internal"
 
   /users/current/computers:
     # Get computers.
@@ -191,6 +201,8 @@ paths:
               $ref: "#/definitions/Computer"
         401:
           $ref: "#/responses/Unauthorized"
+        500:
+          $ref: "#/responses/Internal"
 
     # Create a new computer, when there are multiple.
     post:
@@ -217,6 +229,8 @@ paths:
           $ref: "#/responses/BadRequest"
         401:
           $ref: "#/responses/Unauthorized"
+        500:
+          $ref: "#/responses/Internal"
 
 
   /users/current/computers/{computer_id}:
@@ -238,6 +252,8 @@ paths:
             $ref: "#/definitions/Computer"
         401:
           $ref: "#/responses/Unauthorized"
+        500:
+          $ref: "#/responses/Internal"
 
 
   /users/current/invites:
@@ -258,6 +274,8 @@ paths:
               $ref: "#/definitions/Invite"
         401:
           $ref: "#/responses/Unauthorized"
+        500:
+          $ref: "#/responses/Internal"
 
 
   /users/current/invites/{group_id}:
@@ -279,6 +297,8 @@ paths:
             $ref: "#/definitions/Invite"
         401:
           $ref: "#/responses/Unauthorized"
+        500:
+          $ref: "#/responses/Internal"
 
     # Decline the invite.
     delete:
@@ -293,6 +313,8 @@ paths:
           description: Invite declined.
         401:
           $ref: "#/responses/Unauthorized"
+        500:
+          $ref: "#/responses/Internal"
 
 
   /users/current/invites/{group_id}/accept:
@@ -314,6 +336,8 @@ paths:
             $ref: "#/definitions/Group"
         401:
           $ref: "#/responses/Unauthorized"
+        500:
+          $ref: "#/responses/Internal"
 
 
   /users/current/groups:
@@ -334,6 +358,8 @@ paths:
               $ref: "#/definitions/Group"
         401:
           $ref: "#/responses/Unauthorized"
+        500:
+          $ref: "#/responses/Internal"
 
   /users/current/groups/{group_id}:
     parameters:
@@ -354,6 +380,8 @@ paths:
             $ref: "#/definitions/Group"
         401:
           $ref: "#/responses/Unauthorized"
+        500:
+          $ref: "#/responses/Internal"
 
 
   /users/current/groups/{group_id}/computers:
@@ -377,6 +405,8 @@ paths:
               $ref: "#/definitions/GroupComputer"
         401:
           $ref: "#/responses/Unauthorized"
+        500:
+          $ref: "#/responses/Internal"
 
 
   /users/current/groups/{group_id}/invites:
@@ -400,6 +430,8 @@ paths:
               $ref: "#/definitions/Invite"
         401:
           $ref: "#/responses/Unauthorized"
+        500:
+          $ref: "#/responses/Internal"
 
 
     # Invite a user.
@@ -420,6 +452,8 @@ paths:
           $ref: "#/responses/BadRequest"
         401:
           $ref: "#/responses/Unauthorized"
+        500:
+          $ref: "#/responses/Internal"
 
   /users/current/computer/current/groups/{group_id}/backups:
     parameters:
@@ -443,6 +477,8 @@ paths:
               $ref: "#/definitions/Backup"
         401:
           $ref: "#/responses/Unauthorized"
+        500:
+          $ref: "#/responses/Internal"
 
     # Create a new backup log with upload_request 0.
     post:
@@ -463,6 +499,8 @@ paths:
             $ref: "#/definitions/Error"
         401:
           $ref: "#/responses/Unauthorized"
+        500:
+          $ref: "#/responses/Internal"
 
 
 
@@ -489,6 +527,8 @@ paths:
           $ref: "#/responses/NotFound"
         401:
           $ref: "#/responses/Unauthorized"
+        500:
+          $ref: "#/responses/Internal"
 
     # Delete a backup TODO initialize a deletion.
     delete:
@@ -506,6 +546,8 @@ paths:
           $ref: "#/responses/NotFound"
         401:
           $ref: "#/responses/Unauthorized"
+        500:
+          $ref: "#/responses/Internal"
 
     # For requesting the upload on the server.
     put:
@@ -524,6 +566,8 @@ paths:
           $ref: "#/responses/NotFound"
         401:
           $ref: "#/responses/Unauthorized"
+        500:
+          $ref: "#/responses/Internal"
 
   /users/current/computer/current/groups/{group_id}/backups/{backup_id}/computers:
     parameters:
@@ -547,6 +591,8 @@ paths:
           $ref: "#/responses/NotFound"
         401:
           $ref: "#/responses/Unauthorized"
+        500:
+          $ref: "#/responses/Internal"
 
 
   /users/current/computer/current/groups/{group_id}/backups/{backup_id}/download:
@@ -575,6 +621,8 @@ paths:
           $ref: "#/responses/NotFound"
         401:
           $ref: "#/responses/Unauthorized"
+        500:
+          $ref: "#/responses/Internal"
 
 
   /users/current/computer/current/groups/{group_id}/backups/{backup_id}/upload:
@@ -615,6 +663,8 @@ paths:
           $ref: "#/responses/NotFound"
         401:
           $ref: "#/responses/Unauthorized"
+        500:
+          $ref: "#/responses/Internal"
 
 
 
@@ -895,16 +945,10 @@ definitions:
   # Common response objects.
   Error:
     type: object
-    required:
-      - code
-      - message
     properties:
       code:
         type: string
         example: "CodeOfTheError"
-      message:
-        type: string
-        example: "description of the error"
 
 
 # Parameters definitions
@@ -966,6 +1010,11 @@ responses:
 
   Unauthorized:
     description: Unauthorized.
+    schema:
+      $ref: '#/definitions/Error'
+
+  Internal:
+    description: Internal server error.
     schema:
       $ref: '#/definitions/Error'
 

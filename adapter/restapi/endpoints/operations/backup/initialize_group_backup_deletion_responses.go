@@ -124,3 +124,47 @@ func (o *InitializeGroupBackupDeletionNotFound) WriteResponse(rw http.ResponseWr
 		}
 	}
 }
+
+// InitializeGroupBackupDeletionInternalServerErrorCode is the HTTP code returned for type InitializeGroupBackupDeletionInternalServerError
+const InitializeGroupBackupDeletionInternalServerErrorCode int = 500
+
+/*InitializeGroupBackupDeletionInternalServerError Internal server error.
+
+swagger:response initializeGroupBackupDeletionInternalServerError
+*/
+type InitializeGroupBackupDeletionInternalServerError struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *modelapi.Error `json:"body,omitempty"`
+}
+
+// NewInitializeGroupBackupDeletionInternalServerError creates InitializeGroupBackupDeletionInternalServerError with default headers values
+func NewInitializeGroupBackupDeletionInternalServerError() *InitializeGroupBackupDeletionInternalServerError {
+
+	return &InitializeGroupBackupDeletionInternalServerError{}
+}
+
+// WithPayload adds the payload to the initialize group backup deletion internal server error response
+func (o *InitializeGroupBackupDeletionInternalServerError) WithPayload(payload *modelapi.Error) *InitializeGroupBackupDeletionInternalServerError {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the initialize group backup deletion internal server error response
+func (o *InitializeGroupBackupDeletionInternalServerError) SetPayload(payload *modelapi.Error) {
+	o.Payload = payload
+}
+
+// WriteResponse to the client
+func (o *InitializeGroupBackupDeletionInternalServerError) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.WriteHeader(500)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
+}

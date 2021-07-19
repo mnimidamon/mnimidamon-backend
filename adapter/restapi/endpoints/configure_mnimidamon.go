@@ -4,6 +4,12 @@ package endpoints
 
 import (
 	"crypto/tls"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
+	"mnimidamonbackend/adapter/restapi"
+	"mnimidamonbackend/adapter/restapi/handlers"
+	"mnimidamonbackend/domain/repository/sqliterepo"
+	"mnimidamonbackend/domain/usecase/userregistration"
 	"net/http"
 
 	"github.com/go-openapi/errors"
@@ -45,18 +51,44 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 
 	api.JSONProducer = runtime.JSONProducer()
 
+
+	// Setting up the database.
+	db, err := sqliterepo.Initialize("../databasefiles/mnimidamon.db", &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Silent),
+	},true)
+
+	if err != nil {
+		panic(err)
+	}
+
+	// Setting up the repositories
+	ur := sqliterepo.NewUserRepository(db)
+	uruc := userregistration.NewUseCase(ur)
+
+	// Setting up the authorization.
+	ja := restapi.NewJwtAuthentication("SuperSecretKey", ur) // TODO ENV VAR
+
+	// Applies when the "X-AUTH-KEY" header is set
+	api.AuthKeyAuth = ja.UserKeyMiddleware()
+	// Applies when the "X-COMP-KEY" header is set
+	api.CompKeyAuth = ja.CompKeyMiddleware()
+
+
+	/*
 	// Applies when the "X-AUTH-KEY" header is set
 	if api.AuthKeyAuth == nil {
 		api.AuthKeyAuth = func(token string) (interface{}, error) {
 			return nil, errors.NotImplemented("api key auth (auth_key) X-AUTH-KEY from header param [X-AUTH-KEY] has not yet been implemented")
 		}
 	}
+
 	// Applies when the "X-COMP-KEY" header is set
 	if api.CompKeyAuth == nil {
 		api.CompKeyAuth = func(token string) (interface{}, error) {
 			return nil, errors.NotImplemented("api key auth (comp_key) X-COMP-KEY from header param [X-COMP-KEY] has not yet been implemented")
 		}
 	}
+	*/
 
 	// Set your custom authorizer if needed. Default one is security.Authorized()
 	// Expected interface runtime.Authorizer
@@ -181,11 +213,9 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 			return middleware.NotImplemented("operation authorization.RegisterComputer has not yet been implemented")
 		})
 	}
-	if api.AuthorizationRegisterUserHandler == nil {
-		api.AuthorizationRegisterUserHandler = authorization.RegisterUserHandlerFunc(func(params authorization.RegisterUserParams) middleware.Responder {
-			return middleware.NotImplemented("operation authorization.RegisterUser has not yet been implemented")
-		})
-	}
+
+	api.AuthorizationRegisterUserHandler = handlers.NewUserRegistrationHandler(uruc, ja)
+
 	if api.BackupRequestBackupUploadHandler == nil {
 		api.BackupRequestBackupUploadHandler = backup.RequestBackupUploadHandlerFunc(func(params backup.RequestBackupUploadParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation backup.RequestBackupUpload has not yet been implemented")
@@ -197,7 +227,10 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 		})
 	}
 
-	api.PreServerShutdown = func() {}
+	api.PreServerShutdown = func() {
+		sqlConn, _ := db.DB()
+		_ = sqlConn.Close()
+	}
 
 	api.ServerShutdown = func() {}
 

@@ -144,3 +144,47 @@ func (o *UploadBackupNotFound) WriteResponse(rw http.ResponseWriter, producer ru
 		}
 	}
 }
+
+// UploadBackupInternalServerErrorCode is the HTTP code returned for type UploadBackupInternalServerError
+const UploadBackupInternalServerErrorCode int = 500
+
+/*UploadBackupInternalServerError Internal server error.
+
+swagger:response uploadBackupInternalServerError
+*/
+type UploadBackupInternalServerError struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *modelapi.Error `json:"body,omitempty"`
+}
+
+// NewUploadBackupInternalServerError creates UploadBackupInternalServerError with default headers values
+func NewUploadBackupInternalServerError() *UploadBackupInternalServerError {
+
+	return &UploadBackupInternalServerError{}
+}
+
+// WithPayload adds the payload to the upload backup internal server error response
+func (o *UploadBackupInternalServerError) WithPayload(payload *modelapi.Error) *UploadBackupInternalServerError {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the upload backup internal server error response
+func (o *UploadBackupInternalServerError) SetPayload(payload *modelapi.Error) {
+	o.Payload = payload
+}
+
+// WriteResponse to the client
+func (o *UploadBackupInternalServerError) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.WriteHeader(500)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
+}

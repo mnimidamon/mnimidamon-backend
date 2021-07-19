@@ -100,3 +100,47 @@ func (o *GetCurrentUserInviteUnauthorized) WriteResponse(rw http.ResponseWriter,
 		}
 	}
 }
+
+// GetCurrentUserInviteInternalServerErrorCode is the HTTP code returned for type GetCurrentUserInviteInternalServerError
+const GetCurrentUserInviteInternalServerErrorCode int = 500
+
+/*GetCurrentUserInviteInternalServerError Internal server error.
+
+swagger:response getCurrentUserInviteInternalServerError
+*/
+type GetCurrentUserInviteInternalServerError struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *modelapi.Error `json:"body,omitempty"`
+}
+
+// NewGetCurrentUserInviteInternalServerError creates GetCurrentUserInviteInternalServerError with default headers values
+func NewGetCurrentUserInviteInternalServerError() *GetCurrentUserInviteInternalServerError {
+
+	return &GetCurrentUserInviteInternalServerError{}
+}
+
+// WithPayload adds the payload to the get current user invite internal server error response
+func (o *GetCurrentUserInviteInternalServerError) WithPayload(payload *modelapi.Error) *GetCurrentUserInviteInternalServerError {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the get current user invite internal server error response
+func (o *GetCurrentUserInviteInternalServerError) SetPayload(payload *modelapi.Error) {
+	o.Payload = payload
+}
+
+// WriteResponse to the client
+func (o *GetCurrentUserInviteInternalServerError) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.WriteHeader(500)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
+}

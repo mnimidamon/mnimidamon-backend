@@ -59,3 +59,47 @@ func (o *GetUsersOK) WriteResponse(rw http.ResponseWriter, producer runtime.Prod
 		panic(err) // let the recovery middleware deal with this
 	}
 }
+
+// GetUsersInternalServerErrorCode is the HTTP code returned for type GetUsersInternalServerError
+const GetUsersInternalServerErrorCode int = 500
+
+/*GetUsersInternalServerError Internal server error.
+
+swagger:response getUsersInternalServerError
+*/
+type GetUsersInternalServerError struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *modelapi.Error `json:"body,omitempty"`
+}
+
+// NewGetUsersInternalServerError creates GetUsersInternalServerError with default headers values
+func NewGetUsersInternalServerError() *GetUsersInternalServerError {
+
+	return &GetUsersInternalServerError{}
+}
+
+// WithPayload adds the payload to the get users internal server error response
+func (o *GetUsersInternalServerError) WithPayload(payload *modelapi.Error) *GetUsersInternalServerError {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the get users internal server error response
+func (o *GetUsersInternalServerError) SetPayload(payload *modelapi.Error) {
+	o.Payload = payload
+}
+
+// WriteResponse to the client
+func (o *GetUsersInternalServerError) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.WriteHeader(500)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
+}

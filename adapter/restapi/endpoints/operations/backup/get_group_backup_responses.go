@@ -144,3 +144,47 @@ func (o *GetGroupBackupNotFound) WriteResponse(rw http.ResponseWriter, producer 
 		}
 	}
 }
+
+// GetGroupBackupInternalServerErrorCode is the HTTP code returned for type GetGroupBackupInternalServerError
+const GetGroupBackupInternalServerErrorCode int = 500
+
+/*GetGroupBackupInternalServerError Internal server error.
+
+swagger:response getGroupBackupInternalServerError
+*/
+type GetGroupBackupInternalServerError struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *modelapi.Error `json:"body,omitempty"`
+}
+
+// NewGetGroupBackupInternalServerError creates GetGroupBackupInternalServerError with default headers values
+func NewGetGroupBackupInternalServerError() *GetGroupBackupInternalServerError {
+
+	return &GetGroupBackupInternalServerError{}
+}
+
+// WithPayload adds the payload to the get group backup internal server error response
+func (o *GetGroupBackupInternalServerError) WithPayload(payload *modelapi.Error) *GetGroupBackupInternalServerError {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the get group backup internal server error response
+func (o *GetGroupBackupInternalServerError) SetPayload(payload *modelapi.Error) {
+	o.Payload = payload
+}
+
+// WriteResponse to the client
+func (o *GetGroupBackupInternalServerError) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.WriteHeader(500)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
+}

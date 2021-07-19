@@ -144,3 +144,47 @@ func (o *InviteUserToGroupUnauthorized) WriteResponse(rw http.ResponseWriter, pr
 		}
 	}
 }
+
+// InviteUserToGroupInternalServerErrorCode is the HTTP code returned for type InviteUserToGroupInternalServerError
+const InviteUserToGroupInternalServerErrorCode int = 500
+
+/*InviteUserToGroupInternalServerError Internal server error.
+
+swagger:response inviteUserToGroupInternalServerError
+*/
+type InviteUserToGroupInternalServerError struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *modelapi.Error `json:"body,omitempty"`
+}
+
+// NewInviteUserToGroupInternalServerError creates InviteUserToGroupInternalServerError with default headers values
+func NewInviteUserToGroupInternalServerError() *InviteUserToGroupInternalServerError {
+
+	return &InviteUserToGroupInternalServerError{}
+}
+
+// WithPayload adds the payload to the invite user to group internal server error response
+func (o *InviteUserToGroupInternalServerError) WithPayload(payload *modelapi.Error) *InviteUserToGroupInternalServerError {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the invite user to group internal server error response
+func (o *InviteUserToGroupInternalServerError) SetPayload(payload *modelapi.Error) {
+	o.Payload = payload
+}
+
+// WriteResponse to the client
+func (o *InviteUserToGroupInternalServerError) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.WriteHeader(500)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
+}
