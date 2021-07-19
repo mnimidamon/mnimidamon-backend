@@ -13,7 +13,14 @@ var (
 
 // Common error checker for more readable error.
 func IsInternalError(err error) bool {
-	if errs.Is(err, domain.ErrInternalDomain) {
+	if errs.Is(domain.ErrInternalDomain, err) {
+		return true
+	}
+	return false
+}
+
+func IsNotFoundError(err error) bool {
+	if errs.Is(domain.ErrNotFound, err) {
 		return true
 	}
 	return false

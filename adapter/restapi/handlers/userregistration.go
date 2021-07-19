@@ -23,16 +23,19 @@ func (impl userCreateImpl) Handle(p authorization.RegisterUserParams) middleware
 	})
 
 	if IsInternalError(err) {
-		return authorization.NewRegisterUserInternalServerError().WithPayload(ErrInternalServer)
+		return authorization.NewRegisterUserInternalServerError().
+			WithPayload(ErrInternalServer)
 	}
 
 	if err != nil {
-		return authorization.NewRegisterUserBadRequest().WithPayload(ToRestError(err))
+		return authorization.NewRegisterUserBadRequest().
+			WithPayload(ToRestError(err))
 	}
 
 	token, err := impl.JAuth.GenerateUserToken(user.ID)
 	if err != nil {
-		return authorization.NewRegisterUserInternalServerError().WithPayload(ErrSigningToken)
+		return authorization.NewRegisterUserInternalServerError().
+			WithPayload(ErrSigningToken)
 	}
 
 	rp := &modelapi.RegisterResponse{
@@ -40,7 +43,8 @@ func (impl userCreateImpl) Handle(p authorization.RegisterUserParams) middleware
 		User:   MapToUser(user),
 	}
 
-	return authorization.NewRegisterUserOK().WithPayload(rp)
+	return authorization.NewRegisterUserOK().
+		WithPayload(rp)
 }
 
 func NewUserRegistrationHandler(ur usecase.UserRegistrationInterface, ja restapi.JwtAuthentication) authorization.RegisterUserHandler {

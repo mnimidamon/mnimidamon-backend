@@ -4,17 +4,17 @@ package endpoints
 
 import (
 	"crypto/tls"
+	"github.com/go-openapi/errors"
+	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/runtime/middleware"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"mnimidamonbackend/adapter/restapi"
 	"mnimidamonbackend/adapter/restapi/handlers"
 	"mnimidamonbackend/domain/repository/sqliterepo"
+	"mnimidamonbackend/domain/usecase/listuser"
 	"mnimidamonbackend/domain/usecase/userregistration"
 	"net/http"
-
-	"github.com/go-openapi/errors"
-	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/runtime/middleware"
 
 	"mnimidamonbackend/adapter/restapi/endpoints/operations"
 	"mnimidamonbackend/adapter/restapi/endpoints/operations/authorization"
@@ -23,7 +23,6 @@ import (
 	"mnimidamonbackend/adapter/restapi/endpoints/operations/current_user"
 	"mnimidamonbackend/adapter/restapi/endpoints/operations/group"
 	"mnimidamonbackend/adapter/restapi/endpoints/operations/invite"
-	"mnimidamonbackend/adapter/restapi/endpoints/operations/user"
 )
 
 //go:generate swagger generate server --target ..\..\restapi --name Mnimidamon --spec ..\..\..\public\spec\swagger.yaml --model-package modelapi --server-package endpoints --principal interface{}
@@ -64,6 +63,7 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 	// Setting up the repositories
 	ur := sqliterepo.NewUserRepository(db)
 	uruc := userregistration.NewUseCase(ur)
+	luuc := listuser.NewUseCase(ur)
 
 	// Setting up the authorization.
 	ja := restapi.NewJwtAuthentication("SuperSecretKey", ur) // TODO ENV VAR
@@ -178,16 +178,11 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 			return middleware.NotImplemented("operation group.GetGroupInvites has not yet been implemented")
 		})
 	}
-	if api.UserGetUserHandler == nil {
-		api.UserGetUserHandler = user.GetUserHandlerFunc(func(params user.GetUserParams) middleware.Responder {
-			return middleware.NotImplemented("operation user.GetUser has not yet been implemented")
-		})
-	}
-	if api.UserGetUsersHandler == nil {
-		api.UserGetUsersHandler = user.GetUsersHandlerFunc(func(params user.GetUsersParams) middleware.Responder {
-			return middleware.NotImplemented("operation user.GetUsers has not yet been implemented")
-		})
-	}
+
+	api.UserGetUserHandler = handlers.NewGetUserHandler(luuc)
+
+	api.UserGetUsersHandler = handlers.NewGetUsersHandler(luuc)
+
 	if api.BackupInitializeGroupBackupHandler == nil {
 		api.BackupInitializeGroupBackupHandler = backup.InitializeGroupBackupHandlerFunc(func(params backup.InitializeGroupBackupParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation backup.InitializeGroupBackup has not yet been implemented")
@@ -227,12 +222,12 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 		})
 	}
 
-	api.PreServerShutdown = func() {
+	api.PreServerShutdown = func() {}
+
+	api.ServerShutdown = func() {
 		sqlConn, _ := db.DB()
 		_ = sqlConn.Close()
 	}
-
-	api.ServerShutdown = func() {}
 
 	return setupGlobalMiddleware(api.Serve(setupMiddlewares))
 }
