@@ -28,6 +28,7 @@ var (
 	ErrUserAlreadyGroupMember        = NewError("ErrUserAlreadyGroupMember")
 	ErrInvalidBackupSize             = NewError("ErrInvalidBackupSize")
 	ErrInvalidFileName               = NewError("ErrInvalidFileName")
+	ErrNameNotUnique                 = NewError("ErrNameNotUnique")
 )
 
 func ToDomainError(err error) ErrDomain {
