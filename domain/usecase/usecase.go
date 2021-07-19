@@ -28,7 +28,7 @@ type ComputerRegistrationInterface interface {
 
 type ManageGroupComputerInterface interface {
 	Update(groupComputerID uint, size uint) (*model.GroupComputer, error)
-	JoinGroup(computerID uint, size uint) (*model.GroupComputer, error)
+	JoinGroup(computerID uint, size uint, groupID uint) (*model.GroupComputer, error)
 	LeaveGroup(computerID uint, size uint) error
 }
 
