@@ -20,6 +20,9 @@ type unauthorizedErrorResponder struct {
 }
 
 func newUnauthorizedErrorResponder(err error) middleware.Responder {
+	if err == nil {
+		return &unauthorizedErrorResponder{}
+	}
 	return &unauthorizedErrorResponder{
 		Payload: &modelapi.Error{
 			Code: err.Error(),
@@ -43,6 +46,9 @@ type internalServerErrorResponder struct {
 }
 
 func newInternalServerErrorResponder(err error) middleware.Responder {
+	if err == nil {
+		return &internalServerErrorResponder{}
+	}
 	return &internalServerErrorResponder{
 		Payload: &modelapi.Error{
 			Code: err.Error(),
@@ -53,6 +59,32 @@ func newInternalServerErrorResponder(err error) middleware.Responder {
 // This is to suffice the middleware.Responder
 func (o *internalServerErrorResponder) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 	rw.WriteHeader(500)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
+}
+
+type badRequestErrorResponder struct {
+	Payload *modelapi.Error `json:"body,omitempty"`
+}
+
+func newBadRequestErrorResponder(err error) middleware.Responder {
+	if err == nil {
+		return &badRequestErrorResponder{}
+	}
+	return &internalServerErrorResponder{
+		Payload: &modelapi.Error{
+			Code: err.Error(),
+		},
+	}
+}
+
+// This is to suffice the middleware.Responder
+func (o *badRequestErrorResponder) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+	rw.WriteHeader(400)
 	if o.Payload != nil {
 		payload := o.Payload
 		if err := producer.Produce(rw, payload); err != nil {

@@ -74,7 +74,7 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 	lguc := listgroup.NewUseCase(gr)
 
 	// Setting up the authorization.
-	ja := restapi.NewJwtAuthentication("SuperSecretKey", ur, cr, gcr) // TODO ENV VAR
+	ja := restapi.NewJwtAuthentication("SuperSecretKey", ur, gr, cr, gcr) // TODO ENV VAR
 
 	// Applies when the "X-AUTH-KEY" header is set
 	api.AuthKeyAuth = ja.UserKeyMiddleware()
@@ -169,11 +169,9 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 			return middleware.NotImplemented("operation current_user.GetCurrentUserInvites has not yet been implemented")
 		})
 	}
-	if api.GroupGetGroupHandler == nil {
-		api.GroupGetGroupHandler = group.GetGroupHandlerFunc(func(params group.GetGroupParams, principal interface{}) middleware.Responder {
-			return middleware.NotImplemented("operation group.GetGroup has not yet been implemented")
-		})
-	}
+
+	api.GroupGetGroupHandler = handlers.NewGetGroupHandler(ja)
+
 	if api.BackupGetGroupBackupHandler == nil {
 		api.BackupGetGroupBackupHandler = backup.GetGroupBackupHandlerFunc(func(params backup.GetGroupBackupParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation backup.GetGroupBackup has not yet been implemented")

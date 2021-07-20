@@ -19,21 +19,24 @@ type JwtAuthentication interface {
 	UserKeyMiddleware() func(token string) (interface{}, error)
 	ExtractComputerFromApiKey(req *http.Request, callback func(um *model.Computer) middleware.Responder) middleware.Responder
 	ExtractUserFromApiKey(req *http.Request, callback func(um *model.User) middleware.Responder) middleware.Responder
+	WithGroup(um *model.User, groupID uint, callback func(gm *model.Group) middleware.Responder) middleware.Responder
 }
 
 type jwtAuthenticationImpl struct {
 	URepo  repository.UserRepository
 	CRepo  repository.ComputerRepository
+	GRepo  repository.GroupRepository
 	GCRepo repository.GroupComputerRepository
 
 	jwtSecret string
 }
 
-func NewJwtAuthentication(jwtSecret string, ur repository.UserRepository, cr repository.ComputerRepository, gcr repository.GroupComputerRepository) JwtAuthentication {
+func NewJwtAuthentication(jwtSecret string, ur repository.UserRepository, gr repository.GroupRepository, cr repository.ComputerRepository, gcr repository.GroupComputerRepository) JwtAuthentication {
 	return &jwtAuthenticationImpl{
 		jwtSecret: jwtSecret,
 		URepo:     ur,
 		CRepo:     cr,
+		GRepo:     gr,
 		GCRepo:    gcr,
 	}
 }

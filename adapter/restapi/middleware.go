@@ -1,12 +1,14 @@
 package restapi
 
 import (
+	errors2 "errors"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	jwtRequest "github.com/dgrijalva/jwt-go/request"
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime/middleware"
 	"mnimidamonbackend/domain/model"
+	"mnimidamonbackend/domain/repository"
 	"net/http"
 )
 
@@ -95,6 +97,29 @@ func (ja jwtAuthenticationImpl) ExtractComputerFromApiKey(req *http.Request, cal
 
 	// Return what the callback returns.
 	return callback(computer)
+}
+
+func (ja jwtAuthenticationImpl) WithGroup(um *model.User, groupID uint, callback func(gm *model.Group) middleware.Responder) middleware.Responder {
+	gm, err := ja.GRepo.FindById(groupID)
+	if err != nil {
+		if errors2.Is(err, repository.ErrNotFound) {
+			return newBadRequestErrorResponder(nil)
+		} else {
+			return newInternalServerErrorResponder(err)
+		}
+	}
+
+	isMember, err :=  ja.GRepo.IsMemberOf(um.ID, gm.ID)
+
+	if err != nil {
+		return newInternalServerErrorResponder(err)
+	}
+
+	if !isMember {
+		return newBadRequestErrorResponder(nil)
+	}
+
+	return callback(gm)
 }
 
 // TODO have to think about it
