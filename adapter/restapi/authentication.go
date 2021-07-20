@@ -2,7 +2,10 @@ package restapi
 
 import (
 	"github.com/dgrijalva/jwt-go"
+	"github.com/go-openapi/runtime/middleware"
+	"mnimidamonbackend/domain/model"
 	"mnimidamonbackend/domain/repository"
+	"net/http"
 	"strconv"
 	"time"
 )
@@ -13,18 +16,25 @@ type JwtAuthentication interface {
 	GenerateComputerToken(computerID uint) (*string, error)
 	GenerateUserToken(userID uint) (*string, error)
 	CompKeyMiddleware() func(token string) (interface{}, error)
-	UserKeyMiddleware() func(token string) (interface {}, error)
+	UserKeyMiddleware() func(token string) (interface{}, error)
+	ExtractComputerFromApiKey(req *http.Request, callback func(um *model.Computer) middleware.Responder) middleware.Responder
+	ExtractUserFromApiKey(req *http.Request, callback func(um *model.User) middleware.Responder) middleware.Responder
 }
 
 type jwtAuthenticationImpl struct {
-	URepo repository.UserRepository
+	URepo  repository.UserRepository
+	CRepo  repository.ComputerRepository
+	GCRepo repository.GroupComputerRepository
+
 	jwtSecret string
 }
 
-func NewJwtAuthentication(jwtSecret string, ur repository.UserRepository) JwtAuthentication {
+func NewJwtAuthentication(jwtSecret string, ur repository.UserRepository, cr repository.ComputerRepository, gcr repository.GroupComputerRepository) JwtAuthentication {
 	return &jwtAuthenticationImpl{
 		jwtSecret: jwtSecret,
-		URepo: ur,
+		URepo:     ur,
+		CRepo:     cr,
+		GCRepo:    gcr,
 	}
 }
 
@@ -67,7 +77,7 @@ func (ja *jwtAuthenticationImpl) GenerateComputerToken(computerID uint) (*string
 
 	// Populate the claims.
 	claims := computerTokenClaims{
-		ComputerID:   computerID,
+		ComputerID: computerID,
 		StandardClaims: jwt.StandardClaims{
 			Id:        strconv.FormatInt(int64(computerID), 10),
 			Issuer:    "mnimidamon-server",
@@ -92,14 +102,14 @@ func (ja *jwtAuthenticationImpl) generateSignedString(claims jwt.Claims) (*strin
 	return &signedString, nil
 }
 
-func  (ja *jwtAuthenticationImpl) GenerateUserToken(userID uint) (*string, error) {
+func (ja *jwtAuthenticationImpl) GenerateUserToken(userID uint) (*string, error) {
 	// The tokens will expire in one day. Unix function converts the
 	// date to the seconds passed so int64.
 	expiresAt := time.Now().Add(time.Hour * 10)
 
 	// Populate the claims.
 	claims := userTokenClaims{
-		UserID:   userID,
+		UserID: userID,
 		StandardClaims: jwt.StandardClaims{
 			Id:        strconv.FormatInt(int64(userID), 10),
 			Issuer:    "mnimidamon-server",

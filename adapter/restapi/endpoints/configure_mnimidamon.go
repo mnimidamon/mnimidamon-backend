@@ -50,44 +50,46 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 
 	api.JSONProducer = runtime.JSONProducer()
 
-
 	// Setting up the database.
 	db, err := sqliterepo.Initialize("../databasefiles/mnimidamon.db", &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
-	},true)
+	}, false)
 
 	if err != nil {
 		panic(err)
 	}
 
-	// Setting up the repositories
+	// Setting up the repositories.
 	ur := sqliterepo.NewUserRepository(db)
+	cr := sqliterepo.NewComputerRepository(db)
+	gcr := sqliterepo.NewGroupComputerRepository(db)
+
+	// Use case setup.
 	uruc := userregistration.NewUseCase(ur)
 	luuc := listuser.NewUseCase(ur)
 
 	// Setting up the authorization.
-	ja := restapi.NewJwtAuthentication("SuperSecretKey", ur) // TODO ENV VAR
+	ja := restapi.NewJwtAuthentication("SuperSecretKey", ur, cr, gcr) // TODO ENV VAR
 
 	// Applies when the "X-AUTH-KEY" header is set
 	api.AuthKeyAuth = ja.UserKeyMiddleware()
 	// Applies when the "X-COMP-KEY" header is set
 	api.CompKeyAuth = ja.CompKeyMiddleware()
 
-
 	/*
-	// Applies when the "X-AUTH-KEY" header is set
-	if api.AuthKeyAuth == nil {
-		api.AuthKeyAuth = func(token string) (interface{}, error) {
-			return nil, errors.NotImplemented("api key auth (auth_key) X-AUTH-KEY from header param [X-AUTH-KEY] has not yet been implemented")
+		// Applies when the "X-AUTH-KEY" header is set
+		if api.AuthKeyAuth == nil {
+			api.AuthKeyAuth = func(token string) (interface{}, error) {
+				return nil, errors.NotImplemented("api key auth (auth_key) X-AUTH-KEY from header param [X-AUTH-KEY] has not yet been implemented")
+			}
 		}
-	}
 
-	// Applies when the "X-COMP-KEY" header is set
-	if api.CompKeyAuth == nil {
-		api.CompKeyAuth = func(token string) (interface{}, error) {
-			return nil, errors.NotImplemented("api key auth (comp_key) X-COMP-KEY from header param [X-COMP-KEY] has not yet been implemented")
+		// Applies when the "X-COMP-KEY" header is set
+		if api.CompKeyAuth == nil {
+			api.CompKeyAuth = func(token string) (interface{}, error) {
+				return nil, errors.NotImplemented("api key auth (comp_key) X-COMP-KEY from header param [X-COMP-KEY] has not yet been implemented")
+			}
 		}
-	}
 	*/
 
 	// Set your custom authorizer if needed. Default one is security.Authorized()
@@ -103,41 +105,45 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 			return middleware.NotImplemented("operation invite.AcceptCurrentUserInvite has not yet been implemented")
 		})
 	}
+
 	if api.InviteDeclineCurrentUserInviteHandler == nil {
 		api.InviteDeclineCurrentUserInviteHandler = invite.DeclineCurrentUserInviteHandlerFunc(func(params invite.DeclineCurrentUserInviteParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation invite.DeclineCurrentUserInvite has not yet been implemented")
 		})
 	}
+
 	if api.CurrentUserDeleteCurrentUserHandler == nil {
 		api.CurrentUserDeleteCurrentUserHandler = current_user.DeleteCurrentUserHandlerFunc(func(params current_user.DeleteCurrentUserParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation current_user.DeleteCurrentUser has not yet been implemented")
 		})
 	}
+
 	if api.BackupDownloadBackupHandler == nil {
 		api.BackupDownloadBackupHandler = backup.DownloadBackupHandlerFunc(func(params backup.DownloadBackupParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation backup.DownloadBackup has not yet been implemented")
 		})
 	}
+
 	if api.ComputerGetBackupLocationsHandler == nil {
 		api.ComputerGetBackupLocationsHandler = computer.GetBackupLocationsHandlerFunc(func(params computer.GetBackupLocationsParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation computer.GetBackupLocations has not yet been implemented")
 		})
 	}
-	if api.CurrentUserGetCurrentUserHandler == nil {
-		api.CurrentUserGetCurrentUserHandler = current_user.GetCurrentUserHandlerFunc(func(params current_user.GetCurrentUserParams, principal interface{}) middleware.Responder {
-			return middleware.NotImplemented("operation current_user.GetCurrentUser has not yet been implemented")
-		})
-	}
+
+	api.CurrentUserGetCurrentUserHandler = handlers.NewGetCurrentUserHandler(ja)
+
 	if api.ComputerGetCurrentUserComputerHandler == nil {
 		api.ComputerGetCurrentUserComputerHandler = computer.GetCurrentUserComputerHandlerFunc(func(params computer.GetCurrentUserComputerParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation computer.GetCurrentUserComputer has not yet been implemented")
 		})
 	}
+
 	if api.ComputerGetCurrentUserComputersHandler == nil {
 		api.ComputerGetCurrentUserComputersHandler = computer.GetCurrentUserComputersHandlerFunc(func(params computer.GetCurrentUserComputersParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation computer.GetCurrentUserComputers has not yet been implemented")
 		})
 	}
+
 	if api.ComputerGetCurrentUserGroupComputersHandler == nil {
 		api.ComputerGetCurrentUserGroupComputersHandler = computer.GetCurrentUserGroupComputersHandlerFunc(func(params computer.GetCurrentUserGroupComputersParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation computer.GetCurrentUserGroupComputers has not yet been implemented")
@@ -148,11 +154,13 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 			return middleware.NotImplemented("operation current_user.GetCurrentUserGroups has not yet been implemented")
 		})
 	}
+
 	if api.InviteGetCurrentUserInviteHandler == nil {
 		api.InviteGetCurrentUserInviteHandler = invite.GetCurrentUserInviteHandlerFunc(func(params invite.GetCurrentUserInviteParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation invite.GetCurrentUserInvite has not yet been implemented")
 		})
 	}
+
 	if api.CurrentUserGetCurrentUserInvitesHandler == nil {
 		api.CurrentUserGetCurrentUserInvitesHandler = current_user.GetCurrentUserInvitesHandlerFunc(func(params current_user.GetCurrentUserInvitesParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation current_user.GetCurrentUserInvites has not yet been implemented")
@@ -193,6 +201,7 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 			return middleware.NotImplemented("operation backup.InitializeGroupBackupDeletion has not yet been implemented")
 		})
 	}
+
 	if api.GroupInviteUserToGroupHandler == nil {
 		api.GroupInviteUserToGroupHandler = group.InviteUserToGroupHandlerFunc(func(params group.InviteUserToGroupParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation group.InviteUserToGroup has not yet been implemented")

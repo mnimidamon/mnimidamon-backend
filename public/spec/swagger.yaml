@@ -282,7 +282,7 @@ paths:
     parameters:
       - $ref: "#/parameters/PathGroupInviteId"
 
-    # Get the invite denoted by invite_id
+    # Get the invite denoted by the current user_id and group_id
     get:
       operationId: getCurrentUserInvite
       tags:
