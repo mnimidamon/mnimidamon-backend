@@ -29,3 +29,14 @@ func MapToGroup(gm *model.Group) *modelapi.Group {
 		Name:    gm.Name,
 	}
 }
+
+func MapToGroups(gms []*model.Group) []*modelapi.Group {
+	var gs []*modelapi.Group
+
+	for _, gm := range gms {
+		g := MapToGroup(gm)
+		gs = append(gs, g)
+	}
+
+	return gs
+}

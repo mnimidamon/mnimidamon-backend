@@ -23,9 +23,10 @@ func (gd groupData) FindAllOfUser(userID uint) ([]*model.Group, error) {
 	var groups []Group
 
 	result :=
-		gd.Where("group_id IN (?)",
+		gd.Where("id IN (?)",
 			gd.Table("group_members").
-			Where("user_id = ?", userID),
+			Where("user_id = ?", userID).
+			Select("group_id"),
 		).Find(&groups)
 
 	if result.Error != nil {

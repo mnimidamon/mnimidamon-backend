@@ -12,6 +12,7 @@ import (
 	"mnimidamonbackend/adapter/restapi"
 	"mnimidamonbackend/adapter/restapi/handlers"
 	"mnimidamonbackend/domain/repository/sqliterepo"
+	"mnimidamonbackend/domain/usecase/listgroup"
 	"mnimidamonbackend/domain/usecase/listuser"
 	"mnimidamonbackend/domain/usecase/managegroup"
 	"mnimidamonbackend/domain/usecase/userregistration"
@@ -70,6 +71,7 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 	uruc := userregistration.NewUseCase(ur)
 	luuc := listuser.NewUseCase(ur)
 	mguc := managegroup.NewUseCase(ur, gr)
+	lguc := listgroup.NewUseCase(gr)
 
 	// Setting up the authorization.
 	ja := restapi.NewJwtAuthentication("SuperSecretKey", ur, cr, gcr) // TODO ENV VAR
@@ -153,11 +155,8 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 			return middleware.NotImplemented("operation computer.GetCurrentUserGroupComputers has not yet been implemented")
 		})
 	}
-	if api.CurrentUserGetCurrentUserGroupsHandler == nil {
-		api.CurrentUserGetCurrentUserGroupsHandler = current_user.GetCurrentUserGroupsHandlerFunc(func(params current_user.GetCurrentUserGroupsParams, principal interface{}) middleware.Responder {
-			return middleware.NotImplemented("operation current_user.GetCurrentUserGroups has not yet been implemented")
-		})
-	}
+
+	api.CurrentUserGetCurrentUserGroupsHandler = handlers.NewGetCurrentUserGroupsHandler(lguc, ja)
 
 	if api.InviteGetCurrentUserInviteHandler == nil {
 		api.InviteGetCurrentUserInviteHandler = invite.GetCurrentUserInviteHandlerFunc(func(params invite.GetCurrentUserInviteParams, principal interface{}) middleware.Responder {
