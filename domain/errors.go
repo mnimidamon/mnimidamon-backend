@@ -21,6 +21,7 @@ var (
 	ErrBackupWaitingForDeletion      = NewError("ErrBackupWaitingForDeletion")
 	ErrAlreadyExists                 = NewError("ErrAlreadyExists")
 	ErrUserWithUsernameAlreadyExists = NewError("ErrUserWithUsernameAlreadyExists")
+	ErrGroupWithNameAlreadyExists    = NewError("ErrGroupWithNameAlreadyExists")
 	ErrInternalDomain                = NewError("ErrInternalDomain")
 	ErrInvalidCredentials            = NewError("ErrInvalidCredentials")
 	ErrUserNotGroupMember            = NewError("ErrUserNotGroupMember")

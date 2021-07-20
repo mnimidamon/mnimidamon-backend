@@ -23,11 +23,14 @@ func NewUseCase(ur repository.UserRepository) usecase.UserRegistrationInterface 
 
 func (ur userRegistrationUseCase) RegisterUser(p payload.UserCredentialsPayload) (*model.User, error) {
 	// Unique username checkpoint.
-	userExists, _ := ur.URepo.FindByUsername(p.Username)
-	if userExists != nil {
-		return nil, domain.ErrUserWithUsernameAlreadyExists
+	_, err := ur.URepo.FindByUsername(p.Username)
+	if err != nil {
+		if !errors.Is(err, repository.ErrNotFound) {
+			return nil, domain.ToDomainError(err)
+		} else {
+			return nil, domain.ErrUserWithUsernameAlreadyExists
+		}
 	}
-
 	// New User creation.
 	user, err := model.NewUser(p.Username, p.Password)
 	if err != nil {

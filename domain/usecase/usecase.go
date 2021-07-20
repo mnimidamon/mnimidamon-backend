@@ -12,6 +12,10 @@ type UserRegistrationInterface interface {
 	// UnregisterUser()
 }
 
+type ManageGroupInterface interface {
+	CreateGroup(p payload.CreateGroupPayload) (*model.Group, error)
+}
+
 type ListUserInterface interface {
 	FindAll() ([]*model.User, error)
 	FindById(userID uint) (*model.User, error)
