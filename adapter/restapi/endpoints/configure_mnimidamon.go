@@ -130,6 +130,7 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 		})
 	}
 
+	api.GroupCreateGroupHandler = nil
 	api.CurrentUserGetCurrentUserHandler = handlers.NewGetCurrentUserHandler(ja)
 
 	if api.ComputerGetCurrentUserComputerHandler == nil {

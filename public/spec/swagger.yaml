@@ -361,6 +361,33 @@ paths:
         500:
           $ref: "#/responses/Internal"
 
+    post:
+      operationId: createGroup
+      tags:
+        - group
+      summary: Create a new group
+      security:
+        - auth_key: []
+      parameters:
+        - in: body
+          name: body
+          description: Group creation payload.
+          required: true
+          schema:
+            $ref: "#/definitions/GroupCreatePayload"
+      responses:
+        200:
+          description: The new gorup.
+          schema:
+            $ref: "#/definitions/Group"
+        400:
+          $ref: "#/responses/BadRequest"
+        401:
+          $ref: "#/responses/Unauthorized"
+        500:
+          $ref: "#/responses/Internal"
+
+
   /users/current/groups/{group_id}:
     parameters:
       - $ref: "#/parameters/PathGroupId"
@@ -927,6 +954,19 @@ definitions:
         example: "password"
         minLength: 3
         maxLength: 50
+
+  GroupCreatePayload:
+    description: "Payload that is used to create a new group."
+    type: object
+    required:
+      - name
+    properties:
+      name:
+        description: "Name of the group."
+        type: string
+        example: "damons"
+        minLength: 3
+        maxLength: 12
 
   # Response on successful registration.
   RegisterResponse:

@@ -54,6 +54,9 @@ func NewMnimidamonAPI(spec *loads.Document) *MnimidamonAPI {
 		InviteAcceptCurrentUserInviteHandler: invite.AcceptCurrentUserInviteHandlerFunc(func(params invite.AcceptCurrentUserInviteParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation invite.AcceptCurrentUserInvite has not yet been implemented")
 		}),
+		GroupCreateGroupHandler: group.CreateGroupHandlerFunc(func(params group.CreateGroupParams, principal interface{}) middleware.Responder {
+			return middleware.NotImplemented("operation group.CreateGroup has not yet been implemented")
+		}),
 		InviteDeclineCurrentUserInviteHandler: invite.DeclineCurrentUserInviteHandlerFunc(func(params invite.DeclineCurrentUserInviteParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation invite.DeclineCurrentUserInvite has not yet been implemented")
 		}),
@@ -192,6 +195,8 @@ type MnimidamonAPI struct {
 
 	// InviteAcceptCurrentUserInviteHandler sets the operation handler for the accept current user invite operation
 	InviteAcceptCurrentUserInviteHandler invite.AcceptCurrentUserInviteHandler
+	// GroupCreateGroupHandler sets the operation handler for the create group operation
+	GroupCreateGroupHandler group.CreateGroupHandler
 	// InviteDeclineCurrentUserInviteHandler sets the operation handler for the decline current user invite operation
 	InviteDeclineCurrentUserInviteHandler invite.DeclineCurrentUserInviteHandler
 	// CurrentUserDeleteCurrentUserHandler sets the operation handler for the delete current user operation
@@ -331,6 +336,9 @@ func (o *MnimidamonAPI) Validate() error {
 
 	if o.InviteAcceptCurrentUserInviteHandler == nil {
 		unregistered = append(unregistered, "invite.AcceptCurrentUserInviteHandler")
+	}
+	if o.GroupCreateGroupHandler == nil {
+		unregistered = append(unregistered, "group.CreateGroupHandler")
 	}
 	if o.InviteDeclineCurrentUserInviteHandler == nil {
 		unregistered = append(unregistered, "invite.DeclineCurrentUserInviteHandler")
@@ -514,6 +522,10 @@ func (o *MnimidamonAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/users/current/invites/{group_id}/accept"] = invite.NewAcceptCurrentUserInvite(o.context, o.InviteAcceptCurrentUserInviteHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/users/current/groups"] = group.NewCreateGroup(o.context, o.GroupCreateGroupHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}

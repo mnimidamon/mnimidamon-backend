@@ -611,6 +611,46 @@ func init() {
             "$ref": "#/responses/Internal"
           }
         }
+      },
+      "post": {
+        "security": [
+          {
+            "auth_key": []
+          }
+        ],
+        "tags": [
+          "group"
+        ],
+        "summary": "Create a new group",
+        "operationId": "createGroup",
+        "parameters": [
+          {
+            "description": "Group creation payload.",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GroupCreatePayload"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The new gorup.",
+            "schema": {
+              "$ref": "#/definitions/Group"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
+          }
+        }
       }
     },
     "/users/current/groups/{group_id}": {
@@ -1117,6 +1157,22 @@ func init() {
           "type": "integer",
           "readOnly": true,
           "example": 42
+        }
+      }
+    },
+    "GroupCreatePayload": {
+      "description": "Payload that is used to create a new group.",
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "description": "Name of the group.",
+          "type": "string",
+          "maxLength": 12,
+          "minLength": 3,
+          "example": "damons"
         }
       }
     },
@@ -2154,6 +2210,55 @@ func init() {
             }
           }
         }
+      },
+      "post": {
+        "security": [
+          {
+            "auth_key": []
+          }
+        ],
+        "tags": [
+          "group"
+        ],
+        "summary": "Create a new group",
+        "operationId": "createGroup",
+        "parameters": [
+          {
+            "description": "Group creation payload.",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GroupCreatePayload"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The new gorup.",
+            "schema": {
+              "$ref": "#/definitions/Group"
+            }
+          },
+          "400": {
+            "description": "Supplied parameters were not okay.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
       }
     },
     "/users/current/groups/{group_id}": {
@@ -2744,6 +2849,22 @@ func init() {
           "type": "integer",
           "readOnly": true,
           "example": 42
+        }
+      }
+    },
+    "GroupCreatePayload": {
+      "description": "Payload that is used to create a new group.",
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "description": "Name of the group.",
+          "type": "string",
+          "maxLength": 12,
+          "minLength": 3,
+          "example": "damons"
         }
       }
     },
