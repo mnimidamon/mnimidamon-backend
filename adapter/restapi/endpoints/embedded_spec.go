@@ -522,7 +522,7 @@ func init() {
         "parameters": [
           {
             "description": "Payload to register a new computer",
-            "name": "name",
+            "name": "body",
             "in": "body",
             "required": true,
             "schema": {
@@ -2096,7 +2096,7 @@ func init() {
         "parameters": [
           {
             "description": "Payload to register a new computer",
-            "name": "name",
+            "name": "body",
             "in": "body",
             "required": true,
             "schema": {

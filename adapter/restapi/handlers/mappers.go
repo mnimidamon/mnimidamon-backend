@@ -40,3 +40,11 @@ func MapToGroups(gms []*model.Group) []*modelapi.Group {
 
 	return gs
 }
+
+func MapToComputer(cm *model.Computer) *modelapi.Computer {
+	return &modelapi.Computer{
+		ComputerID: int64(cm.ID),
+		Name:       cm.Name,
+		OwnerID:    int64(cm.OwnerID),
+	}
+}

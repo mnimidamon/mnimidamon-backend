@@ -215,7 +215,7 @@ paths:
         - auth_key: []
       parameters:
         - in: body
-          name: name
+          name: body
           required: true
           description: Payload to register a new computer
           schema:

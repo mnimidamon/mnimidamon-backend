@@ -39,7 +39,7 @@ type RegisterComputerParams struct {
 	  Required: true
 	  In: body
 	*/
-	Name *modelapi.CreateComputerPayload
+	Body *modelapi.CreateComputerPayload
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -56,9 +56,9 @@ func (o *RegisterComputerParams) BindRequest(r *http.Request, route *middleware.
 		var body modelapi.CreateComputerPayload
 		if err := route.Consumer.Consume(r.Body, &body); err != nil {
 			if err == io.EOF {
-				res = append(res, errors.Required("name", "body", ""))
+				res = append(res, errors.Required("body", "body", ""))
 			} else {
-				res = append(res, errors.NewParseError("name", "body", "", err))
+				res = append(res, errors.NewParseError("body", "body", "", err))
 			}
 		} else {
 			// validate body object
@@ -72,11 +72,11 @@ func (o *RegisterComputerParams) BindRequest(r *http.Request, route *middleware.
 			}
 
 			if len(res) == 0 {
-				o.Name = &body
+				o.Body = &body
 			}
 		}
 	} else {
-		res = append(res, errors.Required("name", "body", ""))
+		res = append(res, errors.Required("body", "body", ""))
 	}
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)

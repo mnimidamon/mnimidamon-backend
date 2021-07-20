@@ -12,6 +12,7 @@ import (
 	"mnimidamonbackend/adapter/restapi"
 	"mnimidamonbackend/adapter/restapi/handlers"
 	"mnimidamonbackend/domain/repository/sqliterepo"
+	"mnimidamonbackend/domain/usecase/computerregistration"
 	"mnimidamonbackend/domain/usecase/listcomputer"
 	"mnimidamonbackend/domain/usecase/listgroup"
 	"mnimidamonbackend/domain/usecase/listgroupcomputer"
@@ -22,7 +23,6 @@ import (
 	"net/http"
 
 	"mnimidamonbackend/adapter/restapi/endpoints/operations"
-	"mnimidamonbackend/adapter/restapi/endpoints/operations/authorization"
 	"mnimidamonbackend/adapter/restapi/endpoints/operations/backup"
 	"mnimidamonbackend/adapter/restapi/endpoints/operations/computer"
 	"mnimidamonbackend/adapter/restapi/endpoints/operations/current_user"
@@ -78,6 +78,7 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 	lcuc := listcomputer.NewUseCase(cr)
 	lgcuc := listgroupcomputer.NewUseCase(gcr)
 	lgmuc := listgroupmember.NewUseCase(gr)
+	crcuc := computerregistration.NewUseCase(cr, ur)
 
 	// Setting up the authorization.
 	ja := restapi.NewJwtAuthentication("SuperSecretKey", luuc, lguc, lcuc, lgcuc, lgmuc)
@@ -217,11 +218,7 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 
 	api.AuthorizationLoginUserHandler = handlers.NewLoginUserHandler(uruc, ja)
 
-	if api.AuthorizationRegisterComputerHandler == nil {
-		api.AuthorizationRegisterComputerHandler = authorization.RegisterComputerHandlerFunc(func(params authorization.RegisterComputerParams, principal interface{}) middleware.Responder {
-			return middleware.NotImplemented("operation authorization.RegisterComputer has not yet been implemented")
-		})
-	}
+	api.AuthorizationRegisterComputerHandler = handlers.NewRegisterComputerHandler(crcuc, ja)
 
 	api.AuthorizationRegisterUserHandler = handlers.NewUserRegistrationHandler(uruc, ja)
 
