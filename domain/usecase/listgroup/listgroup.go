@@ -27,6 +27,16 @@ func (ur listGroupUseCase) FindAllOfUser(userID uint) ([]*model.Group, error) {
 	return gl, nil
 }
 
+func (ur listGroupUseCase) FindById(groupID uint) (*model.Group, error) {
+	g, err := ur.GRepo.FindById(groupID)
+
+	if err != nil {
+		return nil, domain.ToDomainError(err)
+	}
+
+	return g, nil
+}
+
 func (ur listGroupUseCase) FindByIdOfUser(groupID uint, userID uint) (*model.Group, error) {
 	isMember, err := ur.GRepo.IsMemberOf(userID, groupID)
 
@@ -46,4 +56,3 @@ func (ur listGroupUseCase) FindByIdOfUser(groupID uint, userID uint) (*model.Gro
 
 	return g, nil
 }
-

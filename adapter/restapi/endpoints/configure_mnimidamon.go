@@ -12,7 +12,10 @@ import (
 	"mnimidamonbackend/adapter/restapi"
 	"mnimidamonbackend/adapter/restapi/handlers"
 	"mnimidamonbackend/domain/repository/sqliterepo"
+	"mnimidamonbackend/domain/usecase/listcomputer"
 	"mnimidamonbackend/domain/usecase/listgroup"
+	"mnimidamonbackend/domain/usecase/listgroupcomputer"
+	"mnimidamonbackend/domain/usecase/listgroupmember"
 	"mnimidamonbackend/domain/usecase/listuser"
 	"mnimidamonbackend/domain/usecase/managegroup"
 	"mnimidamonbackend/domain/usecase/userregistration"
@@ -72,9 +75,12 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 	luuc := listuser.NewUseCase(ur)
 	mguc := managegroup.NewUseCase(ur, gr)
 	lguc := listgroup.NewUseCase(gr)
+	lcuc := listcomputer.NewUseCase(cr)
+	lgcuc := listgroupcomputer.NewUseCase(gcr)
+	lgmuc := listgroupmember.NewUseCase(gr)
 
 	// Setting up the authorization.
-	ja := restapi.NewJwtAuthentication("SuperSecretKey", ur, gr, cr, gcr) // TODO ENV VAR
+	ja := restapi.NewJwtAuthentication("SuperSecretKey", luuc, lguc, lcuc, lgcuc, lgmuc)
 
 	// Applies when the "X-AUTH-KEY" header is set
 	api.AuthKeyAuth = ja.UserKeyMiddleware()

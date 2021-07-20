@@ -24,6 +24,7 @@ type ListUserInterface interface {
 
 type ListGroupMemberInterface interface {
 	FindAllMembersOfGroup(groupID uint) ([]*model.User, error)
+	IsMemberOf(userID uint, groupID uint) (bool, error)
 }
 
 type ComputerRegistrationInterface interface {
@@ -63,6 +64,7 @@ type ListInviteInterface interface {
 }
 
 type ListGroupInterface interface {
+	FindById(groupID uint) (*model.Group, error)
 	FindAllOfUser(userID uint) ([]*model.Group, error)
 	FindByIdOfUser(groupID uint, userID uint) (*model.Group, error)
 }

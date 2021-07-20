@@ -25,7 +25,7 @@ func (grct *GroupComputerRepositoryTester) Setup(t *testing.T) {
 	_, gr, ur, cr := grct.Repo, grct.GRepo, grct.URepo, grct.CRepo
 	_, u, g, c := grct.GroupComputer, grct.User, grct.Group, grct.Computer
 	/*
-	gcr, gr, ur, cr := grct.Repo, grct.GRepo, grct.URepo, grct.CRepo
+	gcr, gr, ur, cr := grct.Repo, grct.LGCase, grct.LUCase, grct.LCCase
 	gc, u, g, c := grct.GroupComputer, grct.User, grct.Group, grct.Computer
 	*/
 

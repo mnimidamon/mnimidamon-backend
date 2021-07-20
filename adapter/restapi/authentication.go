@@ -4,7 +4,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/go-openapi/runtime/middleware"
 	"mnimidamonbackend/domain/model"
-	"mnimidamonbackend/domain/repository"
+	"mnimidamonbackend/domain/usecase"
 	"net/http"
 	"strconv"
 	"time"
@@ -23,21 +23,23 @@ type JwtAuthentication interface {
 }
 
 type jwtAuthenticationImpl struct {
-	URepo  repository.UserRepository
-	CRepo  repository.ComputerRepository
-	GRepo  repository.GroupRepository
-	GCRepo repository.GroupComputerRepository
+	LUCase  usecase.ListUserInterface
+	LCCase  usecase.ListComputerInterface
+	LGCase  usecase.ListGroupInterface
+	LGCCase usecase.ListGroupComputerInterface
+	LGMCase usecase.ListGroupMemberInterface
 
 	jwtSecret string
 }
 
-func NewJwtAuthentication(jwtSecret string, ur repository.UserRepository, gr repository.GroupRepository, cr repository.ComputerRepository, gcr repository.GroupComputerRepository) JwtAuthentication {
+func NewJwtAuthentication(jwtSecret string, luuc usecase.ListUserInterface, lguc usecase.ListGroupInterface, lcuc usecase.ListComputerInterface, lgcuc usecase.ListGroupComputerInterface, lgmuc usecase.ListGroupMemberInterface) JwtAuthentication {
 	return &jwtAuthenticationImpl{
 		jwtSecret: jwtSecret,
-		URepo:     ur,
-		CRepo:     cr,
-		GRepo:     gr,
-		GCRepo:    gcr,
+		LUCase:    luuc,
+		LCCase:    lcuc,
+		LGCase:    lguc,
+		LGCCase:   lgcuc,
+		LGMCase:   lgmuc,
 	}
 }
 

@@ -31,7 +31,7 @@ func (cbrt *ComputerBackupRepositoryTester) Setup(t *testing.T) {
 	_, gc, u, g, c, b := cbrt.ComputerBackup, cbrt.GroupComputer, cbrt.User, cbrt.Group, cbrt.Computer, cbrt.Backup
 
 	/*
-		cbr, gcr, gr, ur, cr, br := cbrt.Repo, cbrt.GCRepo, cbrt.GRepo, cbrt.URepo, cbrt.CRepo, cbrt.BRepo
+		cbr, gcr, gr, ur, cr, br := cbrt.Repo, cbrt.LGCCase, cbrt.LGCase, cbrt.LUCase, cbrt.LCCase, cbrt.BRepo
 		cb, gc, u, g, c, b := cbrt., cbrt.GroupComputer, cbrt.User, cbrt.Group, cbrt., cbrt.Backup
 	*/
 

@@ -7,8 +7,8 @@ import (
 	jwtRequest "github.com/dgrijalva/jwt-go/request"
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime/middleware"
+	"mnimidamonbackend/domain"
 	"mnimidamonbackend/domain/model"
-	"mnimidamonbackend/domain/repository"
 	"net/http"
 )
 
@@ -67,7 +67,7 @@ func (ja jwtAuthenticationImpl) ExtractUserFromApiKey(req *http.Request, callbac
 		return newUnauthorizedErrorResponder(ErrInvalidUserAuthToken)
 	}
 
-	user, err := ja.URepo.FindById(utc.UserID)
+	user, err := ja.LUCase.FindById(utc.UserID)
 	if err != nil {
 		return newInternalServerErrorResponder(err)
 	}
@@ -90,7 +90,7 @@ func (ja jwtAuthenticationImpl) ExtractComputerFromApiKey(req *http.Request, cal
 		return newUnauthorizedErrorResponder(ErrInvalidComputerAuthToken)
 	}
 
-	computer, err := ja.CRepo.FindById(ctc.ComputerID)
+	computer, err := ja.LCCase.FindById(ctc.ComputerID)
 	if err != nil {
 		return newInternalServerErrorResponder(err)
 	}
@@ -100,16 +100,16 @@ func (ja jwtAuthenticationImpl) ExtractComputerFromApiKey(req *http.Request, cal
 }
 
 func (ja jwtAuthenticationImpl) WithGroup(um *model.User, groupID uint, callback func(gm *model.Group) middleware.Responder) middleware.Responder {
-	gm, err := ja.GRepo.FindById(groupID)
+	gm, err := ja.LGCase.FindById(groupID)
 	if err != nil {
-		if errors2.Is(err, repository.ErrNotFound) {
+		if errors2.Is(err, domain.ErrNotFound) {
 			return newBadRequestErrorResponder(nil)
 		} else {
 			return newInternalServerErrorResponder(err)
 		}
 	}
 
-	isMember, err :=  ja.GRepo.IsMemberOf(um.ID, gm.ID)
+	isMember, err :=  ja.LGMCase.IsMemberOf(um.ID, gm.ID)
 
 	if err != nil {
 		return newInternalServerErrorResponder(err)
