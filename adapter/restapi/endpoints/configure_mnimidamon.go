@@ -88,29 +88,6 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 	// Applies when the "X-COMP-KEY" header is set
 	api.CompKeyAuth = ja.CompKeyMiddleware()
 
-	/*
-		// Applies when the "X-AUTH-KEY" header is set
-		if api.AuthKeyAuth == nil {
-			api.AuthKeyAuth = func(token string) (interface{}, error) {
-				return nil, errors.NotImplemented("api key auth (auth_key) X-AUTH-KEY from header param [X-AUTH-KEY] has not yet been implemented")
-			}
-		}
-
-		// Applies when the "X-COMP-KEY" header is set
-		if api.CompKeyAuth == nil {
-			api.CompKeyAuth = func(token string) (interface{}, error) {
-				return nil, errors.NotImplemented("api key auth (comp_key) X-COMP-KEY from header param [X-COMP-KEY] has not yet been implemented")
-			}
-		}
-	*/
-
-	// Set your custom authorizer if needed. Default one is security.Authorized()
-	// Expected interface runtime.Authorizer
-	//
-	// Example:
-	// api.APIAuthorizer = security.Authorized()
-	// You may change here the memory limit for this multipart form parser. Below is the default (32 MB).
-	// backup.UploadBackupMaxParseMemory = 32 << 20
 
 	if api.InviteAcceptCurrentUserInviteHandler == nil {
 		api.InviteAcceptCurrentUserInviteHandler = invite.AcceptCurrentUserInviteHandlerFunc(func(params invite.AcceptCurrentUserInviteParams, principal interface{}) middleware.Responder {
@@ -143,13 +120,12 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 	}
 
 	api.GroupCreateGroupHandler = handlers.NewCreateGroupHandler(mguc, ja)
+
 	api.CurrentUserGetCurrentUserHandler = handlers.NewGetCurrentUserHandler(ja)
 
-	if api.ComputerGetCurrentUserComputerHandler == nil {
-		api.ComputerGetCurrentUserComputerHandler = computer.GetCurrentUserComputerHandlerFunc(func(params computer.GetCurrentUserComputerParams, principal interface{}) middleware.Responder {
-			return middleware.NotImplemented("operation computer.GetCurrentUserComputer has not yet been implemented")
-		})
-	}
+	api.ComputerGetCurrentComputerHandler =  handlers.NewGetCurrentUserComputer(luuc, lcuc, ja)
+
+	api.ComputerGetCurrentUserComputerHandler = nil
 
 	if api.ComputerGetCurrentUserComputersHandler == nil {
 		api.ComputerGetCurrentUserComputersHandler = computer.GetCurrentUserComputersHandlerFunc(func(params computer.GetCurrentUserComputersParams, principal interface{}) middleware.Responder {

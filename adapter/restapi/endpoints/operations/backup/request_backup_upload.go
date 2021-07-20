@@ -29,7 +29,7 @@ func NewRequestBackupUpload(ctx *middleware.Context, handler RequestBackupUpload
 	return &RequestBackupUpload{Context: ctx, Handler: handler}
 }
 
-/* RequestBackupUpload swagger:route PUT /users/current/computer/current/groups/{group_id}/backups/{backup_id} backup requestBackupUpload
+/* RequestBackupUpload swagger:route PUT /users/current/computers/current/groups/{group_id}/backups/{backup_id} backup requestBackupUpload
 
 Update the upload request flag
 

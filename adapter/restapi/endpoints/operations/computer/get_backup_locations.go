@@ -29,7 +29,7 @@ func NewGetBackupLocations(ctx *middleware.Context, handler GetBackupLocationsHa
 	return &GetBackupLocations{Context: ctx, Handler: handler}
 }
 
-/* GetBackupLocations swagger:route GET /users/current/computer/current/groups/{group_id}/backups/{backup_id}/computers computer getBackupLocations
+/* GetBackupLocations swagger:route GET /users/current/computers/current/groups/{group_id}/backups/{backup_id}/computers computer getBackupLocations
 
 Get a list on which computers the backup is stored
 

@@ -29,7 +29,7 @@ func NewUploadBackup(ctx *middleware.Context, handler UploadBackupHandler) *Uplo
 	return &UploadBackup{Context: ctx, Handler: handler}
 }
 
-/* UploadBackup swagger:route POST /users/current/computer/current/groups/{group_id}/backups/{backup_id}/upload backup uploadBackup
+/* UploadBackup swagger:route POST /users/current/computers/current/groups/{group_id}/backups/{backup_id}/upload backup uploadBackup
 
 Upload the backup file
 

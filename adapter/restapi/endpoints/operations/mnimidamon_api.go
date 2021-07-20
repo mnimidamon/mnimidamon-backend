@@ -69,6 +69,9 @@ func NewMnimidamonAPI(spec *loads.Document) *MnimidamonAPI {
 		ComputerGetBackupLocationsHandler: computer.GetBackupLocationsHandlerFunc(func(params computer.GetBackupLocationsParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation computer.GetBackupLocations has not yet been implemented")
 		}),
+		ComputerGetCurrentComputerHandler: computer.GetCurrentComputerHandlerFunc(func(params computer.GetCurrentComputerParams, principal interface{}) middleware.Responder {
+			return middleware.NotImplemented("operation computer.GetCurrentComputer has not yet been implemented")
+		}),
 		CurrentUserGetCurrentUserHandler: current_user.GetCurrentUserHandlerFunc(func(params current_user.GetCurrentUserParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation current_user.GetCurrentUser has not yet been implemented")
 		}),
@@ -205,6 +208,8 @@ type MnimidamonAPI struct {
 	BackupDownloadBackupHandler backup.DownloadBackupHandler
 	// ComputerGetBackupLocationsHandler sets the operation handler for the get backup locations operation
 	ComputerGetBackupLocationsHandler computer.GetBackupLocationsHandler
+	// ComputerGetCurrentComputerHandler sets the operation handler for the get current computer operation
+	ComputerGetCurrentComputerHandler computer.GetCurrentComputerHandler
 	// CurrentUserGetCurrentUserHandler sets the operation handler for the get current user operation
 	CurrentUserGetCurrentUserHandler current_user.GetCurrentUserHandler
 	// ComputerGetCurrentUserComputerHandler sets the operation handler for the get current user computer operation
@@ -351,6 +356,9 @@ func (o *MnimidamonAPI) Validate() error {
 	}
 	if o.ComputerGetBackupLocationsHandler == nil {
 		unregistered = append(unregistered, "computer.GetBackupLocationsHandler")
+	}
+	if o.ComputerGetCurrentComputerHandler == nil {
+		unregistered = append(unregistered, "computer.GetCurrentComputerHandler")
 	}
 	if o.CurrentUserGetCurrentUserHandler == nil {
 		unregistered = append(unregistered, "current_user.GetCurrentUserHandler")
@@ -537,11 +545,15 @@ func (o *MnimidamonAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/users/current/computer/current/groups/{group_id}/backups/{backup_id}/download"] = backup.NewDownloadBackup(o.context, o.BackupDownloadBackupHandler)
+	o.handlers["GET"]["/users/current/computers/current/groups/{group_id}/backups/{backup_id}/download"] = backup.NewDownloadBackup(o.context, o.BackupDownloadBackupHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/users/current/computer/current/groups/{group_id}/backups/{backup_id}/computers"] = computer.NewGetBackupLocations(o.context, o.ComputerGetBackupLocationsHandler)
+	o.handlers["GET"]["/users/current/computers/current/groups/{group_id}/backups/{backup_id}/computers"] = computer.NewGetBackupLocations(o.context, o.ComputerGetBackupLocationsHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/users/current/computers/current"] = computer.NewGetCurrentComputer(o.context, o.ComputerGetCurrentComputerHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -577,11 +589,11 @@ func (o *MnimidamonAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/users/current/computer/current/groups/{group_id}/backups/{backup_id}"] = backup.NewGetGroupBackup(o.context, o.BackupGetGroupBackupHandler)
+	o.handlers["GET"]["/users/current/computers/current/groups/{group_id}/backups/{backup_id}"] = backup.NewGetGroupBackup(o.context, o.BackupGetGroupBackupHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/users/current/computer/current/groups/{group_id}/backups"] = backup.NewGetGroupBackups(o.context, o.BackupGetGroupBackupsHandler)
+	o.handlers["GET"]["/users/current/computers/current/groups/{group_id}/backups"] = backup.NewGetGroupBackups(o.context, o.BackupGetGroupBackupsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -597,11 +609,11 @@ func (o *MnimidamonAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/users/current/computer/current/groups/{group_id}/backups"] = backup.NewInitializeGroupBackup(o.context, o.BackupInitializeGroupBackupHandler)
+	o.handlers["POST"]["/users/current/computers/current/groups/{group_id}/backups"] = backup.NewInitializeGroupBackup(o.context, o.BackupInitializeGroupBackupHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/users/current/computer/current/groups/{group_id}/backups/{backup_id}"] = backup.NewInitializeGroupBackupDeletion(o.context, o.BackupInitializeGroupBackupDeletionHandler)
+	o.handlers["DELETE"]["/users/current/computers/current/groups/{group_id}/backups/{backup_id}"] = backup.NewInitializeGroupBackupDeletion(o.context, o.BackupInitializeGroupBackupDeletionHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
@@ -621,11 +633,11 @@ func (o *MnimidamonAPI) initHandlerCache() {
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/users/current/computer/current/groups/{group_id}/backups/{backup_id}"] = backup.NewRequestBackupUpload(o.context, o.BackupRequestBackupUploadHandler)
+	o.handlers["PUT"]["/users/current/computers/current/groups/{group_id}/backups/{backup_id}"] = backup.NewRequestBackupUpload(o.context, o.BackupRequestBackupUploadHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/users/current/computer/current/groups/{group_id}/backups/{backup_id}/upload"] = backup.NewUploadBackup(o.context, o.BackupUploadBackupHandler)
+	o.handlers["POST"]["/users/current/computers/current/groups/{group_id}/backups/{backup_id}/upload"] = backup.NewUploadBackup(o.context, o.BackupUploadBackupHandler)
 }
 
 // Serve creates a http handler to serve the API over HTTP

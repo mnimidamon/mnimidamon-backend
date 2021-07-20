@@ -29,7 +29,7 @@ func NewInitializeGroupBackup(ctx *middleware.Context, handler InitializeGroupBa
 	return &InitializeGroupBackup{Context: ctx, Handler: handler}
 }
 
-/* InitializeGroupBackup swagger:route POST /users/current/computer/current/groups/{group_id}/backups backup initializeGroupBackup
+/* InitializeGroupBackup swagger:route POST /users/current/computers/current/groups/{group_id}/backups backup initializeGroupBackup
 
 Initialize a new backup
 

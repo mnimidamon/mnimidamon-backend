@@ -232,6 +232,28 @@ paths:
         500:
           $ref: "#/responses/Internal"
 
+  /users/current/computers/current:
+
+    # Get all backups of a group.
+    get:
+      operationId: getCurrentComputer
+      tags:
+        - computer
+      summary: Get current computer
+      security:
+        - auth_key: []
+          comp_key: []
+      responses:
+        200:
+          description: The current Computer.
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Computer"
+        401:
+          $ref: "#/responses/Unauthorized"
+        500:
+          $ref: "#/responses/Internal"
 
   /users/current/computers/{computer_id}:
     parameters:
@@ -482,7 +504,9 @@ paths:
         500:
           $ref: "#/responses/Internal"
 
-  /users/current/computer/current/groups/{group_id}/backups:
+
+
+  /users/current/computers/current/groups/{group_id}/backups:
     parameters:
       - $ref: "#/parameters/PathGroupId"
 
@@ -531,7 +555,7 @@ paths:
 
 
 
-  /users/current/computer/current/groups/{group_id}/backups/{backup_id}:
+  /users/current/computers/current/groups/{group_id}/backups/{backup_id}:
     parameters:
       - $ref: "#/parameters/PathGroupId"
       - $ref: "#/parameters/PathBackupId"
@@ -544,7 +568,7 @@ paths:
       summary: Get a backup
       security:
         - auth_key: []
-        - comp_key: []
+          comp_key: []
       responses:
         200:
           description: The specified .
@@ -565,7 +589,7 @@ paths:
       summary: Initialize a backup deletion
       security:
         - auth_key: []
-        - comp_key: []
+          comp_key: []
       responses:
         202:
           description: The specified backup is logged to be deleted.
@@ -596,7 +620,7 @@ paths:
         500:
           $ref: "#/responses/Internal"
 
-  /users/current/computer/current/groups/{group_id}/backups/{backup_id}/computers:
+  /users/current/computers/current/groups/{group_id}/backups/{backup_id}/computers:
     parameters:
       - $ref: "#/parameters/PathGroupId"
       - $ref: "#/parameters/PathBackupId"
@@ -608,7 +632,7 @@ paths:
       summary: Get a list on which computers the backup is stored
       security:
         - auth_key: []
-        - comp_key: []
+          comp_key: []
       responses:
         200:
           description: Users and their computers that have the backup
@@ -622,7 +646,7 @@ paths:
           $ref: "#/responses/Internal"
 
 
-  /users/current/computer/current/groups/{group_id}/backups/{backup_id}/download:
+  /users/current/computers/current/groups/{group_id}/backups/{backup_id}/download:
     parameters:
       - $ref: "#/parameters/PathGroupId"
       - $ref: "#/parameters/PathBackupId"
@@ -635,7 +659,7 @@ paths:
       summary: Download the backup file
       security:
         - auth_key: []
-        - comp_key: []
+          comp_key: []
       responses:
         200:
           description: Binary string of the encoded file content.
@@ -652,7 +676,7 @@ paths:
           $ref: "#/responses/Internal"
 
 
-  /users/current/computer/current/groups/{group_id}/backups/{backup_id}/upload:
+  /users/current/computers/current/groups/{group_id}/backups/{backup_id}/upload:
     parameters:
       - $ref: "#/parameters/PathGroupId"
       - $ref: "#/parameters/PathBackupId"
@@ -665,7 +689,7 @@ paths:
       summary: Upload the backup file
       security:
         - auth_key: []
-        - comp_key: []
+          comp_key: []
       consumes:
         - multipart/form-data
       parameters:

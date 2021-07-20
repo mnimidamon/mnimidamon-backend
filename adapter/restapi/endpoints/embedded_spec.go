@@ -153,330 +153,6 @@ func init() {
         }
       }
     },
-    "/users/current/computer/current/groups/{group_id}/backups": {
-      "get": {
-        "security": [
-          {
-            "auth_key": []
-          },
-          {
-            "comp_key": []
-          }
-        ],
-        "tags": [
-          "backup"
-        ],
-        "summary": "Get group backups",
-        "operationId": "getGroupBackups",
-        "responses": {
-          "200": {
-            "description": "Array of the group backups.",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Backup"
-              }
-            }
-          },
-          "401": {
-            "$ref": "#/responses/Unauthorized"
-          },
-          "500": {
-            "$ref": "#/responses/Internal"
-          }
-        }
-      },
-      "post": {
-        "security": [
-          {
-            "auth_key": []
-          }
-        ],
-        "tags": [
-          "backup"
-        ],
-        "summary": "Initialize a new backup",
-        "operationId": "initializeGroupBackup",
-        "responses": {
-          "200": {
-            "description": "Newly created backup object.",
-            "schema": {
-              "$ref": "#/definitions/Backup"
-            }
-          },
-          "401": {
-            "$ref": "#/responses/Unauthorized"
-          },
-          "404": {
-            "description": "If the backup is too big or there is any other problem.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "$ref": "#/responses/Internal"
-          }
-        }
-      },
-      "parameters": [
-        {
-          "$ref": "#/parameters/PathGroupId"
-        }
-      ]
-    },
-    "/users/current/computer/current/groups/{group_id}/backups/{backup_id}": {
-      "get": {
-        "security": [
-          {
-            "auth_key": []
-          },
-          {
-            "comp_key": []
-          }
-        ],
-        "tags": [
-          "backup"
-        ],
-        "summary": "Get a backup",
-        "operationId": "getGroupBackup",
-        "responses": {
-          "200": {
-            "description": "The specified .",
-            "schema": {
-              "$ref": "#/definitions/Backup"
-            }
-          },
-          "401": {
-            "$ref": "#/responses/Unauthorized"
-          },
-          "404": {
-            "$ref": "#/responses/NotFound"
-          },
-          "500": {
-            "$ref": "#/responses/Internal"
-          }
-        }
-      },
-      "put": {
-        "security": [
-          {
-            "auth_key": []
-          }
-        ],
-        "tags": [
-          "backup"
-        ],
-        "summary": "Update the upload request flag",
-        "operationId": "requestBackupUpload",
-        "responses": {
-          "200": {
-            "description": "Upload request flag has been updated"
-          },
-          "400": {
-            "$ref": "#/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/responses/Unauthorized"
-          },
-          "404": {
-            "$ref": "#/responses/NotFound"
-          },
-          "500": {
-            "$ref": "#/responses/Internal"
-          }
-        }
-      },
-      "delete": {
-        "security": [
-          {
-            "auth_key": []
-          },
-          {
-            "comp_key": []
-          }
-        ],
-        "tags": [
-          "backup"
-        ],
-        "summary": "Initialize a backup deletion",
-        "operationId": "initializeGroupBackupDeletion",
-        "responses": {
-          "202": {
-            "description": "The specified backup is logged to be deleted."
-          },
-          "401": {
-            "$ref": "#/responses/Unauthorized"
-          },
-          "404": {
-            "$ref": "#/responses/NotFound"
-          },
-          "500": {
-            "$ref": "#/responses/Internal"
-          }
-        }
-      },
-      "parameters": [
-        {
-          "$ref": "#/parameters/PathGroupId"
-        },
-        {
-          "$ref": "#/parameters/PathBackupId"
-        }
-      ]
-    },
-    "/users/current/computer/current/groups/{group_id}/backups/{backup_id}/computers": {
-      "get": {
-        "security": [
-          {
-            "auth_key": []
-          },
-          {
-            "comp_key": []
-          }
-        ],
-        "tags": [
-          "computer"
-        ],
-        "summary": "Get a list on which computers the backup is stored",
-        "operationId": "getBackupLocations",
-        "responses": {
-          "200": {
-            "description": "Users and their computers that have the backup",
-            "schema": {
-              "$ref": "#/definitions/StoredBackupsComputerResponse"
-            }
-          },
-          "401": {
-            "$ref": "#/responses/Unauthorized"
-          },
-          "404": {
-            "$ref": "#/responses/NotFound"
-          },
-          "500": {
-            "$ref": "#/responses/Internal"
-          }
-        }
-      },
-      "parameters": [
-        {
-          "$ref": "#/parameters/PathGroupId"
-        },
-        {
-          "$ref": "#/parameters/PathBackupId"
-        }
-      ]
-    },
-    "/users/current/computer/current/groups/{group_id}/backups/{backup_id}/download": {
-      "get": {
-        "security": [
-          {
-            "auth_key": []
-          },
-          {
-            "comp_key": []
-          }
-        ],
-        "tags": [
-          "backup"
-        ],
-        "summary": "Download the backup file",
-        "operationId": "downloadBackup",
-        "responses": {
-          "200": {
-            "description": "Binary string of the encoded file content.",
-            "schema": {
-              "type": "string",
-              "format": "binary"
-            }
-          },
-          "400": {
-            "$ref": "#/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/responses/Unauthorized"
-          },
-          "404": {
-            "$ref": "#/responses/NotFound"
-          },
-          "500": {
-            "$ref": "#/responses/Internal"
-          }
-        }
-      },
-      "parameters": [
-        {
-          "$ref": "#/parameters/PathGroupId"
-        },
-        {
-          "$ref": "#/parameters/PathBackupId"
-        }
-      ]
-    },
-    "/users/current/computer/current/groups/{group_id}/backups/{backup_id}/upload": {
-      "post": {
-        "security": [
-          {
-            "auth_key": []
-          },
-          {
-            "comp_key": []
-          }
-        ],
-        "consumes": [
-          "multipart/form-data"
-        ],
-        "tags": [
-          "backup"
-        ],
-        "summary": "Upload the backup file",
-        "operationId": "uploadBackup",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "Name of the file with the extension.",
-            "name": "file_name",
-            "in": "formData"
-          },
-          {
-            "type": "file",
-            "description": "Encoded file binary.",
-            "name": "uploaded_backup",
-            "in": "formData"
-          },
-          {
-            "type": "string",
-            "description": "Hash of the encoded file binary.",
-            "name": "hash",
-            "in": "formData"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The updated backup object.",
-            "schema": {
-              "$ref": "#/definitions/Backup"
-            }
-          },
-          "401": {
-            "$ref": "#/responses/Unauthorized"
-          },
-          "404": {
-            "$ref": "#/responses/NotFound"
-          },
-          "500": {
-            "$ref": "#/responses/Internal"
-          }
-        }
-      },
-      "parameters": [
-        {
-          "$ref": "#/parameters/PathGroupId"
-        },
-        {
-          "$ref": "#/parameters/PathBackupId"
-        }
-      ]
-    },
     "/users/current/computers": {
       "get": {
         "security": [
@@ -548,6 +224,352 @@ func init() {
           }
         }
       }
+    },
+    "/users/current/computers/current": {
+      "get": {
+        "security": [
+          {
+            "auth_key": [],
+            "comp_key": []
+          }
+        ],
+        "tags": [
+          "computer"
+        ],
+        "summary": "Get current computer",
+        "operationId": "getCurrentComputer",
+        "responses": {
+          "200": {
+            "description": "The current Computer.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Computer"
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
+          }
+        }
+      }
+    },
+    "/users/current/computers/current/groups/{group_id}/backups": {
+      "get": {
+        "security": [
+          {
+            "auth_key": []
+          },
+          {
+            "comp_key": []
+          }
+        ],
+        "tags": [
+          "backup"
+        ],
+        "summary": "Get group backups",
+        "operationId": "getGroupBackups",
+        "responses": {
+          "200": {
+            "description": "Array of the group backups.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Backup"
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "auth_key": []
+          }
+        ],
+        "tags": [
+          "backup"
+        ],
+        "summary": "Initialize a new backup",
+        "operationId": "initializeGroupBackup",
+        "responses": {
+          "200": {
+            "description": "Newly created backup object.",
+            "schema": {
+              "$ref": "#/definitions/Backup"
+            }
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "404": {
+            "description": "If the backup is too big or there is any other problem.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/parameters/PathGroupId"
+        }
+      ]
+    },
+    "/users/current/computers/current/groups/{group_id}/backups/{backup_id}": {
+      "get": {
+        "security": [
+          {
+            "auth_key": [],
+            "comp_key": []
+          }
+        ],
+        "tags": [
+          "backup"
+        ],
+        "summary": "Get a backup",
+        "operationId": "getGroupBackup",
+        "responses": {
+          "200": {
+            "description": "The specified .",
+            "schema": {
+              "$ref": "#/definitions/Backup"
+            }
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "auth_key": []
+          }
+        ],
+        "tags": [
+          "backup"
+        ],
+        "summary": "Update the upload request flag",
+        "operationId": "requestBackupUpload",
+        "responses": {
+          "200": {
+            "description": "Upload request flag has been updated"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "auth_key": [],
+            "comp_key": []
+          }
+        ],
+        "tags": [
+          "backup"
+        ],
+        "summary": "Initialize a backup deletion",
+        "operationId": "initializeGroupBackupDeletion",
+        "responses": {
+          "202": {
+            "description": "The specified backup is logged to be deleted."
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/parameters/PathGroupId"
+        },
+        {
+          "$ref": "#/parameters/PathBackupId"
+        }
+      ]
+    },
+    "/users/current/computers/current/groups/{group_id}/backups/{backup_id}/computers": {
+      "get": {
+        "security": [
+          {
+            "auth_key": [],
+            "comp_key": []
+          }
+        ],
+        "tags": [
+          "computer"
+        ],
+        "summary": "Get a list on which computers the backup is stored",
+        "operationId": "getBackupLocations",
+        "responses": {
+          "200": {
+            "description": "Users and their computers that have the backup",
+            "schema": {
+              "$ref": "#/definitions/StoredBackupsComputerResponse"
+            }
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/parameters/PathGroupId"
+        },
+        {
+          "$ref": "#/parameters/PathBackupId"
+        }
+      ]
+    },
+    "/users/current/computers/current/groups/{group_id}/backups/{backup_id}/download": {
+      "get": {
+        "security": [
+          {
+            "auth_key": [],
+            "comp_key": []
+          }
+        ],
+        "tags": [
+          "backup"
+        ],
+        "summary": "Download the backup file",
+        "operationId": "downloadBackup",
+        "responses": {
+          "200": {
+            "description": "Binary string of the encoded file content.",
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/parameters/PathGroupId"
+        },
+        {
+          "$ref": "#/parameters/PathBackupId"
+        }
+      ]
+    },
+    "/users/current/computers/current/groups/{group_id}/backups/{backup_id}/upload": {
+      "post": {
+        "security": [
+          {
+            "auth_key": [],
+            "comp_key": []
+          }
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "tags": [
+          "backup"
+        ],
+        "summary": "Upload the backup file",
+        "operationId": "uploadBackup",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Name of the file with the extension.",
+            "name": "file_name",
+            "in": "formData"
+          },
+          {
+            "type": "file",
+            "description": "Encoded file binary.",
+            "name": "uploaded_backup",
+            "in": "formData"
+          },
+          {
+            "type": "string",
+            "description": "Hash of the encoded file binary.",
+            "name": "hash",
+            "in": "formData"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The updated backup object.",
+            "schema": {
+              "$ref": "#/definitions/Backup"
+            }
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/parameters/PathGroupId"
+        },
+        {
+          "$ref": "#/parameters/PathBackupId"
+        }
+      ]
     },
     "/users/current/computers/{computer_id}": {
       "get": {
@@ -1613,438 +1635,6 @@ func init() {
         }
       }
     },
-    "/users/current/computer/current/groups/{group_id}/backups": {
-      "get": {
-        "security": [
-          {
-            "auth_key": []
-          },
-          {
-            "comp_key": []
-          }
-        ],
-        "tags": [
-          "backup"
-        ],
-        "summary": "Get group backups",
-        "operationId": "getGroupBackups",
-        "responses": {
-          "200": {
-            "description": "Array of the group backups.",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Backup"
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Internal server error.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      },
-      "post": {
-        "security": [
-          {
-            "auth_key": []
-          }
-        ],
-        "tags": [
-          "backup"
-        ],
-        "summary": "Initialize a new backup",
-        "operationId": "initializeGroupBackup",
-        "responses": {
-          "200": {
-            "description": "Newly created backup object.",
-            "schema": {
-              "$ref": "#/definitions/Backup"
-            }
-          },
-          "401": {
-            "description": "Unauthorized.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "404": {
-            "description": "If the backup is too big or there is any other problem.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Internal server error.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      },
-      "parameters": [
-        {
-          "type": "integer",
-          "description": "Numeric ID of the Group.",
-          "name": "group_id",
-          "in": "path",
-          "required": true
-        }
-      ]
-    },
-    "/users/current/computer/current/groups/{group_id}/backups/{backup_id}": {
-      "get": {
-        "security": [
-          {
-            "auth_key": []
-          },
-          {
-            "comp_key": []
-          }
-        ],
-        "tags": [
-          "backup"
-        ],
-        "summary": "Get a backup",
-        "operationId": "getGroupBackup",
-        "responses": {
-          "200": {
-            "description": "The specified .",
-            "schema": {
-              "$ref": "#/definitions/Backup"
-            }
-          },
-          "401": {
-            "description": "Unauthorized.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "404": {
-            "description": "The specified resource was not found.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Internal server error.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      },
-      "put": {
-        "security": [
-          {
-            "auth_key": []
-          }
-        ],
-        "tags": [
-          "backup"
-        ],
-        "summary": "Update the upload request flag",
-        "operationId": "requestBackupUpload",
-        "responses": {
-          "200": {
-            "description": "Upload request flag has been updated"
-          },
-          "400": {
-            "description": "Supplied parameters were not okay.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "401": {
-            "description": "Unauthorized.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "404": {
-            "description": "The specified resource was not found.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Internal server error.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      },
-      "delete": {
-        "security": [
-          {
-            "auth_key": []
-          },
-          {
-            "comp_key": []
-          }
-        ],
-        "tags": [
-          "backup"
-        ],
-        "summary": "Initialize a backup deletion",
-        "operationId": "initializeGroupBackupDeletion",
-        "responses": {
-          "202": {
-            "description": "The specified backup is logged to be deleted."
-          },
-          "401": {
-            "description": "Unauthorized.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "404": {
-            "description": "The specified resource was not found.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Internal server error.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      },
-      "parameters": [
-        {
-          "type": "integer",
-          "description": "Numeric ID of the Group.",
-          "name": "group_id",
-          "in": "path",
-          "required": true
-        },
-        {
-          "type": "integer",
-          "description": "Numeric ID of the Backup.",
-          "name": "backup_id",
-          "in": "path",
-          "required": true
-        }
-      ]
-    },
-    "/users/current/computer/current/groups/{group_id}/backups/{backup_id}/computers": {
-      "get": {
-        "security": [
-          {
-            "auth_key": []
-          },
-          {
-            "comp_key": []
-          }
-        ],
-        "tags": [
-          "computer"
-        ],
-        "summary": "Get a list on which computers the backup is stored",
-        "operationId": "getBackupLocations",
-        "responses": {
-          "200": {
-            "description": "Users and their computers that have the backup",
-            "schema": {
-              "$ref": "#/definitions/StoredBackupsComputerResponse"
-            }
-          },
-          "401": {
-            "description": "Unauthorized.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "404": {
-            "description": "The specified resource was not found.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Internal server error.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      },
-      "parameters": [
-        {
-          "type": "integer",
-          "description": "Numeric ID of the Group.",
-          "name": "group_id",
-          "in": "path",
-          "required": true
-        },
-        {
-          "type": "integer",
-          "description": "Numeric ID of the Backup.",
-          "name": "backup_id",
-          "in": "path",
-          "required": true
-        }
-      ]
-    },
-    "/users/current/computer/current/groups/{group_id}/backups/{backup_id}/download": {
-      "get": {
-        "security": [
-          {
-            "auth_key": []
-          },
-          {
-            "comp_key": []
-          }
-        ],
-        "tags": [
-          "backup"
-        ],
-        "summary": "Download the backup file",
-        "operationId": "downloadBackup",
-        "responses": {
-          "200": {
-            "description": "Binary string of the encoded file content.",
-            "schema": {
-              "type": "string",
-              "format": "binary"
-            }
-          },
-          "400": {
-            "description": "Supplied parameters were not okay.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "401": {
-            "description": "Unauthorized.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "404": {
-            "description": "The specified resource was not found.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Internal server error.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      },
-      "parameters": [
-        {
-          "type": "integer",
-          "description": "Numeric ID of the Group.",
-          "name": "group_id",
-          "in": "path",
-          "required": true
-        },
-        {
-          "type": "integer",
-          "description": "Numeric ID of the Backup.",
-          "name": "backup_id",
-          "in": "path",
-          "required": true
-        }
-      ]
-    },
-    "/users/current/computer/current/groups/{group_id}/backups/{backup_id}/upload": {
-      "post": {
-        "security": [
-          {
-            "auth_key": []
-          },
-          {
-            "comp_key": []
-          }
-        ],
-        "consumes": [
-          "multipart/form-data"
-        ],
-        "tags": [
-          "backup"
-        ],
-        "summary": "Upload the backup file",
-        "operationId": "uploadBackup",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "Name of the file with the extension.",
-            "name": "file_name",
-            "in": "formData"
-          },
-          {
-            "type": "file",
-            "description": "Encoded file binary.",
-            "name": "uploaded_backup",
-            "in": "formData"
-          },
-          {
-            "type": "string",
-            "description": "Hash of the encoded file binary.",
-            "name": "hash",
-            "in": "formData"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The updated backup object.",
-            "schema": {
-              "$ref": "#/definitions/Backup"
-            }
-          },
-          "401": {
-            "description": "Unauthorized.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "404": {
-            "description": "The specified resource was not found.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Internal server error.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      },
-      "parameters": [
-        {
-          "type": "integer",
-          "description": "Numeric ID of the Group.",
-          "name": "group_id",
-          "in": "path",
-          "required": true
-        },
-        {
-          "type": "integer",
-          "description": "Numeric ID of the Backup.",
-          "name": "backup_id",
-          "in": "path",
-          "required": true
-        }
-      ]
-    },
     "/users/current/computers": {
       "get": {
         "security": [
@@ -2131,6 +1721,466 @@ func init() {
           }
         }
       }
+    },
+    "/users/current/computers/current": {
+      "get": {
+        "security": [
+          {
+            "auth_key": [],
+            "comp_key": []
+          }
+        ],
+        "tags": [
+          "computer"
+        ],
+        "summary": "Get current computer",
+        "operationId": "getCurrentComputer",
+        "responses": {
+          "200": {
+            "description": "The current Computer.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Computer"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/users/current/computers/current/groups/{group_id}/backups": {
+      "get": {
+        "security": [
+          {
+            "auth_key": []
+          },
+          {
+            "comp_key": []
+          }
+        ],
+        "tags": [
+          "backup"
+        ],
+        "summary": "Get group backups",
+        "operationId": "getGroupBackups",
+        "responses": {
+          "200": {
+            "description": "Array of the group backups.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Backup"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "auth_key": []
+          }
+        ],
+        "tags": [
+          "backup"
+        ],
+        "summary": "Initialize a new backup",
+        "operationId": "initializeGroupBackup",
+        "responses": {
+          "200": {
+            "description": "Newly created backup object.",
+            "schema": {
+              "$ref": "#/definitions/Backup"
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "If the backup is too big or there is any other problem.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "type": "integer",
+          "description": "Numeric ID of the Group.",
+          "name": "group_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    "/users/current/computers/current/groups/{group_id}/backups/{backup_id}": {
+      "get": {
+        "security": [
+          {
+            "auth_key": [],
+            "comp_key": []
+          }
+        ],
+        "tags": [
+          "backup"
+        ],
+        "summary": "Get a backup",
+        "operationId": "getGroupBackup",
+        "responses": {
+          "200": {
+            "description": "The specified .",
+            "schema": {
+              "$ref": "#/definitions/Backup"
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "The specified resource was not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "auth_key": []
+          }
+        ],
+        "tags": [
+          "backup"
+        ],
+        "summary": "Update the upload request flag",
+        "operationId": "requestBackupUpload",
+        "responses": {
+          "200": {
+            "description": "Upload request flag has been updated"
+          },
+          "400": {
+            "description": "Supplied parameters were not okay.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "The specified resource was not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "auth_key": [],
+            "comp_key": []
+          }
+        ],
+        "tags": [
+          "backup"
+        ],
+        "summary": "Initialize a backup deletion",
+        "operationId": "initializeGroupBackupDeletion",
+        "responses": {
+          "202": {
+            "description": "The specified backup is logged to be deleted."
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "The specified resource was not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "type": "integer",
+          "description": "Numeric ID of the Group.",
+          "name": "group_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "type": "integer",
+          "description": "Numeric ID of the Backup.",
+          "name": "backup_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    "/users/current/computers/current/groups/{group_id}/backups/{backup_id}/computers": {
+      "get": {
+        "security": [
+          {
+            "auth_key": [],
+            "comp_key": []
+          }
+        ],
+        "tags": [
+          "computer"
+        ],
+        "summary": "Get a list on which computers the backup is stored",
+        "operationId": "getBackupLocations",
+        "responses": {
+          "200": {
+            "description": "Users and their computers that have the backup",
+            "schema": {
+              "$ref": "#/definitions/StoredBackupsComputerResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "The specified resource was not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "type": "integer",
+          "description": "Numeric ID of the Group.",
+          "name": "group_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "type": "integer",
+          "description": "Numeric ID of the Backup.",
+          "name": "backup_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    "/users/current/computers/current/groups/{group_id}/backups/{backup_id}/download": {
+      "get": {
+        "security": [
+          {
+            "auth_key": [],
+            "comp_key": []
+          }
+        ],
+        "tags": [
+          "backup"
+        ],
+        "summary": "Download the backup file",
+        "operationId": "downloadBackup",
+        "responses": {
+          "200": {
+            "description": "Binary string of the encoded file content.",
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "400": {
+            "description": "Supplied parameters were not okay.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "The specified resource was not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "type": "integer",
+          "description": "Numeric ID of the Group.",
+          "name": "group_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "type": "integer",
+          "description": "Numeric ID of the Backup.",
+          "name": "backup_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    "/users/current/computers/current/groups/{group_id}/backups/{backup_id}/upload": {
+      "post": {
+        "security": [
+          {
+            "auth_key": [],
+            "comp_key": []
+          }
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "tags": [
+          "backup"
+        ],
+        "summary": "Upload the backup file",
+        "operationId": "uploadBackup",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Name of the file with the extension.",
+            "name": "file_name",
+            "in": "formData"
+          },
+          {
+            "type": "file",
+            "description": "Encoded file binary.",
+            "name": "uploaded_backup",
+            "in": "formData"
+          },
+          {
+            "type": "string",
+            "description": "Hash of the encoded file binary.",
+            "name": "hash",
+            "in": "formData"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The updated backup object.",
+            "schema": {
+              "$ref": "#/definitions/Backup"
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "The specified resource was not found.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "type": "integer",
+          "description": "Numeric ID of the Group.",
+          "name": "group_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "type": "integer",
+          "description": "Numeric ID of the Backup.",
+          "name": "backup_id",
+          "in": "path",
+          "required": true
+        }
+      ]
     },
     "/users/current/computers/{computer_id}": {
       "get": {

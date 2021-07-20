@@ -17,7 +17,7 @@ type JwtAuthentication interface {
 	GenerateUserToken(userID uint) (*string, error)
 	CompKeyMiddleware() func(token string) (interface{}, error)
 	UserKeyMiddleware() func(token string) (interface{}, error)
-	ExtractComputerFromApiKey(req *http.Request, callback func(um *model.Computer) middleware.Responder) middleware.Responder
+	ExtractComputerFromApiKey(req *http.Request, ownerID uint, callback func(cm *model.Computer) middleware.Responder) middleware.Responder
 	ExtractUserFromApiKey(req *http.Request, callback func(um *model.User) middleware.Responder) middleware.Responder
 	WithGroup(um *model.User, groupID uint, callback func(gm *model.Group) middleware.Responder) middleware.Responder
 }

@@ -76,7 +76,7 @@ func (ja jwtAuthenticationImpl) ExtractUserFromApiKey(req *http.Request, callbac
 	return callback(user)
 }
 
-func (ja jwtAuthenticationImpl) ExtractComputerFromApiKey(req *http.Request, callback func(um *model.Computer) middleware.Responder) middleware.Responder {
+func (ja jwtAuthenticationImpl) ExtractComputerFromApiKey(req *http.Request, ownerID uint, callback func(cm *model.Computer) middleware.Responder) middleware.Responder {
 	ctc := new(computerTokenClaims)
 	token, err := jwtRequest.ParseFromRequest(req, &CompHeaderExtractorFilter, func(token *jwt.Token) (interface{}, error) {
 		return []byte(ja.jwtSecret), nil
@@ -93,6 +93,10 @@ func (ja jwtAuthenticationImpl) ExtractComputerFromApiKey(req *http.Request, cal
 	computer, err := ja.LCCase.FindById(ctc.ComputerID)
 	if err != nil {
 		return newInternalServerErrorResponder(err)
+	}
+
+	if ownerID != computer.OwnerID {
+		return newBadRequestErrorResponder(nil)
 	}
 
 	// Return what the callback returns.

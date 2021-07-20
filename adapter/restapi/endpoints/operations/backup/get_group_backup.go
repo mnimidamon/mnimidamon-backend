@@ -29,7 +29,7 @@ func NewGetGroupBackup(ctx *middleware.Context, handler GetGroupBackupHandler) *
 	return &GetGroupBackup{Context: ctx, Handler: handler}
 }
 
-/* GetGroupBackup swagger:route GET /users/current/computer/current/groups/{group_id}/backups/{backup_id} backup getGroupBackup
+/* GetGroupBackup swagger:route GET /users/current/computers/current/groups/{group_id}/backups/{backup_id} backup getGroupBackup
 
 Get a backup
 

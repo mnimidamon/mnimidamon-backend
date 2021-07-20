@@ -29,7 +29,7 @@ func NewInitializeGroupBackupDeletion(ctx *middleware.Context, handler Initializ
 	return &InitializeGroupBackupDeletion{Context: ctx, Handler: handler}
 }
 
-/* InitializeGroupBackupDeletion swagger:route DELETE /users/current/computer/current/groups/{group_id}/backups/{backup_id} backup initializeGroupBackupDeletion
+/* InitializeGroupBackupDeletion swagger:route DELETE /users/current/computers/current/groups/{group_id}/backups/{backup_id} backup initializeGroupBackupDeletion
 
 Initialize a backup deletion
 

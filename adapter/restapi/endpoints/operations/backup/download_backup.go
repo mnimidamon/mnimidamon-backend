@@ -29,7 +29,7 @@ func NewDownloadBackup(ctx *middleware.Context, handler DownloadBackupHandler) *
 	return &DownloadBackup{Context: ctx, Handler: handler}
 }
 
-/* DownloadBackup swagger:route GET /users/current/computer/current/groups/{group_id}/backups/{backup_id}/download backup downloadBackup
+/* DownloadBackup swagger:route GET /users/current/computers/current/groups/{group_id}/backups/{backup_id}/download backup downloadBackup
 
 Download the backup file
 
