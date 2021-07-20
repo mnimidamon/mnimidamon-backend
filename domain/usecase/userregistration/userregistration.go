@@ -27,10 +27,11 @@ func (ur userRegistrationUseCase) RegisterUser(p payload.UserCredentialsPayload)
 	if err != nil {
 		if !errors.Is(err, repository.ErrNotFound) {
 			return nil, domain.ToDomainError(err)
-		} else {
-			return nil, domain.ErrUserWithUsernameAlreadyExists
 		}
+	} else {
+		return nil, domain.ErrUserWithUsernameAlreadyExists
 	}
+
 	// New User creation.
 	user, err := model.NewUser(p.Username, p.Password)
 	if err != nil {

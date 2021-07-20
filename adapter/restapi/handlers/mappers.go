@@ -22,3 +22,10 @@ func MapToUsers(ums []*model.User) []*modelapi.User {
 
 	return us
 }
+
+func MapToGroup(gm *model.Group) *modelapi.Group {
+	return &modelapi.Group{
+		GroupID: int64(gm.ID),
+		Name:    gm.Name,
+	}
+}

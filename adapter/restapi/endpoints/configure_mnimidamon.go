@@ -13,6 +13,7 @@ import (
 	"mnimidamonbackend/adapter/restapi/handlers"
 	"mnimidamonbackend/domain/repository/sqliterepo"
 	"mnimidamonbackend/domain/usecase/listuser"
+	"mnimidamonbackend/domain/usecase/managegroup"
 	"mnimidamonbackend/domain/usecase/userregistration"
 	"net/http"
 
@@ -62,11 +63,13 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 	// Setting up the repositories.
 	ur := sqliterepo.NewUserRepository(db)
 	cr := sqliterepo.NewComputerRepository(db)
+	gr := sqliterepo.NewGroupRepository(db)
 	gcr := sqliterepo.NewGroupComputerRepository(db)
 
 	// Use case setup.
 	uruc := userregistration.NewUseCase(ur)
 	luuc := listuser.NewUseCase(ur)
+	mguc := managegroup.NewUseCase(ur, gr)
 
 	// Setting up the authorization.
 	ja := restapi.NewJwtAuthentication("SuperSecretKey", ur, cr, gcr) // TODO ENV VAR
@@ -130,7 +133,7 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 		})
 	}
 
-	api.GroupCreateGroupHandler = nil
+	api.GroupCreateGroupHandler = handlers.NewCreateGroupHandler(mguc, ja)
 	api.CurrentUserGetCurrentUserHandler = handlers.NewGetCurrentUserHandler(ja)
 
 	if api.ComputerGetCurrentUserComputerHandler == nil {

@@ -22,9 +22,9 @@ func (mg manageGroupUseCase) CreateGroup(p payload.CreateGroupPayload) (*model.G
 	if	_, err := mg.GRepo.FindByName(name); err != nil {
 		if !errors.Is(err, repository.ErrNotFound) {
 			return nil, domain.ToDomainError(err)
-		} else {
-			return nil, domain.ErrGroupWithNameAlreadyExists
 		}
+	} else {
+		return nil, domain.ErrGroupWithNameAlreadyExists
 	}
 
 	// Does the user exist?
