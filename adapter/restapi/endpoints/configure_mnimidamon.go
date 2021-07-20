@@ -198,11 +198,9 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 			return middleware.NotImplemented("operation group.InviteUserToGroup has not yet been implemented")
 		})
 	}
-	if api.AuthorizationLoginUserHandler == nil {
-		api.AuthorizationLoginUserHandler = authorization.LoginUserHandlerFunc(func(params authorization.LoginUserParams) middleware.Responder {
-			return middleware.NotImplemented("operation authorization.LoginUser has not yet been implemented")
-		})
-	}
+
+	api.AuthorizationLoginUserHandler = handlers.NewLoginUserHandler(uruc, ja)
+
 	if api.AuthorizationRegisterComputerHandler == nil {
 		api.AuthorizationRegisterComputerHandler = authorization.RegisterComputerHandlerFunc(func(params authorization.RegisterComputerParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation authorization.RegisterComputer has not yet been implemented")
