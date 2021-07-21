@@ -1,6 +1,9 @@
 # JetBrains GoLand
 .idea
 
+# AirCode reloading foulder
+air
+
 # Binaries for programs and plugins
 *.exe
 *.exe~
