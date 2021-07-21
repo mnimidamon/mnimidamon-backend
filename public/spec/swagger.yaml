@@ -491,6 +491,13 @@ paths:
       summary: Invite an user to a group
       security:
         - auth_key: []
+      parameters:
+        - in: body
+          name: body
+          required: true
+          description: Payload to invite a user
+          schema:
+            $ref: "#/definitions/InviteUserPayload"
       responses:
         200:
           description: The newly created invite object.
@@ -773,24 +780,14 @@ definitions:
         type: integer
         readOnly: true
         example: 42
-      user_id:
-        description: "Numeric identificator of the invited User."
-        type: integer
-        readOnly: true
-        example: 42
-      group_id:
-        description: "Numeric identificator of the Group the user is invited to."
-        type: integer
-        readOnly: true
-        example: 42
+      user:
+        $ref: "#/definitions/User"
+      group:
+        $ref: "#/definitions/Group"
       date:
         description: "The invitation date."
         type: string
         format: date
-      accepted:
-        description: "If it's accepted."
-        type: boolean
-        example: false
 
   Backup:
     description: "Object that represents a file Backup."
@@ -912,6 +909,19 @@ definitions:
           - computer_id: 10
             name: "thedamon"
 
+  #Invite user to group payload.
+  InviteUserPayload:
+    description: "Payload that is used for inviting a user to group"
+    type: object
+    required:
+      - username
+    properties:
+      username:
+        description: "User to be invited"
+        type: string
+        example: "marmiha"
+        minLength: 3
+        maxLength: 10
 
   # Create computer payload.
   CreateComputerPayload:

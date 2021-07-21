@@ -785,6 +785,17 @@ func init() {
         ],
         "summary": "Invite an user to a group",
         "operationId": "inviteUserToGroup",
+        "parameters": [
+          {
+            "description": "Payload to invite a user",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/InviteUserPayload"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "The newly created invite object.",
@@ -1202,21 +1213,13 @@ func init() {
       "description": "Object that represents an active invite to a group.",
       "type": "object",
       "properties": {
-        "accepted": {
-          "description": "If it's accepted.",
-          "type": "boolean",
-          "example": false
-        },
         "date": {
           "description": "The invitation date.",
           "type": "string",
           "format": "date"
         },
-        "group_id": {
-          "description": "Numeric identificator of the Group the user is invited to.",
-          "type": "integer",
-          "readOnly": true,
-          "example": 42
+        "group": {
+          "$ref": "#/definitions/Group"
         },
         "invite_id": {
           "description": "Numeric identificator of the Invite.",
@@ -1224,11 +1227,24 @@ func init() {
           "readOnly": true,
           "example": 42
         },
-        "user_id": {
-          "description": "Numeric identificator of the invited User.",
-          "type": "integer",
-          "readOnly": true,
-          "example": 42
+        "user": {
+          "$ref": "#/definitions/User"
+        }
+      }
+    },
+    "InviteUserPayload": {
+      "description": "Payload that is used for inviting a user to group",
+      "type": "object",
+      "required": [
+        "username"
+      ],
+      "properties": {
+        "username": {
+          "description": "User to be invited",
+          "type": "string",
+          "maxLength": 10,
+          "minLength": 3,
+          "example": "marmiha"
         }
       }
     },
@@ -2447,6 +2463,17 @@ func init() {
         ],
         "summary": "Invite an user to a group",
         "operationId": "inviteUserToGroup",
+        "parameters": [
+          {
+            "description": "Payload to invite a user",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/InviteUserPayload"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "The newly created invite object.",
@@ -2922,21 +2949,13 @@ func init() {
       "description": "Object that represents an active invite to a group.",
       "type": "object",
       "properties": {
-        "accepted": {
-          "description": "If it's accepted.",
-          "type": "boolean",
-          "example": false
-        },
         "date": {
           "description": "The invitation date.",
           "type": "string",
           "format": "date"
         },
-        "group_id": {
-          "description": "Numeric identificator of the Group the user is invited to.",
-          "type": "integer",
-          "readOnly": true,
-          "example": 42
+        "group": {
+          "$ref": "#/definitions/Group"
         },
         "invite_id": {
           "description": "Numeric identificator of the Invite.",
@@ -2944,11 +2963,24 @@ func init() {
           "readOnly": true,
           "example": 42
         },
-        "user_id": {
-          "description": "Numeric identificator of the invited User.",
-          "type": "integer",
-          "readOnly": true,
-          "example": 42
+        "user": {
+          "$ref": "#/definitions/User"
+        }
+      }
+    },
+    "InviteUserPayload": {
+      "description": "Payload that is used for inviting a user to group",
+      "type": "object",
+      "required": [
+        "username"
+      ],
+      "properties": {
+        "username": {
+          "description": "User to be invited",
+          "type": "string",
+          "maxLength": 10,
+          "minLength": 3,
+          "example": "marmiha"
         }
       }
     },

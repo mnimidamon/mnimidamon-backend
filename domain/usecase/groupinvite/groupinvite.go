@@ -107,7 +107,7 @@ func (gi groupInviteUseCase) DeclineInvite(userID uint, groupID uint) error {
 }
 
 func (gi groupInviteUseCase) InviteUser(userID uint, groupID uint) (*model.Invite, error) {
-	_, g, err := gi.findUserAndGroup(userID, groupID)
+	u, g, err := gi.findUserAndGroup(userID, groupID)
 	if err != nil {
 		return nil, err
 	}
@@ -122,11 +122,20 @@ func (gi groupInviteUseCase) InviteUser(userID uint, groupID uint) (*model.Invit
 		return nil, domain.ErrAlreadyExists
 	}
 
+	isMember, err := gi.GRepo.IsMemberOf(userID, groupID)
+	if err != nil {
+		return nil, domain.ToDomainError(err)
+	}
+
+	if isMember {
+		return nil, domain.ErrUserAlreadyGroupMember
+	}
+
 	i := &model.Invite{
 		UserID:    userID,
 		GroupID:   groupID,
-		User:      nil,
-		Group:     nil,
+		User:      u,
+		Group:     g,
 		CreatedAt: time.Time{},
 	}
 

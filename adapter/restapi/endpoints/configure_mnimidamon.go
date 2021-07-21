@@ -13,6 +13,7 @@ import (
 	"mnimidamonbackend/adapter/restapi/handlers"
 	"mnimidamonbackend/domain/repository/sqliterepo"
 	"mnimidamonbackend/domain/usecase/computerregistration"
+	"mnimidamonbackend/domain/usecase/groupinvite"
 	"mnimidamonbackend/domain/usecase/listcomputer"
 	"mnimidamonbackend/domain/usecase/listgroup"
 	"mnimidamonbackend/domain/usecase/listgroupcomputer"
@@ -69,6 +70,7 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 	cr := sqliterepo.NewComputerRepository(db)
 	gr := sqliterepo.NewGroupRepository(db)
 	gcr := sqliterepo.NewGroupComputerRepository(db)
+	ir := sqliterepo.NewInviteRepository(db)
 
 	// Use case setup.
 	uruc := userregistration.NewUseCase(ur)
@@ -79,6 +81,7 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 	lgcuc := listgroupcomputer.NewUseCase(gcr)
 	lgmuc := listgroupmember.NewUseCase(gr)
 	crcuc := computerregistration.NewUseCase(cr, ur)
+	giuc := groupinvite.NewUseCase(gr, ir, ur)
 
 	// Setting up the authorization.
 	ja := restapi.NewJwtAuthentication("SuperSecretKey", luuc, lguc, lcuc, lgcuc, lgmuc)
@@ -186,11 +189,8 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 		})
 	}
 
-	if api.GroupInviteUserToGroupHandler == nil {
-		api.GroupInviteUserToGroupHandler = group.InviteUserToGroupHandlerFunc(func(params group.InviteUserToGroupParams, principal interface{}) middleware.Responder {
-			return middleware.NotImplemented("operation group.InviteUserToGroup has not yet been implemented")
-		})
-	}
+
+	api.GroupInviteUserToGroupHandler = handlers.NewInviteUserToGroupHandler(giuc, luuc, ja)
 
 	api.AuthorizationLoginUserHandler = handlers.NewLoginUserHandler(uruc, ja)
 

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"github.com/go-openapi/strfmt"
 	"mnimidamonbackend/adapter/restapi/modelapi"
 	"mnimidamonbackend/domain/model"
 )
@@ -46,5 +47,13 @@ func MapToComputer(cm *model.Computer) *modelapi.Computer {
 		ComputerID: int64(cm.ID),
 		Name:       cm.Name,
 		OwnerID:    int64(cm.OwnerID),
+	}
+}
+
+func MapToInvite(im *model.Invite) *modelapi.Invite {
+	return &modelapi.Invite{
+		Date:  strfmt.Date(im.CreatedAt),
+		Group: MapToGroup(im.Group),
+		User:  MapToUser(im.User),
 	}
 }
