@@ -50,6 +50,7 @@ func (i *Invite) CopyToBusinessModel(im  *model.Invite) {
 
 	im.GroupID = i.GroupID
 	im.UserID = i.UserID
+	im.CreatedAt = i.CreatedAt
 
 	im.Group = i.Group.NewBusinessModel()
 	im.User = i.User.NewBusinessModel()

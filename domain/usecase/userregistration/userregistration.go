@@ -23,13 +23,15 @@ func NewUseCase(ur repository.UserRepository) usecase.UserRegistrationInterface 
 
 func (ur userRegistrationUseCase) RegisterUser(p payload.UserCredentialsPayload) (*model.User, error) {
 	// Unique username checkpoint.
-	_, err := ur.URepo.FindByUsername(p.Username)
+	existing, err := ur.URepo.FindByUsername(p.Username)
 	if err != nil {
 		if !errors.Is(err, repository.ErrNotFound) {
 			return nil, domain.ToDomainError(err)
 		}
 	} else {
-		return nil, domain.ErrUserWithUsernameAlreadyExists
+		if existing.Username == p.Username {
+			return nil, domain.ErrUserWithUsernameAlreadyExists
+		}
 	}
 
 	// New User creation.
@@ -59,6 +61,10 @@ func (ur userRegistrationUseCase) ValidateUserCredentials(p payload.UserCredenti
 		return nil, domain.ErrInternalDomain
 	}
 
+	// Because FindByUsername finds by substring.
+	if user.Username != p.Username {
+		return nil, domain.ErrInvalidCredentials
+	}
 	// Verify the password.
 	if err = user.VerifyPassword(p.Password); err != nil{
 		return nil, domain.ErrInvalidCredentials

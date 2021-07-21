@@ -18,6 +18,7 @@ import (
 	"mnimidamonbackend/domain/usecase/listgroup"
 	"mnimidamonbackend/domain/usecase/listgroupcomputer"
 	"mnimidamonbackend/domain/usecase/listgroupmember"
+	"mnimidamonbackend/domain/usecase/listinvite"
 	"mnimidamonbackend/domain/usecase/listuser"
 	"mnimidamonbackend/domain/usecase/managegroup"
 	"mnimidamonbackend/domain/usecase/userregistration"
@@ -82,6 +83,7 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 	lgmuc := listgroupmember.NewUseCase(gr)
 	crcuc := computerregistration.NewUseCase(cr, ur)
 	giuc := groupinvite.NewUseCase(gr, ir, ur)
+	liuc := listinvite.NewUseCase(ir)
 
 	// Setting up the authorization.
 	ja := restapi.NewJwtAuthentication("SuperSecretKey", luuc, lguc, lcuc, lgcuc, lgmuc)
@@ -149,12 +151,8 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 			return middleware.NotImplemented("operation invite.GetCurrentUserInvite has not yet been implemented")
 		})
 	}
-
-	if api.CurrentUserGetCurrentUserInvitesHandler == nil {
-		api.CurrentUserGetCurrentUserInvitesHandler = current_user.GetCurrentUserInvitesHandlerFunc(func(params current_user.GetCurrentUserInvitesParams, principal interface{}) middleware.Responder {
-			return middleware.NotImplemented("operation current_user.GetCurrentUserInvites has not yet been implemented")
-		})
-	}
+	
+	api.CurrentUserGetCurrentUserInvitesHandler = handlers.NewGetCurrentUserInvitesHandler(liuc, ja)
 
 	api.GroupGetGroupHandler = handlers.NewGetGroupHandler(ja)
 

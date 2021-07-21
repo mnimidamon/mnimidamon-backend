@@ -99,7 +99,8 @@ func (ud userData) FindByUsername(username string) (*model.User, error) {
 
 	result :=
 		ud.Where("username LIKE ?", fmt.Sprintf("%s%%", username)).
-		First(&user)
+			Order("username asc").
+			First(&user)
 
 	if err := result.Error; err != nil {
 		return nil, toRepositoryError(err)
