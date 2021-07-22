@@ -85,7 +85,7 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 	liuc := listinvite.NewUseCase(ir)
 
 	// Setting up the authorization.
-	ja := restapi.NewJwtAuthentication("SuperSecretKey", luuc, lguc, lcuc, lgcuc, lgmuc)
+	ja := restapi.NewJwtAuthentication("SuperSecretKey", luuc, lguc, lcuc, lgcuc, lgmuc, liuc)
 
 	// Applies when the "X-AUTH-KEY" header is set
 	api.AuthKeyAuth = ja.UserKeyMiddleware()
@@ -93,11 +93,8 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 	api.CompKeyAuth = ja.CompKeyMiddleware()
 
 
-	if api.InviteAcceptCurrentUserInviteHandler == nil {
-		api.InviteAcceptCurrentUserInviteHandler = invite.AcceptCurrentUserInviteHandlerFunc(func(params invite.AcceptCurrentUserInviteParams, principal interface{}) middleware.Responder {
-			return middleware.NotImplemented("operation invite.AcceptCurrentUserInvite has not yet been implemented")
-		})
-	}
+
+	api.InviteAcceptCurrentUserInviteHandler = handlers.NewAcceptInviteHandler(giuc, ja)
 
 	if api.InviteDeclineCurrentUserInviteHandler == nil {
 		api.InviteDeclineCurrentUserInviteHandler = invite.DeclineCurrentUserInviteHandlerFunc(func(params invite.DeclineCurrentUserInviteParams, principal interface{}) middleware.Responder {
@@ -166,9 +163,7 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 		})
 	}
 
-	// TODO NEXT
 	api.GroupGetGroupInvitesHandler = handlers.NewGetGroupInvitesHandler(liuc, ja)
-
 
 	api.UserGetUserHandler = handlers.NewGetUserHandler(luuc)
 

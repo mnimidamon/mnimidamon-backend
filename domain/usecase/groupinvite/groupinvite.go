@@ -58,7 +58,7 @@ func (gi groupInviteUseCase) AcceptInvite(userID uint, groupID uint) (*model.Gro
 	// Transaction on group
 	// Transaction on invite
 	gtx := gi.GRepo.BeginTx()
-	itx := gi.IRepo.BeginTx()
+	itx := gi.IRepo.ContinueTx(gtx)
 
 	// Commit group
 	_, err = gtx.AddMember(userID, groupID)
@@ -67,7 +67,6 @@ func (gi groupInviteUseCase) AcceptInvite(userID uint, groupID uint) (*model.Gro
 		itx.Rollback()
 		return nil, domain.ToDomainError(err)
 	}
-
 	// Commit invite
 	err = itx.Delete(userID, groupID)
 	if err != nil {
@@ -76,8 +75,8 @@ func (gi groupInviteUseCase) AcceptInvite(userID uint, groupID uint) (*model.Gro
 		return nil, domain.ToDomainError(err)
 	}
 
-	gtx.Commit()
 	itx.Commit()
+	gtx.Commit()
 
 	return g, nil
 }

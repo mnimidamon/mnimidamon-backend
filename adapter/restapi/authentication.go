@@ -20,6 +20,7 @@ type JwtAuthentication interface {
 	ExtractComputerFromApiKey(req *http.Request, ownerID uint, callback func(cm *model.Computer) middleware.Responder) middleware.Responder
 	ExtractUserFromApiKey(req *http.Request, callback func(um *model.User) middleware.Responder) middleware.Responder
 	WithGroup(um *model.User, groupID uint, callback func(gm *model.Group) middleware.Responder) middleware.Responder
+	WithInvite(um *model.User, groupID uint, callback func(im *model.Invite) middleware.Responder) middleware.Responder
 }
 
 type jwtAuthenticationImpl struct {
@@ -28,11 +29,12 @@ type jwtAuthenticationImpl struct {
 	LGCase  usecase.ListGroupInterface
 	LGCCase usecase.ListGroupComputerInterface
 	LGMCase usecase.ListGroupMemberInterface
+	LICase  usecase.ListInviteInterface
 
 	jwtSecret string
 }
 
-func NewJwtAuthentication(jwtSecret string, luuc usecase.ListUserInterface, lguc usecase.ListGroupInterface, lcuc usecase.ListComputerInterface, lgcuc usecase.ListGroupComputerInterface, lgmuc usecase.ListGroupMemberInterface) JwtAuthentication {
+func NewJwtAuthentication(jwtSecret string, luuc usecase.ListUserInterface, lguc usecase.ListGroupInterface, lcuc usecase.ListComputerInterface, lgcuc usecase.ListGroupComputerInterface, lgmuc usecase.ListGroupMemberInterface, liuc usecase.ListInviteInterface) JwtAuthentication {
 	return &jwtAuthenticationImpl{
 		jwtSecret: jwtSecret,
 		LUCase:    luuc,
@@ -40,6 +42,7 @@ func NewJwtAuthentication(jwtSecret string, luuc usecase.ListUserInterface, lguc
 		LGCase:    lguc,
 		LGCCase:   lgcuc,
 		LGMCase:   lgmuc,
+		LICase:    liuc,
 	}
 }
 

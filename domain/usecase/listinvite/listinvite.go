@@ -12,10 +12,10 @@ type listInviteUseCase struct {
 }
 
 func (li listInviteUseCase) FindById(userID uint, groupID uint) (*model.Invite, error) {
-	i, err := li.FindById(userID, groupID)
+	i, err := li.IRepo.FindById(userID, groupID)
 
 	if err != nil {
-		return nil, err
+		return nil, domain.ToDomainError(err)
 	}
 
 	return i, nil

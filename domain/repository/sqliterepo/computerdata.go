@@ -16,6 +16,24 @@ type computerData struct {
 	*gorm.DB
 }
 
+func (cd computerData) ContinueTx(mr repository.TransactionContextReader) repository.ComputerRepositoryTx {
+	meta := mr.GetContext()
+
+	if dbtx, isDB := meta.(*gorm.DB); isDB {
+		return computerDataTx{
+			computerData{
+				DB: dbtx,
+			},
+		}
+	}
+
+	return cd.BeginTx()
+}
+
+func (cd computerData) GetContext() interface{} {
+	return cd.DB
+}
+
 func (cd computerData) Delete(computerID uint) error {
 	result :=
 		cd.DB.Delete(&Computer{}, computerID)

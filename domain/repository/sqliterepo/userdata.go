@@ -19,6 +19,24 @@ type userData struct {
 	 *gorm.DB
 }
 
+func (ud userData) ContinueTx(mr repository.TransactionContextReader) repository.UserRepositoryTx {
+	meta := mr.GetContext()
+
+	if dbtx, isDB := meta.(*gorm.DB); isDB {
+		return userDataTx{
+			userData{
+				DB: dbtx,
+			},
+		}
+	}
+
+	return ud.BeginTx()
+}
+
+func (ud userData) GetContext() interface{} {
+	return ud.DB
+}
+
 func (ud userData) Exists(userID uint) (bool, error) {
 	_, err := ud.FindById(userID)
 

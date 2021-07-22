@@ -18,6 +18,26 @@ type inviteData struct {
 	*gorm.DB
 }
 
+func (id inviteData) GetContext() interface{} {
+	return id.DB
+}
+
+func (id inviteData) ContinueTx(mr repository.TransactionContextReader) repository.InviteRepositoryTx {
+	meta := mr.GetContext()
+	// If the meta is a database then set it here.
+	// This is because of the database locking for sqlite.
+	if dbtx, isDB := meta.(*gorm.DB); isDB {
+		return inviteDataTx{
+			inviteData{
+				DB: dbtx,
+			},
+		}
+	}
+
+	// Else return a normal transaction.
+	return id.BeginTx()
+}
+
 func (id inviteData) Exists(userID uint, groupID uint) (bool, error) {
 	_, err := id.FindById(userID, groupID)
 
@@ -140,6 +160,7 @@ func (id inviteData) BeginTx() repository.InviteRepositoryTx {
 		},
 	}
 }
+
 
 
 

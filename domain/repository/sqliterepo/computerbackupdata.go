@@ -18,6 +18,24 @@ type computerBackupData struct {
 	*gorm.DB
 }
 
+func (cbd computerBackupData) ContinueTx(mr repository.TransactionContextReader) repository.ComputerBackupRepositoryTx {
+	meta := mr.GetContext()
+
+	if dbtx, isDB := meta.(*gorm.DB); isDB {
+		return computerBackupDataTx{
+			computerBackupData{
+				DB: dbtx,
+			},
+		}
+	}
+
+	return cbd.BeginTx()
+}
+
+func (cbd computerBackupData) GetContext() interface{} {
+	return cbd.DB
+}
+
 func (cbd computerBackupData) FindById(groupComputerID uint, backupID uint) (*model.ComputerBackup, error) {
 	var cb ComputerBackup
 

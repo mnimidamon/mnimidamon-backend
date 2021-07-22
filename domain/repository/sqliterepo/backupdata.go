@@ -17,6 +17,24 @@ type backupData struct {
 	*gorm.DB
 }
 
+func (bd backupData) ContinueTx(mr repository.TransactionContextReader) repository.BackupRepositoryTx {
+	meta := mr.GetContext()
+
+	if dbtx, isDB := meta.(*gorm.DB); isDB {
+		return BackupDataTx{
+			backupData{
+				DB: dbtx,
+			},
+		}
+	}
+
+	return bd.BeginTx()
+}
+
+func (bd backupData) GetContext() interface{} {
+	return bd.DB
+}
+
 func (bd backupData) Delete(backupID uint) error {
 	result :=
 		bd.DB.Delete(&Backup{}, backupID)

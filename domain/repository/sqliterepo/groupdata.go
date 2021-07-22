@@ -19,6 +19,24 @@ type groupData struct {
 	*gorm.DB
 }
 
+func (gd groupData) ContinueTx(mr repository.TransactionContextReader) repository.GroupRepositoryTx {
+	meta := mr.GetContext()
+
+	if dbtx, isDB := meta.(*gorm.DB); isDB {
+		return groupDataTx{
+			groupData{
+				DB: dbtx,
+			},
+		}
+	}
+
+	return gd.BeginTx()
+}
+
+func (gd groupData) GetContext() interface{} {
+	return gd.DB
+}
+
 func (gd groupData) FindAllOfUser(userID uint) ([]*model.Group, error) {
 	var groups []Group
 

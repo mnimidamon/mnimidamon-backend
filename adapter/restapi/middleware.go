@@ -126,6 +126,20 @@ func (ja jwtAuthenticationImpl) WithGroup(um *model.User, groupID uint, callback
 	return callback(gm)
 }
 
+func (ja jwtAuthenticationImpl) WithInvite(um *model.User, groupID uint, callback func(im *model.Invite) middleware.Responder) middleware.Responder {
+	im, err := ja.LICase.FindById(um.ID, groupID)
+
+	if err != nil {
+		if errors2.Is(err, domain.ErrNotFound) {
+			return newBadRequestErrorResponder(nil)
+		} else {
+			return newInternalServerErrorResponder(err)
+		}
+	}
+
+	return callback(im)
+}
+
 // TODO have to think about it
 func (ja jwtAuthenticationImpl) WithGroupComputer(req *http.Request, callback func(um *model.GroupComputer) middleware.Responder) middleware.Responder {
 	panic("unimplemented")

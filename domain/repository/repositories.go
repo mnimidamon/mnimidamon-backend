@@ -8,8 +8,6 @@ import (
 // Repositories Tx objects are used for when a transaction is initiated.
 
 type UserRepository interface {
-	BeginTx() UserRepositoryTx
-
 	FindAll() ([]*model.User, error)
 	FindById(userID uint) (*model.User, error)
 	FindByUsername(username string) (*model.User, error)
@@ -19,16 +17,16 @@ type UserRepository interface {
 	Update(um *model.User) error
 
 	Exists(userID uint) (bool, error)
-	// TODO: Functionalities
-	// 		- this is completed?
+
+	BeginTx() UserRepositoryTx
+	ContinueTx(mr TransactionContextReader) UserRepositoryTx
+	TransactionContextReader
 }
 
 type GroupRepository interface {
-	BeginTx() GroupRepositoryTx
-
 	FindAll() ([]*model.Group, error)
-	FindAllMembers(groupID uint) ([]*model.User, error) // TODO: testing
-	FindAllOfUser(userID uint) ([]*model.Group, error) // TODO: testing
+	FindAllMembers(groupID uint) ([]*model.User, error)
+	FindAllOfUser(userID uint) ([]*model.Group, error)
 	FindById(groupID uint) (*model.Group, error)
 	FindByName(name string) (*model.Group, error)
 
@@ -40,13 +38,12 @@ type GroupRepository interface {
 	IsMemberOf(userID uint, groupID uint) (bool, error)
 	Exists(groupID uint) (bool, error)
 
-	// TODO: Functionalities:
-	//		- get members
+	BeginTx() GroupRepositoryTx
+	ContinueTx(mr TransactionContextReader) GroupRepositoryTx
+	TransactionContextReader
 }
 
 type BackupRepository interface {
-	BeginTx() BackupRepositoryTx
-
 	FindAll(groupID uint) ([]*model.Backup, error)
 	FindById(backupID uint) (*model.Backup, error)
 
@@ -54,13 +51,12 @@ type BackupRepository interface {
 	Delete(backupID uint) error
 	Update(bm *model.Backup) error
 
-	// TODO: Functionalities
-	//		- field updating
+	BeginTx() BackupRepositoryTx
+	ContinueTx(mr TransactionContextReader) BackupRepositoryTx
+	TransactionContextReader
 }
 
 type InviteRepository interface {
-	BeginTx() InviteRepositoryTx
-
 	Create(im *model.Invite) error
 	Delete(userID uint, groupID uint) error
 
@@ -69,11 +65,13 @@ type InviteRepository interface {
 	FindById(userID uint, groupID uint) (*model.Invite, error)
 
 	Exists(userID uint, groupID uint) (bool, error)
+
+	BeginTx() InviteRepositoryTx
+	ContinueTx(mr TransactionContextReader) InviteRepositoryTx
+	TransactionContextReader
 }
 
 type ComputerRepository interface {
-	BeginTx() ComputerRepositoryTx
-
 	FindAll(ownerID uint) ([]*model.Computer, error)
 	FindById(computerID uint) (*model.Computer, error)
 	FindByName(name string, ownerID uint) (*model.Computer, error)
@@ -82,13 +80,12 @@ type ComputerRepository interface {
 	Delete(computerID uint) error
 	Update(cm *model.Computer) error
 
-	// TODO: Functionalities
-	// 		- have to think about this little bit
+	BeginTx() ComputerRepositoryTx
+	ContinueTx(mr TransactionContextReader) ComputerRepositoryTx
+	TransactionContextReader
 }
 
 type GroupComputerRepository interface {
-	BeginTx() GroupComputerRepositoryTx
-
 	FindById(groupID uint, computerID uint) (*model.GroupComputer, error)
 	FindAllOfGroup(groupID uint) ([]*model.GroupComputer, error)
 	FindAllOfComputer(computerID uint) ([]*model.GroupComputer, error)
@@ -99,10 +96,13 @@ type GroupComputerRepository interface {
 	Update(cm *model.GroupComputer) error
 
 	Exists(groupID uint, computerID uint) (bool, error)
+
+	BeginTx() GroupComputerRepositoryTx
+	ContinueTx(mr TransactionContextReader) GroupComputerRepositoryTx
+	TransactionContextReader
 }
 
 type ComputerBackupRepository interface {
-	BeginTx() ComputerBackupRepositoryTx
 
 	FindById(groupComputerID uint, backupID uint) (*model.ComputerBackup, error)
 	FindAllOfGroupComputer(groupComputerID uint) ([]*model.ComputerBackup, error)
@@ -112,6 +112,10 @@ type ComputerBackupRepository interface {
 	Delete(groupComputerID uint, backupID uint) error
 
 	Exists(groupComputerID uint, backupID uint) (bool, error)
+
+	BeginTx() ComputerBackupRepositoryTx
+	ContinueTx(mr TransactionContextReader) ComputerBackupRepositoryTx
+	TransactionContextReader
 }
 
 type ComputerBackupRepositoryTx interface {

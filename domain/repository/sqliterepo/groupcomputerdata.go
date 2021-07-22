@@ -19,6 +19,24 @@ type groupComputerData struct {
 	*gorm.DB
 }
 
+func (gcd groupComputerData) ContinueTx(mr repository.TransactionContextReader) repository.GroupComputerRepositoryTx {
+	meta := mr.GetContext()
+
+	if dbtx, isDB := meta.(*gorm.DB); isDB {
+		return groupComputerDataTx{
+			groupComputerData{
+				DB: dbtx,
+			},
+		}
+	}
+
+	return gcd.BeginTx()
+}
+
+func (gcd groupComputerData) GetContext() interface{} {
+	return gcd.DB
+}
+
 func (gcd groupComputerData) FindAllOfGroupAndComputers(groupID uint, computerIDS ...uint) ([]*model.GroupComputer, error) {
 	var groupComputers []*GroupComputer
 
