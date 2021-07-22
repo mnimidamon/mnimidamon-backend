@@ -457,6 +457,31 @@ paths:
         500:
           $ref: "#/responses/Internal"
 
+  /users/current/groups/{group_id}/members:
+    parameters:
+      - $ref: "#/parameters/PathGroupId"
+
+    # Get all active invites.
+    get:
+      operationId: getGroupMembers
+      tags:
+        - group
+      summary: Get group members
+      security:
+        - auth_key: []
+      responses:
+        200:
+          description: Array of group members.
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/User"
+        400:
+          $ref: "#/responses/BadRequest"
+        401:
+          $ref: "#/responses/Unauthorized"
+        500:
+          $ref: "#/responses/Internal"
 
   /users/current/groups/{group_id}/invites:
     parameters:

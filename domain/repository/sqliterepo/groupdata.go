@@ -62,19 +62,19 @@ func (gd groupData) FindAllOfUser(userID uint) ([]*model.Group, error) {
 }
 
 func (gd groupData) FindAllMembers(groupID uint) ([]*model.User, error) {
-	var members []User
+	var group Group
 
-	err :=
-		gd.Where("group_id = ?", groupID).
-			Association("GroupMembers").
-			Find(&members)
+	result :=
+		gd.Where("id = ?", groupID).
+			Preload("GroupMembers").
+			Find(&group)
 
-	if err != nil {
-		return nil, toRepositoryError(err)
+	if result.Error != nil {
+		return nil, toRepositoryError(result.Error)
 	}
 
 	var mUsers []*model.User
-	for _, u := range members {
+	for _, u := range group.GroupMembers {
 		mb := u.NewBusinessModel()
 		mUsers = append(mUsers, mb)
 	}

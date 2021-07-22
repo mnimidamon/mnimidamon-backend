@@ -96,6 +96,8 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 
 	api.InviteAcceptCurrentUserInviteHandler = handlers.NewAcceptInviteHandler(giuc, ja)
 
+	api.GroupGetGroupMembersHandler = handlers.NewGetGroupMembersHandler(lgmuc, ja)
+
 	if api.InviteDeclineCurrentUserInviteHandler == nil {
 		api.InviteDeclineCurrentUserInviteHandler = invite.DeclineCurrentUserInviteHandlerFunc(func(params invite.DeclineCurrentUserInviteParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation invite.DeclineCurrentUserInvite has not yet been implemented")

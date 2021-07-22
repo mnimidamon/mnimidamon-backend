@@ -820,6 +820,45 @@ func init() {
         }
       ]
     },
+    "/users/current/groups/{group_id}/members": {
+      "get": {
+        "security": [
+          {
+            "auth_key": []
+          }
+        ],
+        "tags": [
+          "group"
+        ],
+        "summary": "Get group members",
+        "operationId": "getGroupMembers",
+        "responses": {
+          "200": {
+            "description": "Array of group members.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/parameters/PathGroupId"
+        }
+      ]
+    },
     "/users/current/invites": {
       "get": {
         "security": [
@@ -2479,6 +2518,58 @@ func init() {
             "description": "The newly created invite object.",
             "schema": {
               "$ref": "#/definitions/Invite"
+            }
+          },
+          "400": {
+            "description": "Supplied parameters were not okay.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "type": "integer",
+          "description": "Numeric ID of the Group.",
+          "name": "group_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    "/users/current/groups/{group_id}/members": {
+      "get": {
+        "security": [
+          {
+            "auth_key": []
+          }
+        ],
+        "tags": [
+          "group"
+        ],
+        "summary": "Get group members",
+        "operationId": "getGroupMembers",
+        "responses": {
+          "200": {
+            "description": "Array of group members.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/User"
+              }
             }
           },
           "400": {

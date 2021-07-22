@@ -105,6 +105,9 @@ func NewMnimidamonAPI(spec *loads.Document) *MnimidamonAPI {
 		GroupGetGroupInvitesHandler: group.GetGroupInvitesHandlerFunc(func(params group.GetGroupInvitesParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation group.GetGroupInvites has not yet been implemented")
 		}),
+		GroupGetGroupMembersHandler: group.GetGroupMembersHandlerFunc(func(params group.GetGroupMembersParams, principal interface{}) middleware.Responder {
+			return middleware.NotImplemented("operation group.GetGroupMembers has not yet been implemented")
+		}),
 		UserGetUserHandler: user.GetUserHandlerFunc(func(params user.GetUserParams) middleware.Responder {
 			return middleware.NotImplemented("operation user.GetUser has not yet been implemented")
 		}),
@@ -232,6 +235,8 @@ type MnimidamonAPI struct {
 	BackupGetGroupBackupsHandler backup.GetGroupBackupsHandler
 	// GroupGetGroupInvitesHandler sets the operation handler for the get group invites operation
 	GroupGetGroupInvitesHandler group.GetGroupInvitesHandler
+	// GroupGetGroupMembersHandler sets the operation handler for the get group members operation
+	GroupGetGroupMembersHandler group.GetGroupMembersHandler
 	// UserGetUserHandler sets the operation handler for the get user operation
 	UserGetUserHandler user.GetUserHandler
 	// UserGetUsersHandler sets the operation handler for the get users operation
@@ -392,6 +397,9 @@ func (o *MnimidamonAPI) Validate() error {
 	}
 	if o.GroupGetGroupInvitesHandler == nil {
 		unregistered = append(unregistered, "group.GetGroupInvitesHandler")
+	}
+	if o.GroupGetGroupMembersHandler == nil {
+		unregistered = append(unregistered, "group.GetGroupMembersHandler")
 	}
 	if o.UserGetUserHandler == nil {
 		unregistered = append(unregistered, "user.GetUserHandler")
@@ -598,6 +606,10 @@ func (o *MnimidamonAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/users/current/groups/{group_id}/invites"] = group.NewGetGroupInvites(o.context, o.GroupGetGroupInvitesHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/users/current/groups/{group_id}/members"] = group.NewGetGroupMembers(o.context, o.GroupGetGroupMembersHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
