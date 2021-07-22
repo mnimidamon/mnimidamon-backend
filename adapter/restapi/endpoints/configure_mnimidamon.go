@@ -28,7 +28,6 @@ import (
 	"mnimidamonbackend/adapter/restapi/endpoints/operations/backup"
 	"mnimidamonbackend/adapter/restapi/endpoints/operations/computer"
 	"mnimidamonbackend/adapter/restapi/endpoints/operations/current_user"
-	"mnimidamonbackend/adapter/restapi/endpoints/operations/group"
 	"mnimidamonbackend/adapter/restapi/endpoints/operations/invite"
 )
 
@@ -166,11 +165,10 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 			return middleware.NotImplemented("operation backup.GetGroupBackups has not yet been implemented")
 		})
 	}
-	if api.GroupGetGroupInvitesHandler == nil {
-		api.GroupGetGroupInvitesHandler = group.GetGroupInvitesHandlerFunc(func(params group.GetGroupInvitesParams, principal interface{}) middleware.Responder {
-			return middleware.NotImplemented("operation group.GetGroupInvites has not yet been implemented")
-		})
-	}
+
+	// TODO NEXT
+	api.GroupGetGroupInvitesHandler = handlers.NewGetGroupInvitesHandler(liuc, ja)
+
 
 	api.UserGetUserHandler = handlers.NewGetUserHandler(luuc)
 
@@ -181,6 +179,7 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 			return middleware.NotImplemented("operation backup.InitializeGroupBackup has not yet been implemented")
 		})
 	}
+
 	if api.BackupInitializeGroupBackupDeletionHandler == nil {
 		api.BackupInitializeGroupBackupDeletionHandler = backup.InitializeGroupBackupDeletionHandlerFunc(func(params backup.InitializeGroupBackupDeletionParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation backup.InitializeGroupBackupDeletion has not yet been implemented")

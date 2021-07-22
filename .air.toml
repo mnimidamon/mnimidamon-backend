@@ -5,7 +5,7 @@ tmp_dir = "./air/tmp"
 [build]
   bin = "main"
   cmd = "go build -o ./main.exe ./cmd/mnimidamon-server"
-  args_bin = ["--port 1000"]
+  cmd_args = ["--port 1000"]
   delay = 1000
   exclude_dir = ["assets", "tmp", "vendor", "testdata"]
   exclude_file = []

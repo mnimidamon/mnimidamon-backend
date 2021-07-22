@@ -68,6 +68,7 @@ func (id inviteData) FindAllOfGroup(groupID uint) ([]*model.Invite, error) {
 
 	result :=
 		id.Where("group_id = ?", groupID).
+			Preload("User").
 			Find(&invites)
 
 	if result.Error != nil {
