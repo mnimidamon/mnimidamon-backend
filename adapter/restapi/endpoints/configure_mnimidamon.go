@@ -20,6 +20,7 @@ import (
 	"mnimidamonbackend/domain/usecase/listgroupmember"
 	"mnimidamonbackend/domain/usecase/listinvite"
 	"mnimidamonbackend/domain/usecase/listuser"
+	"mnimidamonbackend/domain/usecase/managebackup"
 	"mnimidamonbackend/domain/usecase/managegroup"
 	"mnimidamonbackend/domain/usecase/managegroupcomputer"
 	"mnimidamonbackend/domain/usecase/userregistration"
@@ -86,9 +87,10 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 	giuc := groupinvite.NewUseCase(gr, ir, ur)
 	liuc := listinvite.NewUseCase(ir)
 	mgcuc := managegroupcomputer.NewUseCase(gcr, cr, gr, br, cbr)
+	mbuc := managebackup.NewUseCase(br, ur, gr, cr, gcr)
 
 	// Setting up the authorization.
-	ja := restapi.NewJwtAuthentication("SuperSecretKey", luuc, lguc, lcuc, lgcuc, lgmuc, liuc)
+	ja := restapi.NewJwtAuthentication("git ", luuc, lguc, lcuc, lgcuc, lgmuc, liuc)
 
 	// Applies when the "X-AUTH-KEY" header is set
 	api.AuthKeyAuth = ja.UserKeyMiddleware()
@@ -96,10 +98,35 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 	api.CompKeyAuth = ja.CompKeyMiddleware()
 
 
+	api.AuthorizationLoginUserHandler = handlers.NewLoginUserHandler(uruc, ja)
+	api.AuthorizationRegisterComputerHandler = handlers.NewRegisterComputerHandler(crcuc, ja)
+	api.AuthorizationRegisterUserHandler = handlers.NewUserRegistrationHandler(uruc, ja)
+
+
 	api.InviteAcceptCurrentUserInviteHandler = handlers.NewAcceptInviteHandler(giuc, ja)
-	api.GroupGetGroupMembersHandler = handlers.NewGetGroupMembersHandler(lgmuc, ja)
 	api.InviteDeclineCurrentUserInviteHandler = handlers.NewDeclineCurrentUserInviteHandler(giuc, ja)
+
+	api.GroupGetGroupMembersHandler = handlers.NewGetGroupMembersHandler(lgmuc, ja)
 	api.GroupComputerJoinComputerToGroupHandler = handlers.NewJoinComputerToGroupHandler(mgcuc, ja)
+	api.GroupInviteUserToGroupHandler = handlers.NewInviteUserToGroupHandler(giuc, luuc, ja)
+	api.GroupCreateGroupHandler = handlers.NewCreateGroupHandler(mguc, ja)
+	api.GroupGetGroupHandler = handlers.NewGetGroupHandler(ja)
+	api.GroupGetGroupInvitesHandler = handlers.NewGetGroupInvitesHandler(liuc, ja)
+
+	api.UserGetUserHandler = handlers.NewGetUserHandler(luuc)
+	api.UserGetUsersHandler = handlers.NewGetUsersHandler(luuc)
+
+	api.CurrentUserGetCurrentUserHandler = handlers.NewGetCurrentUserHandler(ja)
+	api.CurrentUserGetCurrentUserInvitesHandler = handlers.NewGetCurrentUserInvitesHandler(liuc, ja)
+	api.CurrentUserGetCurrentUserGroupsHandler = handlers.NewGetCurrentUserGroupsHandler(lguc, ja)
+
+	api.ComputerGetCurrentComputerHandler = handlers.NewGetCurrentUserComputer(ja)
+	api.ComputerGetCurrentUserComputerHandler = handlers.NewGetCurrentUserComputerHandler(lcuc, ja)
+
+	api.InviteGetCurrentUserInviteHandler = handlers.NewGetCurrentUserInviteHandler(ja)
+
+	api.BackupInitializeGroupBackupHandler = handlers.NewInitializeGroupBackupHandler(mbuc, ja)
+
 
 	api.GroupComputerLeaveComputerFromGroupHandler = nil
 
@@ -121,14 +148,6 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 		})
 	}
 
-	api.GroupCreateGroupHandler = handlers.NewCreateGroupHandler(mguc, ja)
-
-	api.CurrentUserGetCurrentUserHandler = handlers.NewGetCurrentUserHandler(ja)
-
-	api.ComputerGetCurrentComputerHandler =  handlers.NewGetCurrentUserComputer(ja)
-
-	api.ComputerGetCurrentUserComputerHandler = handlers.NewGetCurrentUserComputerHandler(lcuc, ja)
-
 	if api.ComputerGetCurrentUserComputersHandler == nil {
 		api.ComputerGetCurrentUserComputersHandler = computer.GetCurrentUserComputersHandlerFunc(func(params computer.GetCurrentUserComputersParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation computer.GetCurrentUserComputers has not yet been implemented")
@@ -140,14 +159,6 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 			return middleware.NotImplemented("operation computer.GetCurrentUserGroupComputers has not yet been implemented")
 		})
 	}
-
-	api.CurrentUserGetCurrentUserGroupsHandler = handlers.NewGetCurrentUserGroupsHandler(lguc, ja)
-
-	api.InviteGetCurrentUserInviteHandler = handlers.NewGetCurrentUserInviteHandler(ja)
-
-	api.CurrentUserGetCurrentUserInvitesHandler = handlers.NewGetCurrentUserInvitesHandler(liuc, ja)
-
-	api.GroupGetGroupHandler = handlers.NewGetGroupHandler(ja)
 
 	if api.BackupGetGroupBackupHandler == nil {
 		api.BackupGetGroupBackupHandler = backup.GetGroupBackupHandlerFunc(func(params backup.GetGroupBackupParams, principal interface{}) middleware.Responder {
@@ -161,32 +172,11 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 		})
 	}
 
-	api.GroupGetGroupInvitesHandler = handlers.NewGetGroupInvitesHandler(liuc, ja)
-
-	api.UserGetUserHandler = handlers.NewGetUserHandler(luuc)
-
-	api.UserGetUsersHandler = handlers.NewGetUsersHandler(luuc)
-
-	if api.BackupInitializeGroupBackupHandler == nil {
-		api.BackupInitializeGroupBackupHandler = backup.InitializeGroupBackupHandlerFunc(func(params backup.InitializeGroupBackupParams, principal interface{}) middleware.Responder {
-			return middleware.NotImplemented("operation backup.InitializeGroupBackup has not yet been implemented")
-		})
-	}
-
 	if api.BackupInitializeGroupBackupDeletionHandler == nil {
 		api.BackupInitializeGroupBackupDeletionHandler = backup.InitializeGroupBackupDeletionHandlerFunc(func(params backup.InitializeGroupBackupDeletionParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation backup.InitializeGroupBackupDeletion has not yet been implemented")
 		})
 	}
-
-
-	api.GroupInviteUserToGroupHandler = handlers.NewInviteUserToGroupHandler(giuc, luuc, ja)
-
-	api.AuthorizationLoginUserHandler = handlers.NewLoginUserHandler(uruc, ja)
-
-	api.AuthorizationRegisterComputerHandler = handlers.NewRegisterComputerHandler(crcuc, ja)
-
-	api.AuthorizationRegisterUserHandler = handlers.NewUserRegistrationHandler(uruc, ja)
 
 	if api.BackupRequestBackupUploadHandler == nil {
 		api.BackupRequestBackupUploadHandler = backup.RequestBackupUploadHandlerFunc(func(params backup.RequestBackupUploadParams, principal interface{}) middleware.Responder {

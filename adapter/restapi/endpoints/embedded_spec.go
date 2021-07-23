@@ -319,14 +319,14 @@ func init() {
               "$ref": "#/definitions/Backup"
             }
           },
-          "401": {
-            "$ref": "#/responses/Unauthorized"
-          },
-          "404": {
+          "400": {
             "description": "If the backup is too big or there is any other problem.",
             "schema": {
               "$ref": "#/definitions/Error"
             }
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
           },
           "500": {
             "$ref": "#/responses/Internal"
@@ -2007,14 +2007,14 @@ func init() {
               "$ref": "#/definitions/Backup"
             }
           },
-          "401": {
-            "description": "Unauthorized.",
+          "400": {
+            "description": "If the backup is too big or there is any other problem.",
             "schema": {
               "$ref": "#/definitions/Error"
             }
           },
-          "404": {
-            "description": "If the backup is too big or there is any other problem.",
+          "401": {
+            "description": "Unauthorized.",
             "schema": {
               "$ref": "#/definitions/Error"
             }

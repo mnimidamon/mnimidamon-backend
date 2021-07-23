@@ -19,6 +19,14 @@ func (lg listGroupComputerUseCase) FindAllOfGroup(groupID uint) ([]*model.GroupC
 	return gcs, nil
 }
 
+func (lg listGroupComputerUseCase) FindById(groupID uint, computerID uint) (*model.GroupComputer, error) {
+	gc, err := lg.GCRepo.FindById(groupID, computerID)
+	if err != nil {
+		return nil, domain.ToDomainError(err)
+	}
+	return gc, nil
+}
+
 func NewUseCase(gcr repository.GroupComputerRepository) usecase.ListGroupComputerInterface {
 	return listGroupComputerUseCase{
 		GCRepo: gcr,

@@ -140,7 +140,16 @@ func (ja jwtAuthenticationImpl) WithInvite(um *model.User, groupID uint, callbac
 	return callback(im)
 }
 
-// TODO have to think about it
-func (ja jwtAuthenticationImpl) WithGroupComputer(req *http.Request, callback func(um *model.GroupComputer) middleware.Responder) middleware.Responder {
-	panic("unimplemented")
+func (ja jwtAuthenticationImpl) WithGroupComputer(cm *model.Computer, gm *model.Group, callback func(gcm *model.GroupComputer) middleware.Responder) middleware.Responder {
+	gcm, err := ja.LGCCase.FindById(gm.ID, cm.ID)
+
+	if err != nil {
+		if errors2.Is(err, domain.ErrNotFound) {
+			return newBadRequestErrorResponder(nil)
+		} else {
+			return newInternalServerErrorResponder(err)
+		}
+	}
+
+	return callback(gcm)
 }

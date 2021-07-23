@@ -109,3 +109,20 @@ func MapToGroupComputer(gcm *model.GroupComputer) *modelapi.GroupComputer {
 		StorageSize: int64(gcm.StorageSize),
 	}
 }
+
+func MapToBackup(bm *model.Backup) *modelapi.Backup {
+	if bm == nil {
+		return nil
+	}
+
+	return &modelapi.Backup{
+		BackupID:      int64(bm.ID),
+		DeleteRequest: bm.DeleteRequest,
+		Filename:      bm.FileName,
+		GroupID:       int64(bm.GroupID),
+		OnServer:      bm.OnServer,
+		OwnerID:       int64(bm.OwnerID),
+		Size:          int64(bm.Size),
+		UploadRequest: bm.UploadRequest,
+	}
+}

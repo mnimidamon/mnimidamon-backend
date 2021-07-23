@@ -45,6 +45,7 @@ type ListComputerInterface interface {
 
 type ListGroupComputerInterface interface {
 	FindAllOfGroup(groupID uint) ([]*model.GroupComputer, error)
+	FindById(groupID uint, computerID uint) (*model.GroupComputer, error)
 }
 
 type ListComputerBackupInterface interface {

@@ -21,6 +21,7 @@ type JwtAuthentication interface {
 	ExtractUserFromApiKey(req *http.Request, callback func(um *model.User) middleware.Responder) middleware.Responder
 	WithGroup(um *model.User, groupID uint, callback func(gm *model.Group) middleware.Responder) middleware.Responder
 	WithInvite(um *model.User, groupID uint, callback func(im *model.Invite) middleware.Responder) middleware.Responder
+	WithGroupComputer(cm *model.Computer, gm *model.Group, callback func(gcm *model.GroupComputer) middleware.Responder) middleware.Responder
 }
 
 type jwtAuthenticationImpl struct {

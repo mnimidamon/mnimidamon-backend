@@ -49,6 +49,8 @@ func (mb manageBackupUseCase) InitializeBackup(p payload.InitializeBackupPayload
 		return nil, domain.ToDomainError(err)
 	}
 
+	// TODO: Check if owner has a group computer inside the group
+
 	// Check if group exists
 	g, err := mb.GRepo.FindById(p.GroupID)
 	if errors.Is(domain.ErrNotFound, err) {
@@ -154,9 +156,9 @@ func (mb manageBackupUseCase) DeleteRequest(userID uint, backupID uint) (*model.
 	}
 
 	gcrtx := mb.GCRepo.BeginTx()
-	crtx := mb.CRepo.BeginTx()
-	cbtx := mb.CBRepo.BeginTx()
-	brtx := mb.BRepo.BeginTx()
+	crtx := mb.CRepo.ContinueTx(gcrtx)
+	cbtx := mb.CBRepo.ContinueTx(gcrtx)
+	brtx := mb.BRepo.ContinueTx(gcrtx)
 
 	if u.ID == b.OwnerID {
 		// Find the group computers of the backup owner and the group.

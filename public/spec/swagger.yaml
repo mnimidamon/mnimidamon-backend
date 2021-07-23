@@ -639,7 +639,7 @@ paths:
           description: Newly created backup object.
           schema:
             $ref: "#/definitions/Backup"
-        404:
+        400:
           description: If the backup is too big or there is any other problem.
           schema:
             $ref: "#/definitions/Error"

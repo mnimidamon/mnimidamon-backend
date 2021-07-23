@@ -57,6 +57,50 @@ func (o *InitializeGroupBackupOK) WriteResponse(rw http.ResponseWriter, producer
 	}
 }
 
+// InitializeGroupBackupBadRequestCode is the HTTP code returned for type InitializeGroupBackupBadRequest
+const InitializeGroupBackupBadRequestCode int = 400
+
+/*InitializeGroupBackupBadRequest If the backup is too big or there is any other problem.
+
+swagger:response initializeGroupBackupBadRequest
+*/
+type InitializeGroupBackupBadRequest struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *modelapi.Error `json:"body,omitempty"`
+}
+
+// NewInitializeGroupBackupBadRequest creates InitializeGroupBackupBadRequest with default headers values
+func NewInitializeGroupBackupBadRequest() *InitializeGroupBackupBadRequest {
+
+	return &InitializeGroupBackupBadRequest{}
+}
+
+// WithPayload adds the payload to the initialize group backup bad request response
+func (o *InitializeGroupBackupBadRequest) WithPayload(payload *modelapi.Error) *InitializeGroupBackupBadRequest {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the initialize group backup bad request response
+func (o *InitializeGroupBackupBadRequest) SetPayload(payload *modelapi.Error) {
+	o.Payload = payload
+}
+
+// WriteResponse to the client
+func (o *InitializeGroupBackupBadRequest) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.WriteHeader(400)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
+}
+
 // InitializeGroupBackupUnauthorizedCode is the HTTP code returned for type InitializeGroupBackupUnauthorized
 const InitializeGroupBackupUnauthorizedCode int = 401
 
@@ -93,50 +137,6 @@ func (o *InitializeGroupBackupUnauthorized) SetPayload(payload *modelapi.Error) 
 func (o *InitializeGroupBackupUnauthorized) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(401)
-	if o.Payload != nil {
-		payload := o.Payload
-		if err := producer.Produce(rw, payload); err != nil {
-			panic(err) // let the recovery middleware deal with this
-		}
-	}
-}
-
-// InitializeGroupBackupNotFoundCode is the HTTP code returned for type InitializeGroupBackupNotFound
-const InitializeGroupBackupNotFoundCode int = 404
-
-/*InitializeGroupBackupNotFound If the backup is too big or there is any other problem.
-
-swagger:response initializeGroupBackupNotFound
-*/
-type InitializeGroupBackupNotFound struct {
-
-	/*
-	  In: Body
-	*/
-	Payload *modelapi.Error `json:"body,omitempty"`
-}
-
-// NewInitializeGroupBackupNotFound creates InitializeGroupBackupNotFound with default headers values
-func NewInitializeGroupBackupNotFound() *InitializeGroupBackupNotFound {
-
-	return &InitializeGroupBackupNotFound{}
-}
-
-// WithPayload adds the payload to the initialize group backup not found response
-func (o *InitializeGroupBackupNotFound) WithPayload(payload *modelapi.Error) *InitializeGroupBackupNotFound {
-	o.Payload = payload
-	return o
-}
-
-// SetPayload sets the payload to the initialize group backup not found response
-func (o *InitializeGroupBackupNotFound) SetPayload(payload *modelapi.Error) {
-	o.Payload = payload
-}
-
-// WriteResponse to the client
-func (o *InitializeGroupBackupNotFound) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
-
-	rw.WriteHeader(404)
 	if o.Payload != nil {
 		payload := o.Payload
 		if err := producer.Produce(rw, payload); err != nil {
