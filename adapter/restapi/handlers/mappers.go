@@ -96,3 +96,16 @@ func MapToInvites(ims []*model.Invite) []*modelapi.Invite {
 
 	return is
 }
+
+func MapToGroupComputer(gcm *model.GroupComputer) *modelapi.GroupComputer {
+	if gcm == nil {
+		return nil
+	}
+
+	return &modelapi.GroupComputer{
+		ComputerID:  int64(gcm.ComputerID),
+		Computer:    MapToComputer(gcm.Computer),
+		GroupID:     int64(gcm.GroupID),
+		StorageSize: int64(gcm.StorageSize),
+	}
+}

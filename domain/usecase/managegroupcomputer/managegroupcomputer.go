@@ -90,7 +90,7 @@ func (mgc manageGroupComputerUseCase) JoinGroup(computerID uint, size uint, grou
 		return gcm, nil
 	}
 
-	brtx := mgc.BRepo.BeginTx()
+	brtx := mgc.BRepo.ContinueTx(gcrtx)
 	// Else update request to upload for enough backups.
 	var aditionalUploadRequestSize uint = 0
 	for _, b := range backups {

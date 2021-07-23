@@ -50,6 +50,7 @@ func NewMnimidamonAPI(spec *loads.Document) *MnimidamonAPI {
 		JSONConsumer:          runtime.JSONConsumer(),
 		MultipartformConsumer: runtime.DiscardConsumer,
 
+		BinProducer:  runtime.ByteStreamProducer(),
 		JSONProducer: runtime.JSONProducer(),
 
 		InviteAcceptCurrentUserInviteHandler: invite.AcceptCurrentUserInviteHandlerFunc(func(params invite.AcceptCurrentUserInviteParams, principal interface{}) middleware.Responder {
@@ -191,6 +192,9 @@ type MnimidamonAPI struct {
 	//   - multipart/form-data
 	MultipartformConsumer runtime.Consumer
 
+	// BinProducer registers a producer for the following mime types:
+	//   - application/octet-stream
+	BinProducer runtime.Producer
 	// JSONProducer registers a producer for the following mime types:
 	//   - application/json
 	JSONProducer runtime.Producer
@@ -344,6 +348,9 @@ func (o *MnimidamonAPI) Validate() error {
 		unregistered = append(unregistered, "MultipartformConsumer")
 	}
 
+	if o.BinProducer == nil {
+		unregistered = append(unregistered, "BinProducer")
+	}
 	if o.JSONProducer == nil {
 		unregistered = append(unregistered, "JSONProducer")
 	}
@@ -509,6 +516,8 @@ func (o *MnimidamonAPI) ProducersFor(mediaTypes []string) map[string]runtime.Pro
 	result := make(map[string]runtime.Producer, len(mediaTypes))
 	for _, mt := range mediaTypes {
 		switch mt {
+		case "application/octet-stream":
+			result["application/octet-stream"] = o.BinProducer
 		case "application/json":
 			result["application/json"] = o.JSONProducer
 		}
@@ -650,11 +659,11 @@ func (o *MnimidamonAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/user/current/computers/current/groups/{group_id}/join"] = group_computer.NewJoinComputerToGroup(o.context, o.GroupComputerJoinComputerToGroupHandler)
+	o.handlers["POST"]["/users/current/computers/current/groups/{group_id}/join"] = group_computer.NewJoinComputerToGroup(o.context, o.GroupComputerJoinComputerToGroupHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/user/current/computers/current/groups/{group_id}/leave"] = group_computer.NewLeaveComputerFromGroup(o.context, o.GroupComputerLeaveComputerFromGroupHandler)
+	o.handlers["POST"]["/users/current/computers/current/groups/{group_id}/leave"] = group_computer.NewLeaveComputerFromGroup(o.context, o.GroupComputerLeaveComputerFromGroupHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}

@@ -41,28 +41,20 @@ type UploadBackupParams struct {
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
+	/*The encodec backup file.
+	  In: formData
+	*/
+	BackupData io.ReadCloser
 	/*Numeric ID of the Backup.
 	  Required: true
 	  In: path
 	*/
 	BackupID int64
-	/*Name of the file with the extension.
-	  In: formData
-	*/
-	FileName *string
 	/*Numeric ID of the Group.
 	  Required: true
 	  In: path
 	*/
 	GroupID int64
-	/*Hash of the encoded file binary.
-	  In: formData
-	*/
-	Hash *string
-	/*Encoded file binary.
-	  In: formData
-	*/
-	UploadedBackup io.ReadCloser
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -81,15 +73,20 @@ func (o *UploadBackupParams) BindRequest(r *http.Request, route *middleware.Matc
 			return errors.New(400, "%v", err)
 		}
 	}
-	fds := runtime.Values(r.Form)
+
+	backupData, backupDataHeader, err := r.FormFile("backup_data")
+	if err != nil && err != http.ErrMissingFile {
+		res = append(res, errors.New(400, "reading file %q failed: %v", "backupData", err))
+	} else if err == http.ErrMissingFile {
+		// no-op for missing but optional file parameter
+	} else if err := o.bindBackupData(backupData, backupDataHeader); err != nil {
+		res = append(res, err)
+	} else {
+		o.BackupData = &runtime.File{Data: backupData, Header: backupDataHeader}
+	}
 
 	rBackupID, rhkBackupID, _ := route.Params.GetOK("backup_id")
 	if err := o.bindBackupID(rBackupID, rhkBackupID, route.Formats); err != nil {
-		res = append(res, err)
-	}
-
-	fdFileName, fdhkFileName, _ := fds.GetOK("file_name")
-	if err := o.bindFileName(fdFileName, fdhkFileName, route.Formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -97,25 +94,16 @@ func (o *UploadBackupParams) BindRequest(r *http.Request, route *middleware.Matc
 	if err := o.bindGroupID(rGroupID, rhkGroupID, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
-	fdHash, fdhkHash, _ := fds.GetOK("hash")
-	if err := o.bindHash(fdHash, fdhkHash, route.Formats); err != nil {
-		res = append(res, err)
-	}
-
-	uploadedBackup, uploadedBackupHeader, err := r.FormFile("uploaded_backup")
-	if err != nil && err != http.ErrMissingFile {
-		res = append(res, errors.New(400, "reading file %q failed: %v", "uploadedBackup", err))
-	} else if err == http.ErrMissingFile {
-		// no-op for missing but optional file parameter
-	} else if err := o.bindUploadedBackup(uploadedBackup, uploadedBackupHeader); err != nil {
-		res = append(res, err)
-	} else {
-		o.UploadedBackup = &runtime.File{Data: uploadedBackup, Header: uploadedBackupHeader}
-	}
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// bindBackupData binds file parameter BackupData.
+//
+// The only supported validations on files are MinLength and MaxLength
+func (o *UploadBackupParams) bindBackupData(file multipart.File, header *multipart.FileHeader) error {
 	return nil
 }
 
@@ -138,23 +126,6 @@ func (o *UploadBackupParams) bindBackupID(rawData []string, hasKey bool, formats
 	return nil
 }
 
-// bindFileName binds and validates parameter FileName from formData.
-func (o *UploadBackupParams) bindFileName(rawData []string, hasKey bool, formats strfmt.Registry) error {
-	var raw string
-	if len(rawData) > 0 {
-		raw = rawData[len(rawData)-1]
-	}
-
-	// Required: false
-
-	if raw == "" { // empty values pass all other validations
-		return nil
-	}
-	o.FileName = &raw
-
-	return nil
-}
-
 // bindGroupID binds and validates parameter GroupID from path.
 func (o *UploadBackupParams) bindGroupID(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
@@ -171,29 +142,5 @@ func (o *UploadBackupParams) bindGroupID(rawData []string, hasKey bool, formats 
 	}
 	o.GroupID = value
 
-	return nil
-}
-
-// bindHash binds and validates parameter Hash from formData.
-func (o *UploadBackupParams) bindHash(rawData []string, hasKey bool, formats strfmt.Registry) error {
-	var raw string
-	if len(rawData) > 0 {
-		raw = rawData[len(rawData)-1]
-	}
-
-	// Required: false
-
-	if raw == "" { // empty values pass all other validations
-		return nil
-	}
-	o.Hash = &raw
-
-	return nil
-}
-
-// bindUploadedBackup binds file parameter UploadedBackup.
-//
-// The only supported validations on files are MinLength and MaxLength
-func (o *UploadBackupParams) bindUploadedBackup(file multipart.File, header *multipart.FileHeader) error {
 	return nil
 }

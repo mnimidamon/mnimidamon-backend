@@ -43,86 +43,6 @@ func init() {
   "host": "mnimidamon.marmiha.com",
   "basePath": "/api/v1",
   "paths": {
-    "/user/current/computers/current/groups/{group_id}/join": {
-      "post": {
-        "security": [
-          {
-            "auth_key": [],
-            "comp_key": []
-          }
-        ],
-        "tags": [
-          "group computer"
-        ],
-        "operationId": "joinComputerToGroup",
-        "parameters": [
-          {
-            "description": "Group creation payload.",
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/CreateGroupComputerPayload"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The group computer",
-            "schema": {
-              "$ref": "#/definitions/GroupComputer"
-            }
-          },
-          "400": {
-            "$ref": "#/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/responses/Unauthorized"
-          },
-          "500": {
-            "$ref": "#/responses/Internal"
-          }
-        }
-      },
-      "parameters": [
-        {
-          "$ref": "#/parameters/PathGroupId"
-        }
-      ]
-    },
-    "/user/current/computers/current/groups/{group_id}/leave": {
-      "post": {
-        "security": [
-          {
-            "auth_key": [],
-            "comp_key": []
-          }
-        ],
-        "tags": [
-          "group computer"
-        ],
-        "operationId": "leaveComputerFromGroup",
-        "responses": {
-          "204": {
-            "description": "Successful deletion"
-          },
-          "400": {
-            "$ref": "#/responses/BadRequest"
-          },
-          "401": {
-            "$ref": "#/responses/Unauthorized"
-          },
-          "500": {
-            "$ref": "#/responses/Internal"
-          }
-        }
-      },
-      "parameters": [
-        {
-          "$ref": "#/parameters/PathGroupId"
-        }
-      ]
-    },
     "/users": {
       "get": {
         "tags": [
@@ -373,7 +293,8 @@ func init() {
       "post": {
         "security": [
           {
-            "auth_key": []
+            "auth_key": [],
+            "comp_key": []
           }
         ],
         "tags": [
@@ -381,6 +302,16 @@ func init() {
         ],
         "summary": "Initialize a new backup",
         "operationId": "initializeGroupBackup",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/InitializeGroupBackupPayload"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Newly created backup object.",
@@ -442,7 +373,8 @@ func init() {
       "put": {
         "security": [
           {
-            "auth_key": []
+            "auth_key": [],
+            "comp_key": []
           }
         ],
         "tags": [
@@ -552,6 +484,9 @@ func init() {
             "comp_key": []
           }
         ],
+        "produces": [
+          "application/octet-stream"
+        ],
         "tags": [
           "backup"
         ],
@@ -561,8 +496,7 @@ func init() {
           "200": {
             "description": "Binary string of the encoded file content.",
             "schema": {
-              "type": "string",
-              "format": "binary"
+              "type": "file"
             }
           },
           "400": {
@@ -606,21 +540,9 @@ func init() {
         "operationId": "uploadBackup",
         "parameters": [
           {
-            "type": "string",
-            "description": "Name of the file with the extension.",
-            "name": "file_name",
-            "in": "formData"
-          },
-          {
             "type": "file",
-            "description": "Encoded file binary.",
-            "name": "uploaded_backup",
-            "in": "formData"
-          },
-          {
-            "type": "string",
-            "description": "Hash of the encoded file binary.",
-            "name": "hash",
+            "description": "The encodec backup file.",
+            "name": "backup_data",
             "in": "formData"
           }
         ],
@@ -648,6 +570,86 @@ func init() {
         },
         {
           "$ref": "#/parameters/PathBackupId"
+        }
+      ]
+    },
+    "/users/current/computers/current/groups/{group_id}/join": {
+      "post": {
+        "security": [
+          {
+            "auth_key": [],
+            "comp_key": []
+          }
+        ],
+        "tags": [
+          "group computer"
+        ],
+        "operationId": "joinComputerToGroup",
+        "parameters": [
+          {
+            "description": "Group creation payload.",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateGroupComputerPayload"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The group computer",
+            "schema": {
+              "$ref": "#/definitions/GroupComputer"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/parameters/PathGroupId"
+        }
+      ]
+    },
+    "/users/current/computers/current/groups/{group_id}/leave": {
+      "post": {
+        "security": [
+          {
+            "auth_key": [],
+            "comp_key": []
+          }
+        ],
+        "tags": [
+          "group computer"
+        ],
+        "operationId": "leaveComputerFromGroup",
+        "responses": {
+          "204": {
+            "description": "Successful deletion"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/parameters/PathGroupId"
         }
       ]
     },
@@ -1287,14 +1289,11 @@ func init() {
       "description": "Object that represents a Group Computer.",
       "type": "object",
       "properties": {
+        "computer": {
+          "$ref": "#/definitions/Computer"
+        },
         "computer_id": {
           "description": "Numeric identificator of the Computer.",
-          "type": "integer",
-          "readOnly": true,
-          "example": 42
-        },
-        "group_computer_id": {
-          "description": "Numeric identificatior of the Group Computer.",
           "type": "integer",
           "readOnly": true,
           "example": 42
@@ -1343,6 +1342,29 @@ func init() {
           "maxLength": 12,
           "minLength": 3,
           "example": "damons"
+        }
+      }
+    },
+    "InitializeGroupBackupPayload": {
+      "description": "Payload when you initialize a new group backup",
+      "type": "object",
+      "required": [
+        "size",
+        "hash",
+        "file_name"
+      ],
+      "properties": {
+        "file_name": {
+          "type": "string",
+          "minLength": 3
+        },
+        "hash": {
+          "type": "string",
+          "minLength": 1
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 1
         }
       }
     },
@@ -1667,112 +1689,6 @@ func init() {
   "host": "mnimidamon.marmiha.com",
   "basePath": "/api/v1",
   "paths": {
-    "/user/current/computers/current/groups/{group_id}/join": {
-      "post": {
-        "security": [
-          {
-            "auth_key": [],
-            "comp_key": []
-          }
-        ],
-        "tags": [
-          "group computer"
-        ],
-        "operationId": "joinComputerToGroup",
-        "parameters": [
-          {
-            "description": "Group creation payload.",
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/CreateGroupComputerPayload"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The group computer",
-            "schema": {
-              "$ref": "#/definitions/GroupComputer"
-            }
-          },
-          "400": {
-            "description": "Supplied parameters were not okay.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "401": {
-            "description": "Unauthorized.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Internal server error.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      },
-      "parameters": [
-        {
-          "type": "integer",
-          "description": "Numeric ID of the Group.",
-          "name": "group_id",
-          "in": "path",
-          "required": true
-        }
-      ]
-    },
-    "/user/current/computers/current/groups/{group_id}/leave": {
-      "post": {
-        "security": [
-          {
-            "auth_key": [],
-            "comp_key": []
-          }
-        ],
-        "tags": [
-          "group computer"
-        ],
-        "operationId": "leaveComputerFromGroup",
-        "responses": {
-          "204": {
-            "description": "Successful deletion"
-          },
-          "400": {
-            "description": "Supplied parameters were not okay.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "401": {
-            "description": "Unauthorized.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Internal server error.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      },
-      "parameters": [
-        {
-          "type": "integer",
-          "description": "Numeric ID of the Group.",
-          "name": "group_id",
-          "in": "path",
-          "required": true
-        }
-      ]
-    },
     "/users": {
       "get": {
         "tags": [
@@ -2065,7 +1981,8 @@ func init() {
       "post": {
         "security": [
           {
-            "auth_key": []
+            "auth_key": [],
+            "comp_key": []
           }
         ],
         "tags": [
@@ -2073,6 +1990,16 @@ func init() {
         ],
         "summary": "Initialize a new backup",
         "operationId": "initializeGroupBackup",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/InitializeGroupBackupPayload"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Newly created backup object.",
@@ -2153,7 +2080,8 @@ func init() {
       "put": {
         "security": [
           {
-            "auth_key": []
+            "auth_key": [],
+            "comp_key": []
           }
         ],
         "tags": [
@@ -2309,6 +2237,9 @@ func init() {
             "comp_key": []
           }
         ],
+        "produces": [
+          "application/octet-stream"
+        ],
         "tags": [
           "backup"
         ],
@@ -2318,8 +2249,7 @@ func init() {
           "200": {
             "description": "Binary string of the encoded file content.",
             "schema": {
-              "type": "string",
-              "format": "binary"
+              "type": "file"
             }
           },
           "400": {
@@ -2383,21 +2313,9 @@ func init() {
         "operationId": "uploadBackup",
         "parameters": [
           {
-            "type": "string",
-            "description": "Name of the file with the extension.",
-            "name": "file_name",
-            "in": "formData"
-          },
-          {
             "type": "file",
-            "description": "Encoded file binary.",
-            "name": "uploaded_backup",
-            "in": "formData"
-          },
-          {
-            "type": "string",
-            "description": "Hash of the encoded file binary.",
-            "name": "hash",
+            "description": "The encodec backup file.",
+            "name": "backup_data",
             "in": "formData"
           }
         ],
@@ -2440,6 +2358,112 @@ func init() {
           "type": "integer",
           "description": "Numeric ID of the Backup.",
           "name": "backup_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    "/users/current/computers/current/groups/{group_id}/join": {
+      "post": {
+        "security": [
+          {
+            "auth_key": [],
+            "comp_key": []
+          }
+        ],
+        "tags": [
+          "group computer"
+        ],
+        "operationId": "joinComputerToGroup",
+        "parameters": [
+          {
+            "description": "Group creation payload.",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateGroupComputerPayload"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The group computer",
+            "schema": {
+              "$ref": "#/definitions/GroupComputer"
+            }
+          },
+          "400": {
+            "description": "Supplied parameters were not okay.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "type": "integer",
+          "description": "Numeric ID of the Group.",
+          "name": "group_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    "/users/current/computers/current/groups/{group_id}/leave": {
+      "post": {
+        "security": [
+          {
+            "auth_key": [],
+            "comp_key": []
+          }
+        ],
+        "tags": [
+          "group computer"
+        ],
+        "operationId": "leaveComputerFromGroup",
+        "responses": {
+          "204": {
+            "description": "Successful deletion"
+          },
+          "400": {
+            "description": "Supplied parameters were not okay.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "type": "integer",
+          "description": "Numeric ID of the Group.",
+          "name": "group_id",
           "in": "path",
           "required": true
         }
@@ -3206,14 +3230,11 @@ func init() {
       "description": "Object that represents a Group Computer.",
       "type": "object",
       "properties": {
+        "computer": {
+          "$ref": "#/definitions/Computer"
+        },
         "computer_id": {
           "description": "Numeric identificator of the Computer.",
-          "type": "integer",
-          "readOnly": true,
-          "example": 42
-        },
-        "group_computer_id": {
-          "description": "Numeric identificatior of the Group Computer.",
           "type": "integer",
           "readOnly": true,
           "example": 42
@@ -3262,6 +3283,29 @@ func init() {
           "maxLength": 12,
           "minLength": 3,
           "example": "damons"
+        }
+      }
+    },
+    "InitializeGroupBackupPayload": {
+      "description": "Payload when you initialize a new group backup",
+      "type": "object",
+      "required": [
+        "size",
+        "hash",
+        "file_name"
+      ],
+      "properties": {
+        "file_name": {
+          "type": "string",
+          "minLength": 3
+        },
+        "hash": {
+          "type": "string",
+          "minLength": 1
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 1
         }
       }
     },

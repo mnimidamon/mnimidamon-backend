@@ -19,15 +19,13 @@ import (
 // swagger:model GroupComputer
 type GroupComputer struct {
 
+	// computer
+	Computer *Computer `json:"computer,omitempty"`
+
 	// Numeric identificator of the Computer.
 	// Example: 42
 	// Read Only: true
 	ComputerID int64 `json:"computer_id,omitempty"`
-
-	// Numeric identificatior of the Group Computer.
-	// Example: 42
-	// Read Only: true
-	GroupComputerID int64 `json:"group_computer_id,omitempty"`
 
 	// Numeric identificatior of the Group.
 	// Example: 42
@@ -41,6 +39,32 @@ type GroupComputer struct {
 
 // Validate validates this group computer
 func (m *GroupComputer) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateComputer(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *GroupComputer) validateComputer(formats strfmt.Registry) error {
+	if swag.IsZero(m.Computer) { // not required
+		return nil
+	}
+
+	if m.Computer != nil {
+		if err := m.Computer.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("computer")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -48,11 +72,11 @@ func (m *GroupComputer) Validate(formats strfmt.Registry) error {
 func (m *GroupComputer) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.contextValidateComputerID(ctx, formats); err != nil {
+	if err := m.contextValidateComputer(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.contextValidateGroupComputerID(ctx, formats); err != nil {
+	if err := m.contextValidateComputerID(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -66,18 +90,23 @@ func (m *GroupComputer) ContextValidate(ctx context.Context, formats strfmt.Regi
 	return nil
 }
 
-func (m *GroupComputer) contextValidateComputerID(ctx context.Context, formats strfmt.Registry) error {
+func (m *GroupComputer) contextValidateComputer(ctx context.Context, formats strfmt.Registry) error {
 
-	if err := validate.ReadOnly(ctx, "computer_id", "body", int64(m.ComputerID)); err != nil {
-		return err
+	if m.Computer != nil {
+		if err := m.Computer.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("computer")
+			}
+			return err
+		}
 	}
 
 	return nil
 }
 
-func (m *GroupComputer) contextValidateGroupComputerID(ctx context.Context, formats strfmt.Registry) error {
+func (m *GroupComputer) contextValidateComputerID(ctx context.Context, formats strfmt.Registry) error {
 
-	if err := validate.ReadOnly(ctx, "group_computer_id", "body", int64(m.GroupComputerID)); err != nil {
+	if err := validate.ReadOnly(ctx, "computer_id", "body", int64(m.ComputerID)); err != nil {
 		return err
 	}
 

@@ -29,7 +29,7 @@ func NewJoinComputerToGroup(ctx *middleware.Context, handler JoinComputerToGroup
 	return &JoinComputerToGroup{Context: ctx, Handler: handler}
 }
 
-/* JoinComputerToGroup swagger:route POST /user/current/computers/current/groups/{group_id}/join group computer joinComputerToGroup
+/* JoinComputerToGroup swagger:route POST /users/current/computers/current/groups/{group_id}/join group computer joinComputerToGroup
 
 JoinComputerToGroup join computer to group API
 

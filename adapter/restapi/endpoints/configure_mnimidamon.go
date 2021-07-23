@@ -21,6 +21,7 @@ import (
 	"mnimidamonbackend/domain/usecase/listinvite"
 	"mnimidamonbackend/domain/usecase/listuser"
 	"mnimidamonbackend/domain/usecase/managegroup"
+	"mnimidamonbackend/domain/usecase/managegroupcomputer"
 	"mnimidamonbackend/domain/usecase/userregistration"
 	"net/http"
 
@@ -70,6 +71,8 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 	gr := sqliterepo.NewGroupRepository(db)
 	gcr := sqliterepo.NewGroupComputerRepository(db)
 	ir := sqliterepo.NewInviteRepository(db)
+	br := sqliterepo.NewBackupRepository(db)
+	cbr := sqliterepo.NewComputerBackupRepository(db)
 
 	// Use case setup.
 	uruc := userregistration.NewUseCase(ur)
@@ -82,6 +85,7 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 	crcuc := computerregistration.NewUseCase(cr, ur)
 	giuc := groupinvite.NewUseCase(gr, ir, ur)
 	liuc := listinvite.NewUseCase(ir)
+	mgcuc := managegroupcomputer.NewUseCase(gcr, cr, gr, br, cbr)
 
 	// Setting up the authorization.
 	ja := restapi.NewJwtAuthentication("SuperSecretKey", luuc, lguc, lcuc, lgcuc, lgmuc, liuc)
@@ -94,10 +98,9 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 
 	api.InviteAcceptCurrentUserInviteHandler = handlers.NewAcceptInviteHandler(giuc, ja)
 	api.GroupGetGroupMembersHandler = handlers.NewGetGroupMembersHandler(lgmuc, ja)
-
 	api.InviteDeclineCurrentUserInviteHandler = handlers.NewDeclineCurrentUserInviteHandler(giuc, ja)
+	api.GroupComputerJoinComputerToGroupHandler = handlers.NewJoinComputerToGroupHandler(mgcuc, ja)
 
-	api.GroupComputerJoinComputerToGroupHandler = nil
 	api.GroupComputerLeaveComputerFromGroupHandler = nil
 
 	if api.CurrentUserDeleteCurrentUserHandler == nil {

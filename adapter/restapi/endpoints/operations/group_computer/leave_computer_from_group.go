@@ -29,7 +29,7 @@ func NewLeaveComputerFromGroup(ctx *middleware.Context, handler LeaveComputerFro
 	return &LeaveComputerFromGroup{Context: ctx, Handler: handler}
 }
 
-/* LeaveComputerFromGroup swagger:route POST /user/current/computers/current/groups/{group_id}/leave group computer leaveComputerFromGroup
+/* LeaveComputerFromGroup swagger:route POST /users/current/computers/current/groups/{group_id}/leave group computer leaveComputerFromGroup
 
 LeaveComputerFromGroup leave computer from group API
 

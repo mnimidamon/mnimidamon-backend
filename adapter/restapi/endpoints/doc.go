@@ -16,6 +16,7 @@
 //    - multipart/form-data
 //
 //  Produces:
+//    - application/octet-stream
 //    - application/json
 //
 // swagger:meta

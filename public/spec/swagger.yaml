@@ -281,7 +281,7 @@ paths:
         500:
           $ref: "#/responses/Internal"
 
-  /user/current/computers/current/groups/{group_id}/join:
+  /users/current/computers/current/groups/{group_id}/join:
     parameters:
       - $ref: "#/parameters/PathGroupId"
 
@@ -312,7 +312,7 @@ paths:
           $ref: "#/responses/Internal"
 
 
-  /user/current/computers/current/groups/{group_id}/leave:
+  /users/current/computers/current/groups/{group_id}/leave:
     parameters:
       - $ref: "#/parameters/PathGroupId"
 
@@ -627,6 +627,13 @@ paths:
       summary: Initialize a new backup
       security:
         - auth_key: []
+          comp_key: []
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/InitializeGroupBackupPayload"
       responses:
         200:
           description: Newly created backup object.
@@ -696,6 +703,7 @@ paths:
       summary: Update the upload request flag
       security:
         - auth_key: []
+          comp_key: []
       responses:
         200:
           description: Upload request flag has been updated
@@ -745,6 +753,8 @@ paths:
       tags:
         - backup
       summary: Download the backup file
+      produces:
+        - application/octet-stream
       security:
         - auth_key: []
           comp_key: []
@@ -752,8 +762,7 @@ paths:
         200:
           description: Binary string of the encoded file content.
           schema:
-            type: string
-            format: binary
+            type: file
         400:
           $ref: "#/responses/BadRequest"
         404:
@@ -782,17 +791,9 @@ paths:
         - multipart/form-data
       parameters:
         - in: formData
-          name: file_name
-          type: string
-          description: Name of the file with the extension.
-        - in: formData
-          name: uploaded_backup
+          name: backup_data
           type: file
-          description: Encoded file binary.
-        - in: formData
-          name: hash
-          type: string
-          description: Hash of the encoded file binary.
+          description: The encodec backup file.
       responses:
         200:
           description: The updated backup object.
@@ -832,11 +833,8 @@ definitions:
     description: "Object that represents a Group Computer."
     type: object
     properties:
-      group_computer_id:
-        description: "Numeric identificatior of the Group Computer."
-        type: integer
-        readOnly: true
-        example: 42
+      computer:
+        $ref: "#/definitions/Computer"
       computer_id:
         description: "Numeric identificator of the Computer."
         type: integer
@@ -961,6 +959,24 @@ definitions:
         example: "storagetron"
         minLength: 3
         maxLength: 12
+
+  InitializeGroupBackupPayload:
+    description: "Payload when you initialize a new group backup"
+    type: object
+    required:
+      - size
+      - hash
+      - file_name
+    properties:
+      size:
+        type: integer
+        minimum: 1
+      hash:
+        type: string
+        minLength: 1
+      file_name:
+        type: string
+        minLength: 3
 
   CreateGroupComputerPayload:
     description: "Payload when you join a computer to a group"
