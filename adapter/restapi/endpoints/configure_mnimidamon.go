@@ -28,7 +28,6 @@ import (
 	"mnimidamonbackend/adapter/restapi/endpoints/operations/backup"
 	"mnimidamonbackend/adapter/restapi/endpoints/operations/computer"
 	"mnimidamonbackend/adapter/restapi/endpoints/operations/current_user"
-	"mnimidamonbackend/adapter/restapi/endpoints/operations/invite"
 )
 
 //go:generate swagger generate server --target ..\..\restapi --name Mnimidamon --spec ..\..\..\public\spec\swagger.yaml --model-package modelapi --server-package endpoints --principal interface{}
@@ -93,16 +92,10 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 	api.CompKeyAuth = ja.CompKeyMiddleware()
 
 
-
 	api.InviteAcceptCurrentUserInviteHandler = handlers.NewAcceptInviteHandler(giuc, ja)
-
 	api.GroupGetGroupMembersHandler = handlers.NewGetGroupMembersHandler(lgmuc, ja)
 
-	if api.InviteDeclineCurrentUserInviteHandler == nil {
-		api.InviteDeclineCurrentUserInviteHandler = invite.DeclineCurrentUserInviteHandlerFunc(func(params invite.DeclineCurrentUserInviteParams, principal interface{}) middleware.Responder {
-			return middleware.NotImplemented("operation invite.DeclineCurrentUserInvite has not yet been implemented")
-		})
-	}
+	api.InviteDeclineCurrentUserInviteHandler = handlers.NewDeclineCurrentUserInviteHandler(giuc, ja)
 
 	if api.CurrentUserDeleteCurrentUserHandler == nil {
 		api.CurrentUserDeleteCurrentUserHandler = current_user.DeleteCurrentUserHandlerFunc(func(params current_user.DeleteCurrentUserParams, principal interface{}) middleware.Responder {
@@ -144,12 +137,8 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 
 	api.CurrentUserGetCurrentUserGroupsHandler = handlers.NewGetCurrentUserGroupsHandler(lguc, ja)
 
-	if api.InviteGetCurrentUserInviteHandler == nil {
-		api.InviteGetCurrentUserInviteHandler = invite.GetCurrentUserInviteHandlerFunc(func(params invite.GetCurrentUserInviteParams, principal interface{}) middleware.Responder {
-			return middleware.NotImplemented("operation invite.GetCurrentUserInvite has not yet been implemented")
-		})
-	}
-	
+	api.InviteGetCurrentUserInviteHandler = handlers.NewGetCurrentUserInviteHandler(ja)
+
 	api.CurrentUserGetCurrentUserInvitesHandler = handlers.NewGetCurrentUserInvitesHandler(liuc, ja)
 
 	api.GroupGetGroupHandler = handlers.NewGetGroupHandler(ja)

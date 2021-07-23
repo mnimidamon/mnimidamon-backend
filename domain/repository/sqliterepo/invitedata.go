@@ -131,6 +131,7 @@ func (id inviteData) FindById(userID uint, groupID uint) (*model.Invite, error) 
 	result :=
 		id.Model(&Invite{}).
 			Where("user_id = ? AND group_id = ?", userID, groupID).
+			Preload("Group").
 			First(&invite)
 
 	if err := result.Error; err != nil {
