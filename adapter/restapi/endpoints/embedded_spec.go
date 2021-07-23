@@ -590,6 +590,9 @@ func init() {
               "$ref": "#/definitions/Computer"
             }
           },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
           "401": {
             "$ref": "#/responses/Unauthorized"
           },
@@ -2254,6 +2257,12 @@ func init() {
             "description": "The computer",
             "schema": {
               "$ref": "#/definitions/Computer"
+            }
+          },
+          "400": {
+            "description": "Supplied parameters were not okay.",
+            "schema": {
+              "$ref": "#/definitions/Error"
             }
           },
           "401": {

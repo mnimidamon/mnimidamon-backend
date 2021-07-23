@@ -5,16 +5,13 @@ import (
 	"mnimidamonbackend/adapter/restapi"
 	"mnimidamonbackend/adapter/restapi/endpoints/operations/computer"
 	"mnimidamonbackend/domain/model"
-	"mnimidamonbackend/domain/usecase"
 )
 
-type getCurrentUserComputer struct {
-	LUCase usecase.ListUserInterface
-	LCCase usecase.ListComputerInterface
+type getCurrentComputerImpl struct {
 	JAuth  restapi.JwtAuthentication
 }
 
-func (impl *getCurrentUserComputer) Handle(p computer.GetCurrentComputerParams, _ interface{}) middleware.Responder {
+func (impl *getCurrentComputerImpl) Handle(p computer.GetCurrentComputerParams, _ interface{}) middleware.Responder {
 	return impl.JAuth.ExtractUserFromApiKey(p.HTTPRequest, func(um *model.User) middleware.Responder {
 		return impl.JAuth.ExtractComputerFromApiKey(p.HTTPRequest, um.ID, func(cm *model.Computer) middleware.Responder {
 			return computer.NewGetCurrentUserComputerOK().
@@ -23,10 +20,8 @@ func (impl *getCurrentUserComputer) Handle(p computer.GetCurrentComputerParams, 
 	})
 }
 
-func NewGetCurrentUserComputer(luuc usecase.ListUserInterface, lcuc usecase.ListComputerInterface, ja restapi.JwtAuthentication) computer.GetCurrentComputerHandler {
-	return &getCurrentUserComputer{
-		LUCase: luuc,
-		LCCase: lcuc,
+func NewGetCurrentUserComputer(ja restapi.JwtAuthentication) computer.GetCurrentComputerHandler {
+	return &getCurrentComputerImpl{
 		JAuth:  ja,
 	}
 }

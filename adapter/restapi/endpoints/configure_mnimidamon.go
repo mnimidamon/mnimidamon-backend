@@ -119,9 +119,9 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 
 	api.CurrentUserGetCurrentUserHandler = handlers.NewGetCurrentUserHandler(ja)
 
-	api.ComputerGetCurrentComputerHandler =  handlers.NewGetCurrentUserComputer(luuc, lcuc, ja)
+	api.ComputerGetCurrentComputerHandler =  handlers.NewGetCurrentUserComputer(ja)
 
-	api.ComputerGetCurrentUserComputerHandler = nil
+	api.ComputerGetCurrentUserComputerHandler = handlers.NewGetCurrentUserComputerHandler(lcuc, ja)
 
 	if api.ComputerGetCurrentUserComputersHandler == nil {
 		api.ComputerGetCurrentUserComputersHandler = computer.GetCurrentUserComputersHandlerFunc(func(params computer.GetCurrentUserComputersParams, principal interface{}) middleware.Responder {
@@ -148,6 +148,7 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 			return middleware.NotImplemented("operation backup.GetGroupBackup has not yet been implemented")
 		})
 	}
+
 	if api.BackupGetGroupBackupsHandler == nil {
 		api.BackupGetGroupBackupsHandler = backup.GetGroupBackupsHandlerFunc(func(params backup.GetGroupBackupsParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation backup.GetGroupBackups has not yet been implemented")

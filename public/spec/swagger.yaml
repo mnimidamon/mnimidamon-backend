@@ -272,6 +272,8 @@ paths:
           description: The computer
           schema:
             $ref: "#/definitions/Computer"
+        400:
+          $ref: "#/responses/BadRequest"
         401:
           $ref: "#/responses/Unauthorized"
         500:

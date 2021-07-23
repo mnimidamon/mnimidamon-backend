@@ -57,6 +57,50 @@ func (o *GetCurrentUserComputerOK) WriteResponse(rw http.ResponseWriter, produce
 	}
 }
 
+// GetCurrentUserComputerBadRequestCode is the HTTP code returned for type GetCurrentUserComputerBadRequest
+const GetCurrentUserComputerBadRequestCode int = 400
+
+/*GetCurrentUserComputerBadRequest Supplied parameters were not okay.
+
+swagger:response getCurrentUserComputerBadRequest
+*/
+type GetCurrentUserComputerBadRequest struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *modelapi.Error `json:"body,omitempty"`
+}
+
+// NewGetCurrentUserComputerBadRequest creates GetCurrentUserComputerBadRequest with default headers values
+func NewGetCurrentUserComputerBadRequest() *GetCurrentUserComputerBadRequest {
+
+	return &GetCurrentUserComputerBadRequest{}
+}
+
+// WithPayload adds the payload to the get current user computer bad request response
+func (o *GetCurrentUserComputerBadRequest) WithPayload(payload *modelapi.Error) *GetCurrentUserComputerBadRequest {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the get current user computer bad request response
+func (o *GetCurrentUserComputerBadRequest) SetPayload(payload *modelapi.Error) {
+	o.Payload = payload
+}
+
+// WriteResponse to the client
+func (o *GetCurrentUserComputerBadRequest) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.WriteHeader(400)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
+}
+
 // GetCurrentUserComputerUnauthorizedCode is the HTTP code returned for type GetCurrentUserComputerUnauthorized
 const GetCurrentUserComputerUnauthorizedCode int = 401
 
