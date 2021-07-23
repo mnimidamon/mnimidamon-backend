@@ -24,6 +24,7 @@ import (
 	"mnimidamonbackend/adapter/restapi/endpoints/operations/computer"
 	"mnimidamonbackend/adapter/restapi/endpoints/operations/current_user"
 	"mnimidamonbackend/adapter/restapi/endpoints/operations/group"
+	"mnimidamonbackend/adapter/restapi/endpoints/operations/group_computer"
 	"mnimidamonbackend/adapter/restapi/endpoints/operations/invite"
 	"mnimidamonbackend/adapter/restapi/endpoints/operations/user"
 )
@@ -122,6 +123,12 @@ func NewMnimidamonAPI(spec *loads.Document) *MnimidamonAPI {
 		}),
 		GroupInviteUserToGroupHandler: group.InviteUserToGroupHandlerFunc(func(params group.InviteUserToGroupParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation group.InviteUserToGroup has not yet been implemented")
+		}),
+		GroupComputerJoinComputerToGroupHandler: group_computer.JoinComputerToGroupHandlerFunc(func(params group_computer.JoinComputerToGroupParams, principal interface{}) middleware.Responder {
+			return middleware.NotImplemented("operation group_computer.JoinComputerToGroup has not yet been implemented")
+		}),
+		GroupComputerLeaveComputerFromGroupHandler: group_computer.LeaveComputerFromGroupHandlerFunc(func(params group_computer.LeaveComputerFromGroupParams, principal interface{}) middleware.Responder {
+			return middleware.NotImplemented("operation group_computer.LeaveComputerFromGroup has not yet been implemented")
 		}),
 		AuthorizationLoginUserHandler: authorization.LoginUserHandlerFunc(func(params authorization.LoginUserParams) middleware.Responder {
 			return middleware.NotImplemented("operation authorization.LoginUser has not yet been implemented")
@@ -247,6 +254,10 @@ type MnimidamonAPI struct {
 	BackupInitializeGroupBackupDeletionHandler backup.InitializeGroupBackupDeletionHandler
 	// GroupInviteUserToGroupHandler sets the operation handler for the invite user to group operation
 	GroupInviteUserToGroupHandler group.InviteUserToGroupHandler
+	// GroupComputerJoinComputerToGroupHandler sets the operation handler for the join computer to group operation
+	GroupComputerJoinComputerToGroupHandler group_computer.JoinComputerToGroupHandler
+	// GroupComputerLeaveComputerFromGroupHandler sets the operation handler for the leave computer from group operation
+	GroupComputerLeaveComputerFromGroupHandler group_computer.LeaveComputerFromGroupHandler
 	// AuthorizationLoginUserHandler sets the operation handler for the login user operation
 	AuthorizationLoginUserHandler authorization.LoginUserHandler
 	// AuthorizationRegisterComputerHandler sets the operation handler for the register computer operation
@@ -415,6 +426,12 @@ func (o *MnimidamonAPI) Validate() error {
 	}
 	if o.GroupInviteUserToGroupHandler == nil {
 		unregistered = append(unregistered, "group.InviteUserToGroupHandler")
+	}
+	if o.GroupComputerJoinComputerToGroupHandler == nil {
+		unregistered = append(unregistered, "group_computer.JoinComputerToGroupHandler")
+	}
+	if o.GroupComputerLeaveComputerFromGroupHandler == nil {
+		unregistered = append(unregistered, "group_computer.LeaveComputerFromGroupHandler")
 	}
 	if o.AuthorizationLoginUserHandler == nil {
 		unregistered = append(unregistered, "authorization.LoginUserHandler")
@@ -630,6 +647,14 @@ func (o *MnimidamonAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/users/current/groups/{group_id}/invites"] = group.NewInviteUserToGroup(o.context, o.GroupInviteUserToGroupHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/user/current/computers/current/groups/{group_id}/join"] = group_computer.NewJoinComputerToGroup(o.context, o.GroupComputerJoinComputerToGroupHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/user/current/computers/current/groups/{group_id}/leave"] = group_computer.NewLeaveComputerFromGroup(o.context, o.GroupComputerLeaveComputerFromGroupHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}

@@ -97,6 +97,9 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 
 	api.InviteDeclineCurrentUserInviteHandler = handlers.NewDeclineCurrentUserInviteHandler(giuc, ja)
 
+	api.GroupComputerJoinComputerToGroupHandler = nil
+	api.GroupComputerLeaveComputerFromGroupHandler = nil
+
 	if api.CurrentUserDeleteCurrentUserHandler == nil {
 		api.CurrentUserDeleteCurrentUserHandler = current_user.DeleteCurrentUserHandlerFunc(func(params current_user.DeleteCurrentUserParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation current_user.DeleteCurrentUser has not yet been implemented")

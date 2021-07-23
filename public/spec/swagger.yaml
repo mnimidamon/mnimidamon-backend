@@ -28,6 +28,8 @@ tags:
     description: Operations on Backups.
   - name: invite
     description: Operations on Invites.
+  - name: group computer
+    description: Operations on Group Computers.
 
 consumes:
   - application/json
@@ -272,6 +274,58 @@ paths:
           description: The computer
           schema:
             $ref: "#/definitions/Computer"
+        400:
+          $ref: "#/responses/BadRequest"
+        401:
+          $ref: "#/responses/Unauthorized"
+        500:
+          $ref: "#/responses/Internal"
+
+  /user/current/computers/current/groups/{group_id}/join:
+    parameters:
+      - $ref: "#/parameters/PathGroupId"
+
+    post:
+      operationId: joinComputerToGroup
+      tags:
+        - group computer
+      security:
+        - auth_key: []
+          comp_key: []
+      parameters:
+        - in: body
+          name: body
+          description: Group creation payload.
+          required: true
+          schema:
+            $ref: "#/definitions/CreateGroupComputerPayload"
+      responses:
+        200:
+          description: The group computer
+          schema:
+            $ref: "#/definitions/GroupComputer"
+        400:
+          $ref: "#/responses/BadRequest"
+        401:
+          $ref: "#/responses/Unauthorized"
+        500:
+          $ref: "#/responses/Internal"
+
+
+  /user/current/computers/current/groups/{group_id}/leave:
+    parameters:
+      - $ref: "#/parameters/PathGroupId"
+
+    post:
+      operationId: leaveComputerFromGroup
+      tags:
+        - group computer
+      security:
+        - auth_key: []
+          comp_key: []
+      responses:
+        204:
+          description: Successful deletion
         400:
           $ref: "#/responses/BadRequest"
         401:
@@ -907,6 +961,17 @@ definitions:
         example: "storagetron"
         minLength: 3
         maxLength: 12
+
+  CreateGroupComputerPayload:
+    description: "Payload when you join a computer to a group"
+    type: object
+    properties:
+      size:
+        type: integer
+        minimum: 1
+    example:
+      groupComputerPayload:
+        size: 1024
 
   StoredBackupsComputerResponse:
     description: "User and list of computers of that user which have the backup stored."

@@ -43,6 +43,86 @@ func init() {
   "host": "mnimidamon.marmiha.com",
   "basePath": "/api/v1",
   "paths": {
+    "/user/current/computers/current/groups/{group_id}/join": {
+      "post": {
+        "security": [
+          {
+            "auth_key": [],
+            "comp_key": []
+          }
+        ],
+        "tags": [
+          "group computer"
+        ],
+        "operationId": "joinComputerToGroup",
+        "parameters": [
+          {
+            "description": "Group creation payload.",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateGroupComputerPayload"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The group computer",
+            "schema": {
+              "$ref": "#/definitions/GroupComputer"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/parameters/PathGroupId"
+        }
+      ]
+    },
+    "/user/current/computers/current/groups/{group_id}/leave": {
+      "post": {
+        "security": [
+          {
+            "auth_key": [],
+            "comp_key": []
+          }
+        ],
+        "tags": [
+          "group computer"
+        ],
+        "operationId": "leaveComputerFromGroup",
+        "responses": {
+          "204": {
+            "description": "Successful deletion"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/parameters/PathGroupId"
+        }
+      ]
+    },
     "/users": {
       "get": {
         "tags": [
@@ -1160,6 +1240,21 @@ func init() {
         }
       }
     },
+    "CreateGroupComputerPayload": {
+      "description": "Payload when you join a computer to a group",
+      "type": "object",
+      "properties": {
+        "size": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "example": {
+        "groupComputerPayload": {
+          "size": 1024
+        }
+      }
+    },
     "Error": {
       "type": "object",
       "properties": {
@@ -1535,6 +1630,10 @@ func init() {
     {
       "description": "Operations on Invites.",
       "name": "invite"
+    },
+    {
+      "description": "Operations on Group Computers.",
+      "name": "group computer"
     }
   ],
   "externalDocs": {
@@ -1568,6 +1667,112 @@ func init() {
   "host": "mnimidamon.marmiha.com",
   "basePath": "/api/v1",
   "paths": {
+    "/user/current/computers/current/groups/{group_id}/join": {
+      "post": {
+        "security": [
+          {
+            "auth_key": [],
+            "comp_key": []
+          }
+        ],
+        "tags": [
+          "group computer"
+        ],
+        "operationId": "joinComputerToGroup",
+        "parameters": [
+          {
+            "description": "Group creation payload.",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateGroupComputerPayload"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The group computer",
+            "schema": {
+              "$ref": "#/definitions/GroupComputer"
+            }
+          },
+          "400": {
+            "description": "Supplied parameters were not okay.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "type": "integer",
+          "description": "Numeric ID of the Group.",
+          "name": "group_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    "/user/current/computers/current/groups/{group_id}/leave": {
+      "post": {
+        "security": [
+          {
+            "auth_key": [],
+            "comp_key": []
+          }
+        ],
+        "tags": [
+          "group computer"
+        ],
+        "operationId": "leaveComputerFromGroup",
+        "responses": {
+          "204": {
+            "description": "Successful deletion"
+          },
+          "400": {
+            "description": "Supplied parameters were not okay.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "type": "integer",
+          "description": "Numeric ID of the Group.",
+          "name": "group_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
     "/users": {
       "get": {
         "tags": [
@@ -2954,6 +3159,21 @@ func init() {
         }
       }
     },
+    "CreateGroupComputerPayload": {
+      "description": "Payload when you join a computer to a group",
+      "type": "object",
+      "properties": {
+        "size": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "example": {
+        "groupComputerPayload": {
+          "size": 1024
+        }
+      }
+    },
     "Error": {
       "type": "object",
       "properties": {
@@ -3332,6 +3552,10 @@ func init() {
     {
       "description": "Operations on Invites.",
       "name": "invite"
+    },
+    {
+      "description": "Operations on Group Computers.",
+      "name": "group computer"
     }
   ],
   "externalDocs": {
