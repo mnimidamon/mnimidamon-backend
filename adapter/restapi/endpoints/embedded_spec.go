@@ -557,11 +557,11 @@ func init() {
               "$ref": "#/definitions/Backup"
             }
           },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
           "401": {
             "$ref": "#/responses/Unauthorized"
-          },
-          "404": {
-            "$ref": "#/responses/NotFound"
           },
           "500": {
             "$ref": "#/responses/Internal"
@@ -1168,6 +1168,11 @@ func init() {
           "type": "integer",
           "readOnly": true,
           "example": 42
+        },
+        "hash": {
+          "description": "File sha256 hash.",
+          "type": "string",
+          "example": "a01568c0dd1668b1e6d92708cc9faaa9816edfd5ac4190d4befbb5f38e45aa2e"
         },
         "on_server": {
           "description": "The file can be downloaded from server.",
@@ -2334,14 +2339,14 @@ func init() {
               "$ref": "#/definitions/Backup"
             }
           },
-          "401": {
-            "description": "Unauthorized.",
+          "400": {
+            "description": "Supplied parameters were not okay.",
             "schema": {
               "$ref": "#/definitions/Error"
             }
           },
-          "404": {
-            "description": "The specified resource was not found.",
+          "401": {
+            "description": "Unauthorized.",
             "schema": {
               "$ref": "#/definitions/Error"
             }
@@ -3113,6 +3118,11 @@ func init() {
           "type": "integer",
           "readOnly": true,
           "example": 42
+        },
+        "hash": {
+          "description": "File sha256 hash.",
+          "type": "string",
+          "example": "a01568c0dd1668b1e6d92708cc9faaa9816edfd5ac4190d4befbb5f38e45aa2e"
         },
         "on_server": {
           "description": "The file can be downloaded from server.",

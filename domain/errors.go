@@ -34,6 +34,8 @@ var (
 	ErrNameNotUnique                 = NewError("ErrNameNotUnique")
 	ErrUploadNotRequested            = NewError("ErrUploadNotRequested")
 	ErrBackupNotOnServer             = NewError("ErrBackupNotOnServer")
+	ErrCalculatingHash               = NewError("ErrCalculatingHash")
+	ErrInvalidBackupHash             = NewError("ErrInvalidBackupHash")
 )
 
 func ToDomainError(err error) ErrDomain {

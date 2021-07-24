@@ -55,7 +55,7 @@ func (bd backupData) Update(bm *model.Backup) error {
 
 	result :=
 		bd.Model(b).
-			Select( "file_name", "size", "hash").
+			Select( "file_name", "size", "hash", "upload_request", "delete_request", "on_server").
 			Omit("id", "owner_id", "group_id").
 			Updates(b).
 			Select("*").

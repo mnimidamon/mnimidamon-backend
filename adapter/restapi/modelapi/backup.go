@@ -37,6 +37,10 @@ type Backup struct {
 	// Read Only: true
 	GroupID int64 `json:"group_id,omitempty"`
 
+	// File sha256 hash.
+	// Example: a01568c0dd1668b1e6d92708cc9faaa9816edfd5ac4190d4befbb5f38e45aa2e
+	Hash string `json:"hash,omitempty"`
+
 	// The file can be downloaded from server.
 	// Example: true
 	OnServer bool `json:"on_server,omitempty"`

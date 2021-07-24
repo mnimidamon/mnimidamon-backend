@@ -57,6 +57,50 @@ func (o *UploadBackupOK) WriteResponse(rw http.ResponseWriter, producer runtime.
 	}
 }
 
+// UploadBackupBadRequestCode is the HTTP code returned for type UploadBackupBadRequest
+const UploadBackupBadRequestCode int = 400
+
+/*UploadBackupBadRequest Supplied parameters were not okay.
+
+swagger:response uploadBackupBadRequest
+*/
+type UploadBackupBadRequest struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *modelapi.Error `json:"body,omitempty"`
+}
+
+// NewUploadBackupBadRequest creates UploadBackupBadRequest with default headers values
+func NewUploadBackupBadRequest() *UploadBackupBadRequest {
+
+	return &UploadBackupBadRequest{}
+}
+
+// WithPayload adds the payload to the upload backup bad request response
+func (o *UploadBackupBadRequest) WithPayload(payload *modelapi.Error) *UploadBackupBadRequest {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the upload backup bad request response
+func (o *UploadBackupBadRequest) SetPayload(payload *modelapi.Error) {
+	o.Payload = payload
+}
+
+// WriteResponse to the client
+func (o *UploadBackupBadRequest) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.WriteHeader(400)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
+}
+
 // UploadBackupUnauthorizedCode is the HTTP code returned for type UploadBackupUnauthorized
 const UploadBackupUnauthorizedCode int = 401
 
@@ -93,50 +137,6 @@ func (o *UploadBackupUnauthorized) SetPayload(payload *modelapi.Error) {
 func (o *UploadBackupUnauthorized) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(401)
-	if o.Payload != nil {
-		payload := o.Payload
-		if err := producer.Produce(rw, payload); err != nil {
-			panic(err) // let the recovery middleware deal with this
-		}
-	}
-}
-
-// UploadBackupNotFoundCode is the HTTP code returned for type UploadBackupNotFound
-const UploadBackupNotFoundCode int = 404
-
-/*UploadBackupNotFound The specified resource was not found.
-
-swagger:response uploadBackupNotFound
-*/
-type UploadBackupNotFound struct {
-
-	/*
-	  In: Body
-	*/
-	Payload *modelapi.Error `json:"body,omitempty"`
-}
-
-// NewUploadBackupNotFound creates UploadBackupNotFound with default headers values
-func NewUploadBackupNotFound() *UploadBackupNotFound {
-
-	return &UploadBackupNotFound{}
-}
-
-// WithPayload adds the payload to the upload backup not found response
-func (o *UploadBackupNotFound) WithPayload(payload *modelapi.Error) *UploadBackupNotFound {
-	o.Payload = payload
-	return o
-}
-
-// SetPayload sets the payload to the upload backup not found response
-func (o *UploadBackupNotFound) SetPayload(payload *modelapi.Error) {
-	o.Payload = payload
-}
-
-// WriteResponse to the client
-func (o *UploadBackupNotFound) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
-
-	rw.WriteHeader(404)
 	if o.Payload != nil {
 		payload := o.Payload
 		if err := producer.Produce(rw, payload); err != nil {

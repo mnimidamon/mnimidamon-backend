@@ -802,8 +802,8 @@ paths:
           description: The updated backup object.
           schema:
             $ref: "#/definitions/Backup"
-        404:
-          $ref: "#/responses/NotFound"
+        400:
+          $ref: "#/responses/BadRequest"
         401:
           $ref: "#/responses/Unauthorized"
         500:
@@ -898,6 +898,10 @@ definitions:
         description: "Size of the file in MB."
         type: integer
         example: 1024
+      hash:
+        description: "File sha256 hash."
+        type: string
+        example: a01568c0dd1668b1e6d92708cc9faaa9816edfd5ac4190d4befbb5f38e45aa2e
       upload_request:
         description: "Request to upload to server, mutally exclusive with on_server flag."
         type: boolean

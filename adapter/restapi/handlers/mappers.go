@@ -119,6 +119,7 @@ func MapToBackup(bm *model.Backup) *modelapi.Backup {
 		BackupID:      int64(bm.ID),
 		DeleteRequest: bm.DeleteRequest,
 		Filename:      bm.FileName,
+		Hash:          bm.Hash,
 		GroupID:       int64(bm.GroupID),
 		OnServer:      bm.OnServer,
 		OwnerID:       int64(bm.OwnerID),

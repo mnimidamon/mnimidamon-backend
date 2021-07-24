@@ -28,6 +28,7 @@ import (
 	"mnimidamonbackend/domain/usecase/listinvite"
 	"mnimidamonbackend/domain/usecase/listuser"
 	"mnimidamonbackend/domain/usecase/managebackup"
+	"mnimidamonbackend/domain/usecase/managefile"
 	"mnimidamonbackend/domain/usecase/managegroup"
 	"mnimidamonbackend/domain/usecase/managegroupcomputer"
 	"mnimidamonbackend/domain/usecase/userregistration"
@@ -95,6 +96,7 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 	mgcuc := managegroupcomputer.NewUseCase(gcr, cr, gr, br, cbr)
 	mbuc := managebackup.NewUseCase(fs, br, ur, gr, cr, gcr, cbr)
 	lbuc := listbackup.NewUseCase(br)
+	mfuc := managefile.NewUseCase(fs, br)
 
 	// Setting up the authorization.
 	ja := restapi.NewJwtAuthentication("SuperSecretKey", luuc, lguc, lcuc, lgcuc, lgmuc, liuc, lbuc)
@@ -132,6 +134,7 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 
 	api.BackupInitializeGroupBackupHandler = handlers.NewInitializeGroupBackupHandler(mbuc, ja)
 	api.BackupInitializeGroupBackupDeletionHandler = handlers.NewGroupBackupDeletionImpl(mbuc, ja)
+	api.BackupUploadBackupHandler = handlers.NewUploadBackupHandler(mfuc, ja)
 
 	api.GroupComputerLeaveComputerFromGroupHandler = nil
 
@@ -183,11 +186,7 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 		})
 	}
 
-	if api.BackupUploadBackupHandler == nil {
-		api.BackupUploadBackupHandler = backup.UploadBackupHandlerFunc(func(params backup.UploadBackupParams, principal interface{}) middleware.Responder {
-			return middleware.NotImplemented("operation backup.UploadBackup has not yet been implemented")
-		})
-	}
+
 
 	api.PreServerShutdown = func() {}
 

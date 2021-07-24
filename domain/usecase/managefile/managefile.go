@@ -26,7 +26,22 @@ func (mf manageFileUseCase) UploadBackup(backupID uint, rc io.ReadCloser) (*mode
 		return nil, domain.ErrUploadNotRequested
 	}
 
-	// TODO: Check hash.
+	/*
+	// Hash checking
+	h := sha256.New()
+	if _, err := io.Copy(h, rc); err != nil {
+		constants.Log("Error calculating sha256 hash of backup %v: %v", backupID, err)
+		return nil, domain.ErrCalculatingHash
+	}
+
+	correctHash := []byte(bm.Hash)
+	calculatedHash := h.Sum(nil)
+
+	constants.Log("CORR: %v CALC: %v", correctHash, calculatedHash)
+	if  bytes.Compare(correctHash, calculatedHash) != 0 {
+		return nil, domain.ErrInvalidBackupHash
+	}
+	*/
 
 	// Save it to FileStore.
 	err = mf.FStore.SaveFile(backupID, rc)
@@ -46,7 +61,7 @@ func (mf manageFileUseCase) UploadBackup(backupID uint, rc io.ReadCloser) (*mode
 	return bm, err
 }
 
-func (mf manageFileUseCase) DownloadBackup(ownerID uint, backupID uint) (io.ReadCloser, error) {
+func (mf manageFileUseCase) DownloadBackup(backupID uint) (io.ReadCloser, error) {
 	// Get Backup model.
 	bm, err := mf.BRepo.FindById(backupID)
 

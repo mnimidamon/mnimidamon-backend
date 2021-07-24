@@ -4,7 +4,6 @@ import (
 	"io"
 	"mnimidamonbackend/domain/model"
 	"mnimidamonbackend/domain/usecase/payload"
-	"os"
 )
 
 type UserRegistrationInterface interface {
@@ -84,5 +83,5 @@ type ManageBackupInterface interface {
 
 type ManageFileInterface interface {
 	UploadBackup(backupID uint, rc io.ReadCloser) (*model.Backup, error)
-	DownloadBackup(ownerID uint, backupID uint) (io.ReadCloser, error)
+	DownloadBackup(backupID uint) (io.ReadCloser, error)
 }
