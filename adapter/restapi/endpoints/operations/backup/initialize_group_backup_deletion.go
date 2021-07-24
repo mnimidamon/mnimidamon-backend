@@ -33,6 +33,8 @@ func NewInitializeGroupBackupDeletion(ctx *middleware.Context, handler Initializ
 
 Initialize a backup deletion
 
+If the current user is the owner of the backup then it initializes backup deletion otherwise deletes the logged local computer backup of the current computer.
+
 */
 type InitializeGroupBackupDeletion struct {
 	Context *middleware.Context

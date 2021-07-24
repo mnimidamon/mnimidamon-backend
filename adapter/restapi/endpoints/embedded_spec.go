@@ -407,6 +407,7 @@ func init() {
             "comp_key": []
           }
         ],
+        "description": "If the current user is the owner of the backup then it initializes backup deletion otherwise deletes the logged local computer backup of the current computer.",
         "tags": [
           "backup"
         ],
@@ -2129,6 +2130,7 @@ func init() {
             "comp_key": []
           }
         ],
+        "description": "If the current user is the owner of the backup then it initializes backup deletion otherwise deletes the logged local computer backup of the current computer.",
         "tags": [
           "backup"
         ],

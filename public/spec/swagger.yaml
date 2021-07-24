@@ -679,6 +679,7 @@ paths:
     # Delete a backup TODO initialize a deletion.
     delete:
       operationId: initializeGroupBackupDeletion
+      description: If the current user is the owner of the backup then it initializes backup deletion otherwise deletes the logged local computer backup of the current computer.
       tags:
         - backup
       summary: Initialize a backup deletion
