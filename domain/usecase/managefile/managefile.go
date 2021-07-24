@@ -26,7 +26,7 @@ func (mf manageFileUseCase) UploadBackup(backupID uint, rc io.ReadCloser) (*mode
 		return nil, domain.ErrUploadNotRequested
 	}
 
-	/*
+	/* TODO
 	// Hash checking
 	h := sha256.New()
 	if _, err := io.Copy(h, rc); err != nil {
