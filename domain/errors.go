@@ -32,6 +32,8 @@ var (
 	ErrInvalidBackupSize             = NewError("ErrInvalidBackupSize")
 	ErrInvalidFileName               = NewError("ErrInvalidFileName")
 	ErrNameNotUnique                 = NewError("ErrNameNotUnique")
+	ErrUploadNotRequested            = NewError("ErrUploadNotRequested")
+	ErrBackupNotOnServer             = NewError("ErrBackupNotOnServer")
 )
 
 func ToDomainError(err error) ErrDomain {
@@ -40,6 +42,5 @@ func ToDomainError(err error) ErrDomain {
 	}
 
 	// Unexpected error.
-	// TODO logging.
 	return ErrInternalDomain
 }

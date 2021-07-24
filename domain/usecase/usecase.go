@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"io"
 	"mnimidamonbackend/domain/model"
 	"mnimidamonbackend/domain/usecase/payload"
 	"os"
@@ -82,6 +83,6 @@ type ManageBackupInterface interface {
 }
 
 type ManageFileInterface interface {
-	UploadBackup(backupID uint, data []byte) (*model.Backup, error)
-	DownloadBackup(ownerID uint, backupID uint) (os.File, error)
+	UploadBackup(backupID uint, rc io.ReadCloser) (*model.Backup, error)
+	DownloadBackup(ownerID uint, backupID uint) (io.ReadCloser, error)
 }

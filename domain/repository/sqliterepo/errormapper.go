@@ -5,7 +5,7 @@ import (
 	"errors"
 	"github.com/mattn/go-sqlite3"
 	"gorm.io/gorm"
-	"log"
+	"mnimidamonbackend/domain/constants"
 	"mnimidamonbackend/domain/repository"
 )
 
@@ -33,9 +33,9 @@ func toRepositoryError(err error) repository.ErrRepo {
 			return repository.ErrForeignKeyConstraintViolation
 		}
 
-		log.Printf("Unknow SQLite error %v: %v", sqliteErr.ExtendedCode, sqliteErr)
+		constants.Log("Unknown SQLite error %v: %v", sqliteErr.ExtendedCode, sqliteErr)
 	}
 
-	log.Printf("Unknown SQLiteUserRepository error: %t --> %v", err, err)
+	constants.Log("Unknown SQLiteUserRepository error: %t --> %v", err, err)
 	return repository.UnknownRepositoryError
 }

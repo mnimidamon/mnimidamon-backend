@@ -16,9 +16,10 @@ type manageBackupUseCase struct {
 	CBRepo repository.ComputerBackupRepository
 	CRepo  repository.ComputerRepository
 	GCRepo repository.GroupComputerRepository
+	FStore repository.FileStore
 }
 
-func NewUseCase(br repository.BackupRepository, ur repository.UserRepository, gr repository.GroupRepository, cr repository.ComputerRepository, gcr repository.GroupComputerRepository, cbr repository.ComputerBackupRepository) usecase.ManageBackupInterface {
+func NewUseCase(fs repository.FileStore, br repository.BackupRepository, ur repository.UserRepository, gr repository.GroupRepository, cr repository.ComputerRepository, gcr repository.GroupComputerRepository, cbr repository.ComputerBackupRepository) usecase.ManageBackupInterface {
 	return manageBackupUseCase{
 		BRepo:  br,
 		URepo:  ur,
@@ -26,6 +27,7 @@ func NewUseCase(br repository.BackupRepository, ur repository.UserRepository, gr
 		CRepo:  cr,
 		GCRepo: gcr,
 		CBRepo: cbr,
+		FStore: fs,
 	}
 }
 
@@ -198,6 +200,11 @@ func (mb manageBackupUseCase) DeleteRequest(userID uint, backupID uint) (*model.
 			brtx.Commit()
 		}
 
+		// If everything succeeded then delete the backup file.
+		if b.OnServer {
+			err := mb.FStore.DeleteFile(b.ID)
+			return nil, domain.ToDomainError(err)
+		}
 	} else {
 		// Find the group computers of the user and the group.
 		groupComputers, err := mb.findGroupComputersOfUserAndGroup(userID, b.GroupID, crtx, gcrtx)
@@ -221,7 +228,7 @@ func (mb manageBackupUseCase) DeleteRequest(userID uint, backupID uint) (*model.
 	return b, nil
 }
 
-func (mb manageBackupUseCase) findGroupComputersOfUserAndGroup(userID uint, groupID uint, cr repository.ComputerRepository, gc repository.GroupComputerRepository) ([]*model.GroupComputer, error)  {
+func (mb manageBackupUseCase) findGroupComputersOfUserAndGroup(userID uint, groupID uint, cr repository.ComputerRepository, gc repository.GroupComputerRepository) ([]*model.GroupComputer, error) {
 	// If the user is owner get his computers.
 	computers, err := cr.FindAll(userID)
 	if err != nil {

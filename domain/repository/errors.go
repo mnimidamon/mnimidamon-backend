@@ -18,4 +18,9 @@ var (
 	ErrUserAlreadyInGroupViolation         = NewError("ErrUserAlreadyInGroupViolation")
 	ErrInvalidUpdateViolation              = NewError("ErrInvalidUpdateViolation")
 	ErrAlreadyExists                       = NewError("ErrAlreadyExists")
+
+	ErrSaveFile     = NewError("ErrSaveFile")
+	ErrCreateFile   = NewError("ErrCreateFile")
+	ErrOpenFile     = NewError("ErrOpenFile")
+	ErrFileDeletion = NewError("ErrFileDeletion")
 )

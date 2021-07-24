@@ -16,6 +16,7 @@ import (
 	"mnimidamonbackend/adapter/restapi/endpoints/operations/computer"
 	"mnimidamonbackend/adapter/restapi/endpoints/operations/current_user"
 	"mnimidamonbackend/adapter/restapi/handlers"
+	"mnimidamonbackend/domain/repository/filestore"
 	"mnimidamonbackend/domain/repository/sqliterepo"
 	"mnimidamonbackend/domain/usecase/computerregistration"
 	"mnimidamonbackend/domain/usecase/groupinvite"
@@ -68,6 +69,9 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 		panic(err)
 	}
 
+	// File store setup.
+	fs := filestore.New("../filestore")
+
 	// Setting up the repositories.
 	ur := sqliterepo.NewUserRepository(db)
 	cr := sqliterepo.NewComputerRepository(db)
@@ -89,7 +93,7 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 	giuc := groupinvite.NewUseCase(gr, ir, ur)
 	liuc := listinvite.NewUseCase(ir)
 	mgcuc := managegroupcomputer.NewUseCase(gcr, cr, gr, br, cbr)
-	mbuc := managebackup.NewUseCase(br, ur, gr, cr, gcr, cbr)
+	mbuc := managebackup.NewUseCase(fs, br, ur, gr, cr, gcr, cbr)
 	lbuc := listbackup.NewUseCase(br)
 
 	// Setting up the authorization.
