@@ -14,6 +14,7 @@ import (
 	"mnimidamonbackend/domain/repository/sqliterepo"
 	"mnimidamonbackend/domain/usecase/computerregistration"
 	"mnimidamonbackend/domain/usecase/groupinvite"
+	"mnimidamonbackend/domain/usecase/listbackup"
 	"mnimidamonbackend/domain/usecase/listcomputer"
 	"mnimidamonbackend/domain/usecase/listgroup"
 	"mnimidamonbackend/domain/usecase/listgroupcomputer"
@@ -87,10 +88,11 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 	giuc := groupinvite.NewUseCase(gr, ir, ur)
 	liuc := listinvite.NewUseCase(ir)
 	mgcuc := managegroupcomputer.NewUseCase(gcr, cr, gr, br, cbr)
-	mbuc := managebackup.NewUseCase(br, ur, gr, cr, gcr)
+	mbuc := managebackup.NewUseCase(br, ur, gr, cr, gcr, cbr)
+	lbuc := listbackup.NewUseCase(br)
 
 	// Setting up the authorization.
-	ja := restapi.NewJwtAuthentication("git ", luuc, lguc, lcuc, lgcuc, lgmuc, liuc)
+	ja := restapi.NewJwtAuthentication("SuperSecretKey", luuc, lguc, lcuc, lgcuc, lgmuc, liuc, lbuc)
 
 	// Applies when the "X-AUTH-KEY" header is set
 	api.AuthKeyAuth = ja.UserKeyMiddleware()
@@ -126,6 +128,7 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 	api.InviteGetCurrentUserInviteHandler = handlers.NewGetCurrentUserInviteHandler(ja)
 
 	api.BackupInitializeGroupBackupHandler = handlers.NewInitializeGroupBackupHandler(mbuc, ja)
+	api.BackupInitializeGroupBackupDeletionHandler = handlers.NewGroupBackupDeletionImpl(mbuc, ja)
 
 
 	api.GroupComputerLeaveComputerFromGroupHandler = nil
@@ -135,6 +138,7 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 			return middleware.NotImplemented("operation current_user.DeleteCurrentUser has not yet been implemented")
 		})
 	}
+
 
 	if api.BackupDownloadBackupHandler == nil {
 		api.BackupDownloadBackupHandler = backup.DownloadBackupHandlerFunc(func(params backup.DownloadBackupParams, principal interface{}) middleware.Responder {
@@ -172,17 +176,13 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 		})
 	}
 
-	if api.BackupInitializeGroupBackupDeletionHandler == nil {
-		api.BackupInitializeGroupBackupDeletionHandler = backup.InitializeGroupBackupDeletionHandlerFunc(func(params backup.InitializeGroupBackupDeletionParams, principal interface{}) middleware.Responder {
-			return middleware.NotImplemented("operation backup.InitializeGroupBackupDeletion has not yet been implemented")
-		})
-	}
-
 	if api.BackupRequestBackupUploadHandler == nil {
 		api.BackupRequestBackupUploadHandler = backup.RequestBackupUploadHandlerFunc(func(params backup.RequestBackupUploadParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation backup.RequestBackupUpload has not yet been implemented")
 		})
 	}
+
+
 	if api.BackupUploadBackupHandler == nil {
 		api.BackupUploadBackupHandler = backup.UploadBackupHandlerFunc(func(params backup.UploadBackupParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation backup.UploadBackup has not yet been implemented")

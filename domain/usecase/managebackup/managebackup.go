@@ -18,13 +18,14 @@ type manageBackupUseCase struct {
 	GCRepo repository.GroupComputerRepository
 }
 
-func NewUseCase(br repository.BackupRepository, ur repository.UserRepository, gr repository.GroupRepository, cr repository.ComputerRepository, gcr repository.GroupComputerRepository) usecase.ManageBackupInterface {
+func NewUseCase(br repository.BackupRepository, ur repository.UserRepository, gr repository.GroupRepository, cr repository.ComputerRepository, gcr repository.GroupComputerRepository, cbr repository.ComputerBackupRepository) usecase.ManageBackupInterface {
 	return manageBackupUseCase{
 		BRepo:  br,
 		URepo:  ur,
 		GRepo:  gr,
 		CRepo:  cr,
 		GCRepo: gcr,
+		CBRepo: cbr,
 	}
 }
 

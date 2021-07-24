@@ -688,6 +688,8 @@ paths:
       responses:
         202:
           description: The specified backup is logged to be deleted.
+          schema:
+            $ref: "#/definitions/Backup"
         404:
           $ref: "#/responses/NotFound"
         401:

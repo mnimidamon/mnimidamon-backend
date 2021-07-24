@@ -414,7 +414,10 @@ func init() {
         "operationId": "initializeGroupBackupDeletion",
         "responses": {
           "202": {
-            "description": "The specified backup is logged to be deleted."
+            "description": "The specified backup is logged to be deleted.",
+            "schema": {
+              "$ref": "#/definitions/Backup"
+            }
           },
           "401": {
             "$ref": "#/responses/Unauthorized"
@@ -2133,7 +2136,10 @@ func init() {
         "operationId": "initializeGroupBackupDeletion",
         "responses": {
           "202": {
-            "description": "The specified backup is logged to be deleted."
+            "description": "The specified backup is logged to be deleted.",
+            "schema": {
+              "$ref": "#/definitions/Backup"
+            }
           },
           "401": {
             "description": "Unauthorized.",

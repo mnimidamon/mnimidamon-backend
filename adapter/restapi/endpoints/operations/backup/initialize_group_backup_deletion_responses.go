@@ -21,6 +21,11 @@ const InitializeGroupBackupDeletionAcceptedCode int = 202
 swagger:response initializeGroupBackupDeletionAccepted
 */
 type InitializeGroupBackupDeletionAccepted struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *modelapi.Backup `json:"body,omitempty"`
 }
 
 // NewInitializeGroupBackupDeletionAccepted creates InitializeGroupBackupDeletionAccepted with default headers values
@@ -29,12 +34,27 @@ func NewInitializeGroupBackupDeletionAccepted() *InitializeGroupBackupDeletionAc
 	return &InitializeGroupBackupDeletionAccepted{}
 }
 
+// WithPayload adds the payload to the initialize group backup deletion accepted response
+func (o *InitializeGroupBackupDeletionAccepted) WithPayload(payload *modelapi.Backup) *InitializeGroupBackupDeletionAccepted {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the initialize group backup deletion accepted response
+func (o *InitializeGroupBackupDeletionAccepted) SetPayload(payload *modelapi.Backup) {
+	o.Payload = payload
+}
+
 // WriteResponse to the client
 func (o *InitializeGroupBackupDeletionAccepted) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
-	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
-
 	rw.WriteHeader(202)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
 }
 
 // InitializeGroupBackupDeletionUnauthorizedCode is the HTTP code returned for type InitializeGroupBackupDeletionUnauthorized

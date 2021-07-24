@@ -153,3 +153,27 @@ func (ja jwtAuthenticationImpl) WithGroupComputer(cm *model.Computer, gm *model.
 
 	return callback(gcm)
 }
+
+func (ja jwtAuthenticationImpl) WithBackup(um *model.User, gm *model.Group, backupID uint, callback func(bm *model.Backup) middleware.Responder) middleware.Responder {
+	b, err := ja.LBCase.FindById(backupID)
+
+	if err != nil {
+		if errors2.Is(err, domain.ErrNotFound) {
+			return newBadRequestErrorResponder(nil)
+		} else {
+			return newInternalServerErrorResponder(err)
+		}
+	}
+
+	isMember, err :=  ja.LGMCase.IsMemberOf(um.ID, gm.ID)
+
+	if err != nil {
+		return newInternalServerErrorResponder(err)
+	}
+
+	if !isMember {
+		return newBadRequestErrorResponder(nil)
+	}
+
+	return callback(b)
+}

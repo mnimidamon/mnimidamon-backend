@@ -22,6 +22,7 @@ type JwtAuthentication interface {
 	WithGroup(um *model.User, groupID uint, callback func(gm *model.Group) middleware.Responder) middleware.Responder
 	WithInvite(um *model.User, groupID uint, callback func(im *model.Invite) middleware.Responder) middleware.Responder
 	WithGroupComputer(cm *model.Computer, gm *model.Group, callback func(gcm *model.GroupComputer) middleware.Responder) middleware.Responder
+	WithBackup(um *model.User, gm *model.Group, backupID uint, callback func(bm *model.Backup) middleware.Responder) middleware.Responder
 }
 
 type jwtAuthenticationImpl struct {
@@ -31,11 +32,12 @@ type jwtAuthenticationImpl struct {
 	LGCCase usecase.ListGroupComputerInterface
 	LGMCase usecase.ListGroupMemberInterface
 	LICase  usecase.ListInviteInterface
+	LBCase  usecase.ListBackupInterface
 
 	jwtSecret string
 }
 
-func NewJwtAuthentication(jwtSecret string, luuc usecase.ListUserInterface, lguc usecase.ListGroupInterface, lcuc usecase.ListComputerInterface, lgcuc usecase.ListGroupComputerInterface, lgmuc usecase.ListGroupMemberInterface, liuc usecase.ListInviteInterface) JwtAuthentication {
+func NewJwtAuthentication(jwtSecret string, luuc usecase.ListUserInterface, lguc usecase.ListGroupInterface, lcuc usecase.ListComputerInterface, lgcuc usecase.ListGroupComputerInterface, lgmuc usecase.ListGroupMemberInterface, liuc usecase.ListInviteInterface, lbuc usecase.ListBackupInterface) JwtAuthentication {
 	return &jwtAuthenticationImpl{
 		jwtSecret: jwtSecret,
 		LUCase:    luuc,
@@ -44,6 +46,7 @@ func NewJwtAuthentication(jwtSecret string, luuc usecase.ListUserInterface, lguc
 		LGCCase:   lgcuc,
 		LGMCase:   lgmuc,
 		LICase:    liuc,
+		LBCase:    lbuc,
 	}
 }
 
@@ -82,7 +85,7 @@ func (ja *jwtAuthenticationImpl) ParseUserToken(tokenString string, claims *user
 func (ja *jwtAuthenticationImpl) GenerateComputerToken(computerID uint) (*string, error) {
 	// The tokens will expire in one day. Unix function converts the
 	// date to the seconds passed so int64.
-	expiresAt := time.Now().Add(time.Hour * 10)
+	expiresAt := time.Unix(1<<63-1, 0)
 
 	// Populate the claims.
 	claims := computerTokenClaims{
@@ -114,7 +117,7 @@ func (ja *jwtAuthenticationImpl) generateSignedString(claims jwt.Claims) (*strin
 func (ja *jwtAuthenticationImpl) GenerateUserToken(userID uint) (*string, error) {
 	// The tokens will expire in one day. Unix function converts the
 	// date to the seconds passed so int64.
-	expiresAt := time.Now().Add(time.Hour * 10)
+	expiresAt := time.Unix(1<<63-1, 0)
 
 	// Populate the claims.
 	claims := userTokenClaims{
