@@ -4,12 +4,17 @@ package endpoints
 
 import (
 	"crypto/tls"
+	"fmt"
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"mnimidamonbackend/adapter/restapi"
+	"mnimidamonbackend/adapter/restapi/endpoints/operations"
+	"mnimidamonbackend/adapter/restapi/endpoints/operations/backup"
+	"mnimidamonbackend/adapter/restapi/endpoints/operations/computer"
+	"mnimidamonbackend/adapter/restapi/endpoints/operations/current_user"
 	"mnimidamonbackend/adapter/restapi/handlers"
 	"mnimidamonbackend/domain/repository/sqliterepo"
 	"mnimidamonbackend/domain/usecase/computerregistration"
@@ -26,11 +31,7 @@ import (
 	"mnimidamonbackend/domain/usecase/managegroupcomputer"
 	"mnimidamonbackend/domain/usecase/userregistration"
 	"net/http"
-
-	"mnimidamonbackend/adapter/restapi/endpoints/operations"
-	"mnimidamonbackend/adapter/restapi/endpoints/operations/backup"
-	"mnimidamonbackend/adapter/restapi/endpoints/operations/computer"
-	"mnimidamonbackend/adapter/restapi/endpoints/operations/current_user"
+	"time"
 )
 
 //go:generate swagger generate server --target ..\..\restapi --name Mnimidamon --spec ..\..\..\public\spec\swagger.yaml --model-package modelapi --server-package endpoints --principal interface{}
@@ -99,11 +100,9 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 	// Applies when the "X-COMP-KEY" header is set
 	api.CompKeyAuth = ja.CompKeyMiddleware()
 
-
 	api.AuthorizationLoginUserHandler = handlers.NewLoginUserHandler(uruc, ja)
 	api.AuthorizationRegisterComputerHandler = handlers.NewRegisterComputerHandler(crcuc, ja)
 	api.AuthorizationRegisterUserHandler = handlers.NewUserRegistrationHandler(uruc, ja)
-
 
 	api.InviteAcceptCurrentUserInviteHandler = handlers.NewAcceptInviteHandler(giuc, ja)
 	api.InviteDeclineCurrentUserInviteHandler = handlers.NewDeclineCurrentUserInviteHandler(giuc, ja)
@@ -130,7 +129,6 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 	api.BackupInitializeGroupBackupHandler = handlers.NewInitializeGroupBackupHandler(mbuc, ja)
 	api.BackupInitializeGroupBackupDeletionHandler = handlers.NewGroupBackupDeletionImpl(mbuc, ja)
 
-
 	api.GroupComputerLeaveComputerFromGroupHandler = nil
 
 	if api.CurrentUserDeleteCurrentUserHandler == nil {
@@ -138,7 +136,6 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 			return middleware.NotImplemented("operation current_user.DeleteCurrentUser has not yet been implemented")
 		})
 	}
-
 
 	if api.BackupDownloadBackupHandler == nil {
 		api.BackupDownloadBackupHandler = backup.DownloadBackupHandlerFunc(func(params backup.DownloadBackupParams, principal interface{}) middleware.Responder {
@@ -182,7 +179,6 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 		})
 	}
 
-
 	if api.BackupUploadBackupHandler == nil {
 		api.BackupUploadBackupHandler = backup.UploadBackupHandlerFunc(func(params backup.UploadBackupParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation backup.UploadBackup has not yet been implemented")
@@ -214,7 +210,21 @@ func configureServer(s *http.Server, scheme, addr string) {
 // The middleware configuration is for the handler executors. These do not apply to the swagger.json document.
 // The middleware executes after routing but before authentication, binding and validation.
 func setupMiddlewares(handler http.Handler) http.Handler {
-	return handler
+	// Request logging middleware.
+	logFn := func(rw http.ResponseWriter, r *http.Request) {
+		start := time.Now()
+
+		uri := r.RequestURI
+		method := r.Method
+		handler.ServeHTTP(rw, r) // serve the original request
+
+		duration := time.Since(start)
+
+		// log request details
+		fmt.Printf("%v %v %v - %v\n", start.Format("2006/01/02 15:04:05"), method, uri, duration)
+	}
+
+	return http.HandlerFunc(logFn)
 }
 
 // The middleware configuration happens before anything, this middleware also applies to serving the swagger.json document.
