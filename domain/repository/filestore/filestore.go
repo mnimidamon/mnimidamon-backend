@@ -43,16 +43,14 @@ func (fs fileStoreImpl) SaveFile(backup *model.Backup, rc io.ReadCloser) error {
 
 	// Calculate hash
 	f, _ := fs.GetFile(backup.ID)
-	h := sha256.New()
 	defer f.Close()
 
-	if _, err := io.Copy(h, f); err != nil {
-		_ = fs.DeleteFile(backup.ID)
-		return fmt.Errorf("%w: error calculating hash of backup %v: %v", repository.ErrCalculatingHash, backup.ID, err)
-	}
-
+	calculatedHash, err := CalculateReaderCloserHash(f)
 	correctHash := backup.Hash
-	calculatedHash := hex.EncodeToString(h.Sum(nil))
+
+	if err != nil {
+		return err
+	}
 
 	if  correctHash != calculatedHash {
 		_ = fs.DeleteFile(backup.ID)
@@ -82,6 +80,17 @@ func (fs fileStoreImpl) DeleteFile(backupID uint) error {
 	}
 
 	return nil
+}
+
+func (fs fileStoreImpl) CalculateReaderCloserHash(rc io.Reader) (string, error) {
+	h := sha256.New()
+
+	if _, err := io.Copy(h, rc); err != nil {
+		return "", fmt.Errorf("%w: error calculating hash of backup %v: %v", repository.ErrCalculatingHash, err)
+	}
+
+	calculatedHash := hex.EncodeToString(h.Sum(nil))
+	return calculatedHash, nil
 }
 
 func (fs fileStoreImpl) getBackupFilePath(backupID uint) string {

@@ -36,6 +36,7 @@ var (
 	ErrUploadNotRequested            = NewError("ErrUploadNotRequested")
 	ErrBackupNotOnServer             = NewError("ErrBackupNotOnServer")
 	ErrInvalidFile                   = NewError("ErrInvalidFile")
+	ErrInvalidPrefixedHash           = NewError("ErrInvalidPrefixedHash")
 )
 
 func ToDomainError(err error) ErrDomain {

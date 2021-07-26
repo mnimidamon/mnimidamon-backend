@@ -52,6 +52,10 @@ type ListComputerBackupInterface interface {
 	FindAllOfBackup(backupID uint) ([]*model.ComputerBackup, error)
 }
 
+type ManageGroupBackupInterface interface {
+	LogDownload(backupID uint, computerID uint, prefix string, hash string) (*model.ComputerBackup, error)
+}
+
 type GroupInviteInterface interface {
 	AcceptInvite(userID uint, groupID uint) (*model.Group, error)
 	DeclineInvite(userID uint, groupID uint) error
