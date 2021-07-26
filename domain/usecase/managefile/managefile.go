@@ -1,8 +1,10 @@
 package managefile
 
 import (
+	"errors"
 	"io"
 	"mnimidamonbackend/domain"
+	"mnimidamonbackend/domain/constants"
 	"mnimidamonbackend/domain/model"
 	"mnimidamonbackend/domain/repository"
 	"mnimidamonbackend/domain/usecase"
@@ -26,26 +28,13 @@ func (mf manageFileUseCase) UploadBackup(backupID uint, rc io.ReadCloser) (*mode
 		return nil, domain.ErrUploadNotRequested
 	}
 
-	/* TODO
-	// Hash checking
-	h := sha256.New()
-	if _, err := io.Copy(h, rc); err != nil {
-		constants.Log("Error calculating sha256 hash of backup %v: %v", backupID, err)
-		return nil, domain.ErrCalculatingHash
-	}
-
-	correctHash := []byte(bm.Hash)
-	calculatedHash := h.Sum(nil)
-
-	constants.Log("CORR: %v CALC: %v", correctHash, calculatedHash)
-	if  bytes.Compare(correctHash, calculatedHash) != 0 {
-		return nil, domain.ErrInvalidBackupHash
-	}
-	*/
-
 	// Save it to FileStore.
-	err = mf.FStore.SaveFile(backupID, rc)
+	err = mf.FStore.SaveFile(bm, rc)
 	if err != nil {
+		if errors.Is(err, repository.ErrInvalidBackupHash) || errors.Is(err, repository.ErrInvalidSize) {
+			constants.Log("%v", err)
+			return nil, domain.ErrInvalidFile
+		}
 		return nil, domain.ToDomainError(err)
 	}
 

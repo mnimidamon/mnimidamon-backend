@@ -1,8 +1,12 @@
 package filestore
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
+	"fmt"
 	"io"
-	"mnimidamonbackend/domain/constants"
+	"math"
+	"mnimidamonbackend/domain/model"
 	"mnimidamonbackend/domain/repository"
 	"os"
 	"path/filepath"
@@ -13,21 +17,46 @@ type fileStoreImpl struct {
 	directoryPath string
 }
 
-func (fs fileStoreImpl) SaveFile(backupID uint, rc io.ReadCloser) error {
-	filePath := fs.getBackupFilePath(backupID)
+func (fs fileStoreImpl) SaveFile(backup *model.Backup, rc io.ReadCloser) error {
+	filePath := fs.getBackupFilePath(backup.ID)
 	outFile, err := os.Create(filePath)
 
 	if err != nil {
-		constants.Log("FileStore error when creating file for backup %v: %v", filePath, backupID, err)
-		return repository.ErrCreateFile
+		return fmt.Errorf("%w: file store error when creating file for backup %v: %v", repository.ErrCreateFile, filePath, err)
 	}
 
 	defer outFile.Close()
-	_, err = io.Copy(outFile, rc)
+	defer rc.Close()
 
+	written, err := io.Copy(outFile, rc)
 	if err != nil {
-		constants.Log("FileStore error when copying ReadCloser to %v: %v", err)
-		return repository.ErrSaveFile
+		return fmt.Errorf("%w: got err %v when saving file", repository.ErrSaveFile, err)
+	}
+
+	sizeKb := uint(math.Ceil(float64(written) / (1024.)))
+
+	// If size is +- %1 * sizeKb
+	if  !(uint(math.Ceil(.99 * float64(sizeKb))) <= backup.Size && backup.Size <= uint(math.Ceil(1.01 * float64(sizeKb)))) {
+		_ = fs.DeleteFile(backup.ID)
+		return fmt.Errorf("%w: invalid file size %v != +- %%1 %v", repository.ErrInvalidSize, sizeKb, backup.Size)
+	}
+
+	// Calculate hash
+	f, _ := fs.GetFile(backup.ID)
+	h := sha256.New()
+	defer f.Close()
+
+	if _, err := io.Copy(h, f); err != nil {
+		_ = fs.DeleteFile(backup.ID)
+		return fmt.Errorf("%w: error calculating hash of backup %v: %v", repository.ErrCalculatingHash, backup.ID, err)
+	}
+
+	correctHash := backup.Hash
+	calculatedHash := hex.EncodeToString(h.Sum(nil))
+
+	if  correctHash != calculatedHash {
+		_ = fs.DeleteFile(backup.ID)
+		return fmt.Errorf("%w: expected %v got %v",repository.ErrInvalidBackupHash, correctHash, calculatedHash)
 	}
 
 	return nil
@@ -38,8 +67,7 @@ func (fs fileStoreImpl) GetFile(backupID uint) (io.ReadCloser, error) {
 	file, err := os.Open(filePath)
 
 	if err != nil {
-		constants.Log("FileStore error when opening file %v: %v", filePath, err)
-		return nil, repository.ErrOpenFile
+		return nil, fmt.Errorf("%w: error when opening file %v: %v", repository.ErrOpenFile, filePath, err)
 	}
 
 	return file, nil
@@ -50,8 +78,7 @@ func (fs fileStoreImpl) DeleteFile(backupID uint) error {
 	err := os.Remove(filePath)
 
 	if err != nil {
-		constants.Log("FileStore error when deleting file %v: %v", filePath, err)
-		return repository.ErrFileDeletion
+		return fmt.Errorf("%w: error when deleting file %v: %v", repository.ErrFileDeletion, filePath, err)
 	}
 
 	return nil

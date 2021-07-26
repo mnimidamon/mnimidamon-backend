@@ -2,6 +2,7 @@ package domain
 
 import (
 	"errors"
+	"mnimidamonbackend/domain/constants"
 	"mnimidamonbackend/domain/repository"
 )
 
@@ -34,8 +35,7 @@ var (
 	ErrNameNotUnique                 = NewError("ErrNameNotUnique")
 	ErrUploadNotRequested            = NewError("ErrUploadNotRequested")
 	ErrBackupNotOnServer             = NewError("ErrBackupNotOnServer")
-	ErrCalculatingHash               = NewError("ErrCalculatingHash")
-	ErrInvalidBackupHash             = NewError("ErrInvalidBackupHash")
+	ErrInvalidFile                   = NewError("ErrInvalidFile")
 )
 
 func ToDomainError(err error) ErrDomain {
@@ -44,5 +44,6 @@ func ToDomainError(err error) ErrDomain {
 	}
 
 	// Unexpected error.
+	constants.Log("ErrInternalDomain: %v", err)
 	return ErrInternalDomain
 }

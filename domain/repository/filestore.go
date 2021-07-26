@@ -2,10 +2,11 @@ package repository
 
 import (
 	"io"
+	"mnimidamonbackend/domain/model"
 )
 
 type FileStore interface {
-	SaveFile(backupID uint, rc io.ReadCloser) error
+	SaveFile(backup *model.Backup, rc io.ReadCloser) error
 	GetFile(backupID uint) (io.ReadCloser, error)
 	DeleteFile(backupID uint) error
 }

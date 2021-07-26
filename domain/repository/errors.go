@@ -23,4 +23,8 @@ var (
 	ErrCreateFile   = NewError("ErrCreateFile")
 	ErrOpenFile     = NewError("ErrOpenFile")
 	ErrFileDeletion = NewError("ErrFileDeletion")
+
+	ErrInvalidSize       = NewError("ErrInvalidSize")
+	ErrCalculatingHash   = NewError("ErrCalculatingHash")
+	ErrInvalidBackupHash = NewError("ErrInvalidBackupHash")
 )

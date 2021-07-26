@@ -4,7 +4,6 @@ package endpoints
 
 import (
 	"crypto/tls"
-	"fmt"
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
@@ -16,6 +15,7 @@ import (
 	"mnimidamonbackend/adapter/restapi/endpoints/operations/computer"
 	"mnimidamonbackend/adapter/restapi/endpoints/operations/current_user"
 	"mnimidamonbackend/adapter/restapi/handlers"
+	"mnimidamonbackend/domain/constants"
 	"mnimidamonbackend/domain/repository/filestore"
 	"mnimidamonbackend/domain/repository/sqliterepo"
 	"mnimidamonbackend/domain/usecase/computerregistration"
@@ -224,7 +224,7 @@ func setupMiddlewares(handler http.Handler) http.Handler {
 		duration := time.Since(start)
 
 		// log request details
-		fmt.Printf("%v %v %v - %v\n", start.Format("2006/01/02 15:04:05"), method, uri, duration)
+		constants.Log("%v %v - %v\n", method, uri, duration)
 	}
 
 	return http.HandlerFunc(logFn)
