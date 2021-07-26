@@ -144,11 +144,7 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 		})
 	}
 
-	if api.BackupDownloadBackupHandler == nil {
-		api.BackupDownloadBackupHandler = backup.DownloadBackupHandlerFunc(func(params backup.DownloadBackupParams, principal interface{}) middleware.Responder {
-			return middleware.NotImplemented("operation backup.DownloadBackup has not yet been implemented")
-		})
-	}
+	api.BackupDownloadBackupHandler = handlers.NewDownloadBackupImpl(mfuc, ja)
 
 	if api.ComputerGetBackupLocationsHandler == nil {
 		api.ComputerGetBackupLocationsHandler = computer.GetBackupLocationsHandlerFunc(func(params computer.GetBackupLocationsParams, principal interface{}) middleware.Responder {
