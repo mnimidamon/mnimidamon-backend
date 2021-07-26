@@ -57,14 +57,81 @@ func (mgb manageComputerBackupUseCase) LogDownload(backupID uint, computerID uin
 		CreatedAt:       time.Time{},
 	}
 
-	err = mgb.CBRepo.Create(cbm)
+
+	// Start Transactions.
+	cbrtx := mgb.CBRepo.BeginTx()
+	brtx := mgb.BRepo.ContinueTx(cbrtx)
+
+
+	err = cbrtx.Create(cbm)
 	if err != nil {
 		return nil, domain.ToDomainError(err)
 	}
 
 	if bm.OnServer {
-		// TODO: Check if file should be deleted off the server.
+		// Check if file should be deleted off the server.
+		gcms, err := mgb.GCRepo.FindAllOfGroup(gc.GroupID)
+
+		if err != nil {
+			cbrtx.Rollback()
+			return nil, domain.ToDomainError(err)
+		}
+
+		shouldDelete := true
+		for _, gcm := range gcms {
+			// Check if the computer has it stored.
+			exists, err := cbrtx.Exists(gcm.ID, bm.ID)
+
+			if err != nil {
+				cbrtx.Rollback()
+				return nil, domain.ToDomainError(err)
+			}
+
+			if exists {
+				// This computer already has it stored.
+				continue
+			}
+
+			// Get the stored size of the computer that does not have it stored.
+			storedSize, err := cbrtx.FindStoredSizeOf(gcm.ID)
+
+			if err != nil {
+				cbrtx.Rollback()
+				return nil, domain.ToDomainError(err)
+			}
+
+			// This computer can also download it, so it should stay on the server until then.
+			if storedSize + bm.Size <= gcm.StorageSize {
+				shouldDelete = false
+				break
+			}
+		}
+
+		// Everyone has the file or does not have enough space.
+		if shouldDelete {
+			// Update the flags.
+			bm.OnServer = false
+			bm.UploadRequest = false
+
+
+			err := brtx.Update(bm)
+			if err != nil {
+				cbrtx.Rollback()
+				return nil, domain.ToDomainError(err)
+			}
+
+			// Delete the file.
+			err = mgb.FStore.DeleteFile(bm.ID)
+			if err != nil {
+				cbrtx.Rollback()
+				brtx.Rollback()
+				return nil, domain.ToDomainError(err)
+			}
+		}
 	}
+
+	cbrtx.Commit()
+	brtx.Commit()
 
 	return cbm, nil
 }
@@ -103,8 +170,7 @@ func (prc *prefixedReaderCloser) Read(p []byte) (n int, err error) {
 
 	// Prefix has already been read.
 	if len(prc.Prefix) < prc.i + 1 {
-		n, err := prc.RC.Read(p)
-		return n, err
+		return prc.RC.Read(p)
 	}
 
 	// Copy prefix to byte

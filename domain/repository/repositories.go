@@ -89,7 +89,7 @@ type GroupComputerRepository interface {
 	FindById(groupID uint, computerID uint) (*model.GroupComputer, error)
 	FindAllOfGroup(groupID uint) ([]*model.GroupComputer, error)
 	FindAllOfComputer(computerID uint) ([]*model.GroupComputer, error)
-	FindAllOfGroupAndComputers(groupID uint, computerIDS ...uint) ([]*model.GroupComputer, error) // TODO Testing
+	FindAllOfGroupAndComputers(groupID uint, computerIDS ...uint) ([]*model.GroupComputer, error)
 
 	Create(cm *model.GroupComputer) error
 	Delete(groupID uint, computerID uint) error
@@ -110,6 +110,7 @@ type ComputerBackupRepository interface {
 
 	Create(cbm *model.ComputerBackup) error
 	Delete(groupComputerID uint, backupID uint) error
+	FindStoredSizeOf(groupComputerID uint) (uint, error)
 
 	Exists(groupComputerID uint, backupID uint) (bool, error)
 

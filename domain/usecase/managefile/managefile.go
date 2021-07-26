@@ -67,8 +67,6 @@ func (mf manageFileUseCase) DownloadBackup(backupID uint) (io.ReadCloser, error)
 		return nil, domain.ToDomainError(err)
 	}
 
-	// TODO Log the download.
-
 	return rc, nil
 }
 

@@ -9,13 +9,33 @@ import (
 )
 
 func NewComputerBackupRepository(db *gorm.DB) repository.ComputerBackupRepository {
-	return computerBackupData {
+	return computerBackupData{
 		DB: db,
 	}
 }
 
 type computerBackupData struct {
 	*gorm.DB
+}
+
+func (cbd computerBackupData) FindStoredSizeOf(groupComputerID uint) (uint, error) {
+	var sumResult struct {
+		Size int64
+	}
+
+	result := cbd.Model(&Backup{}).
+		Where("id IN (?)",
+			cbd.Model(&ComputerBackup{}).
+				Where("group_computer_id = ?", groupComputerID).
+				Select("backup_id"),
+		).Select("sum(storage_size) as size").
+		Scan(sumResult)
+
+	if result.Error != nil {
+		return 0, toRepositoryError(result.Error)
+	}
+
+	return uint(sumResult.Size), nil
 }
 
 func (cbd computerBackupData) ContinueTx(mr repository.TransactionContextReader) repository.ComputerBackupRepositoryTx {
@@ -128,8 +148,8 @@ func (cbd computerBackupData) Delete(groupComputerID uint, backupID uint) error 
 func (cbd computerBackupData) Exists(groupComputerID uint, backupID uint) (bool, error) {
 	_, err := cbd.FindById(groupComputerID, backupID)
 
-	if err != nil  {
-		if  errors.Is(repository.ErrNotFound, err) {
+	if err != nil {
+		if errors.Is(repository.ErrNotFound, err) {
 			return false, nil
 		}
 		return false, toRepositoryError(err)
@@ -157,4 +177,3 @@ func (cbd computerBackupData) BeginTx() repository.ComputerBackupRepositoryTx {
 		},
 	}
 }
-
