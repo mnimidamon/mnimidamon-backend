@@ -127,3 +127,14 @@ func MapToBackup(bm *model.Backup) *modelapi.Backup {
 		UploadRequest: bm.UploadRequest,
 	}
 }
+
+func MapToComputerBackup(cbm *model.ComputerBackup) *modelapi.GroupComputerBackup {
+	if cbm == nil {
+		return nil
+	}
+
+	return &modelapi.GroupComputerBackup{
+		BackupID:        int64(cbm.BackupID),
+		GroupComputerID: int64(cbm.GroupComputerID),
+	}
+}

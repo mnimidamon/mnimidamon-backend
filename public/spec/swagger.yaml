@@ -744,6 +744,37 @@ paths:
         500:
           $ref: "#/responses/Internal"
 
+  /users/current/computers/current/groups/{group_id}/backups/{backup_id}/log:
+    parameters:
+      - $ref: "#/parameters/PathGroupId"
+      - $ref: "#/parameters/PathBackupId"
+
+    post:
+      operationId: logComputerBackup
+      tags:
+        - backup
+      summary: Log the local computer backup
+      security:
+        - auth_key: []
+          comp_key: []
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/ConfirmDownloadPayload"
+      responses:
+        200:
+          description: The logged computer backup object
+          schema:
+            $ref: "#/definitions/GroupComputerBackup"
+        400:
+          $ref: "#/responses/BadRequest"
+        401:
+          $ref: "#/responses/Unauthorized"
+        500:
+          $ref: "#/responses/Internal"
+
 
   /users/current/computers/current/groups/{group_id}/backups/{backup_id}/download:
     parameters:
@@ -924,8 +955,8 @@ definitions:
         type: integer
         readOnly: true
         example: 42
-      group_member_id:
-        description: "Numeric identificator of the Group Member that has this file Backup locally stored."
+      group_computer_id:
+        description: "Numeric identificator of the Group Computer that has this file Backup locally stored."
         type: integer
         readOnly: true
         example: 42
@@ -1082,6 +1113,26 @@ definitions:
         example: "password"
         minLength: 3
         maxLength: 50
+
+  # Confirm download payload.
+  ConfirmDownloadPayload:
+    description: "Payload that verifies the backup download by md5 hash"
+    type: object
+    required:
+      - prepend_string
+      - hash
+    properties:
+      prepend_string:
+        description: "String that is prepended to the file data"
+        type: string
+        example: "randomprependstring"
+        minLength: 4
+        maxLength: 100
+      hash:
+        description: "Hash of the backup file when the prepend_string is prepended to the file contents"
+        type: string
+        example: "randomprependstring"
+        minLength: 4
 
   # Login payload.
   LoginPayload:

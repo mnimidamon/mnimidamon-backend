@@ -526,6 +526,56 @@ func init() {
         }
       ]
     },
+    "/users/current/computers/current/groups/{group_id}/backups/{backup_id}/log": {
+      "post": {
+        "security": [
+          {
+            "auth_key": [],
+            "comp_key": []
+          }
+        ],
+        "tags": [
+          "backup"
+        ],
+        "summary": "Log the local computer backup",
+        "operationId": "logComputerBackup",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ConfirmDownloadPayload"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The logged computer backup object",
+            "schema": {
+              "$ref": "#/definitions/GroupComputerBackup"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/parameters/PathGroupId"
+        },
+        {
+          "$ref": "#/parameters/PathBackupId"
+        }
+      ]
+    },
     "/users/current/computers/current/groups/{group_id}/backups/{backup_id}/upload": {
       "post": {
         "security": [
@@ -1222,6 +1272,29 @@ func init() {
         }
       }
     },
+    "ConfirmDownloadPayload": {
+      "description": "Payload that verifies the backup download by md5 hash",
+      "type": "object",
+      "required": [
+        "prepend_string",
+        "hash"
+      ],
+      "properties": {
+        "hash": {
+          "description": "Hash of the backup file when the prepend_string is prepended to the file contents",
+          "type": "string",
+          "minLength": 4,
+          "example": "randomprependstring"
+        },
+        "prepend_string": {
+          "description": "String that is prepended to the file data",
+          "type": "string",
+          "maxLength": 100,
+          "minLength": 4,
+          "example": "randomprependstring"
+        }
+      }
+    },
     "CreateComputerPayload": {
       "description": "Payload that is used for registering a new computer.",
       "type": "object",
@@ -1330,8 +1403,8 @@ func init() {
           "readOnly": true,
           "example": 42
         },
-        "group_member_id": {
-          "description": "Numeric identificator of the Group Member that has this file Backup locally stored.",
+        "group_computer_id": {
+          "description": "Numeric identificator of the Group Computer that has this file Backup locally stored.",
           "type": "integer",
           "readOnly": true,
           "example": 42
@@ -2308,6 +2381,73 @@ func init() {
         }
       ]
     },
+    "/users/current/computers/current/groups/{group_id}/backups/{backup_id}/log": {
+      "post": {
+        "security": [
+          {
+            "auth_key": [],
+            "comp_key": []
+          }
+        ],
+        "tags": [
+          "backup"
+        ],
+        "summary": "Log the local computer backup",
+        "operationId": "logComputerBackup",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ConfirmDownloadPayload"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The logged computer backup object",
+            "schema": {
+              "$ref": "#/definitions/GroupComputerBackup"
+            }
+          },
+          "400": {
+            "description": "Supplied parameters were not okay.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "type": "integer",
+          "description": "Numeric ID of the Group.",
+          "name": "group_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "type": "integer",
+          "description": "Numeric ID of the Backup.",
+          "name": "backup_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
     "/users/current/computers/current/groups/{group_id}/backups/{backup_id}/upload": {
       "post": {
         "security": [
@@ -3172,6 +3312,29 @@ func init() {
         }
       }
     },
+    "ConfirmDownloadPayload": {
+      "description": "Payload that verifies the backup download by md5 hash",
+      "type": "object",
+      "required": [
+        "prepend_string",
+        "hash"
+      ],
+      "properties": {
+        "hash": {
+          "description": "Hash of the backup file when the prepend_string is prepended to the file contents",
+          "type": "string",
+          "minLength": 4,
+          "example": "randomprependstring"
+        },
+        "prepend_string": {
+          "description": "String that is prepended to the file data",
+          "type": "string",
+          "maxLength": 100,
+          "minLength": 4,
+          "example": "randomprependstring"
+        }
+      }
+    },
     "CreateComputerPayload": {
       "description": "Payload that is used for registering a new computer.",
       "type": "object",
@@ -3280,8 +3443,8 @@ func init() {
           "readOnly": true,
           "example": 42
         },
-        "group_member_id": {
-          "description": "Numeric identificator of the Group Member that has this file Backup locally stored.",
+        "group_computer_id": {
+          "description": "Numeric identificator of the Group Computer that has this file Backup locally stored.",
           "type": "integer",
           "readOnly": true,
           "example": 42

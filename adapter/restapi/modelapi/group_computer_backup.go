@@ -24,10 +24,10 @@ type GroupComputerBackup struct {
 	// Read Only: true
 	BackupID int64 `json:"backup_id,omitempty"`
 
-	// Numeric identificator of the Group Member that has this file Backup locally stored.
+	// Numeric identificator of the Group Computer that has this file Backup locally stored.
 	// Example: 42
 	// Read Only: true
-	GroupMemberID int64 `json:"group_member_id,omitempty"`
+	GroupComputerID int64 `json:"group_computer_id,omitempty"`
 }
 
 // Validate validates this group computer backup
@@ -43,7 +43,7 @@ func (m *GroupComputerBackup) ContextValidate(ctx context.Context, formats strfm
 		res = append(res, err)
 	}
 
-	if err := m.contextValidateGroupMemberID(ctx, formats); err != nil {
+	if err := m.contextValidateGroupComputerID(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -62,9 +62,9 @@ func (m *GroupComputerBackup) contextValidateBackupID(ctx context.Context, forma
 	return nil
 }
 
-func (m *GroupComputerBackup) contextValidateGroupMemberID(ctx context.Context, formats strfmt.Registry) error {
+func (m *GroupComputerBackup) contextValidateGroupComputerID(ctx context.Context, formats strfmt.Registry) error {
 
-	if err := validate.ReadOnly(ctx, "group_member_id", "body", int64(m.GroupMemberID)); err != nil {
+	if err := validate.ReadOnly(ctx, "group_computer_id", "body", int64(m.GroupComputerID)); err != nil {
 		return err
 	}
 

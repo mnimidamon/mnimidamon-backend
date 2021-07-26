@@ -45,7 +45,7 @@ func (fs fileStoreImpl) SaveFile(backup *model.Backup, rc io.ReadCloser) error {
 	f, _ := fs.GetFile(backup.ID)
 	defer f.Close()
 
-	calculatedHash, err := fs.CalculateReaderCloserHash(f)
+	calculatedHash, err := fs.CalculateReaderHash(f)
 	correctHash := backup.Hash
 
 	if err != nil {
@@ -82,7 +82,7 @@ func (fs fileStoreImpl) DeleteFile(backupID uint) error {
 	return nil
 }
 
-func (fs fileStoreImpl) CalculateReaderCloserHash(rc io.Reader) (string, error) {
+func (fs fileStoreImpl) CalculateReaderHash(rc io.Reader) (string, error) {
 	h := sha256.New()
 
 	if _, err := io.Copy(h, rc); err != nil {

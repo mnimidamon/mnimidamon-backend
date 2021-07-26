@@ -1,4 +1,4 @@
-package managegroupbackup
+package managecomputerbackup
 
 import (
 	"errors"
@@ -11,14 +11,14 @@ import (
 	"time"
 )
 
-type manageGroupBackupUseCase struct {
+type manageComputerBackupUseCase struct {
 	BRepo  repository.BackupRepository
 	GCRepo repository.GroupComputerRepository
 	CBRepo repository.ComputerBackupRepository
 	FStore repository.FileStore
 }
 
-func (mgb manageGroupBackupUseCase) LogDownload(backupID uint, computerID uint, prefix string, hash string) (*model.ComputerBackup, error) {
+func (mgb manageComputerBackupUseCase) LogDownload(backupID uint, computerID uint, prefix string, hash string) (*model.ComputerBackup, error) {
 	bm, err := mgb.BRepo.FindById(backupID)
 
 	if err != nil {
@@ -39,7 +39,7 @@ func (mgb manageGroupBackupUseCase) LogDownload(backupID uint, computerID uint, 
 	rc, _ := mgb.FStore.GetFile(backupID)
 	prc := NewPrefixReaderCloser(rc, []byte(prefix))
 
-	hashCalculated, err := mgb.FStore.CalculateReaderCloserHash(prc)
+	hashCalculated, err := mgb.FStore.CalculateReaderHash(prc)
 
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v -> %v", domain.ErrInternalDomain, err, "prefixed reader closer hash calculation error")
@@ -62,12 +62,15 @@ func (mgb manageGroupBackupUseCase) LogDownload(backupID uint, computerID uint, 
 		return nil, domain.ToDomainError(err)
 	}
 
-	// TODO: Check if file should be deleted off the server.
+	if bm.OnServer {
+		// TODO: Check if file should be deleted off the server.
+	}
+
 	return cbm, nil
 }
 
-func NewUseCase(br repository.BackupRepository, gcr repository.GroupComputerRepository, cbr repository.ComputerBackupRepository, fs repository.FileStore) usecase.ManageGroupBackupInterface {
-	return manageGroupBackupUseCase{
+func NewUseCase(br repository.BackupRepository, gcr repository.GroupComputerRepository, cbr repository.ComputerBackupRepository, fs repository.FileStore) usecase.ManageComputerBackupInterface {
+	return manageComputerBackupUseCase{
 		BRepo:  br,
 		GCRepo: gcr,
 		FStore: fs,
@@ -100,7 +103,8 @@ func (prc *prefixedReaderCloser) Read(p []byte) (n int, err error) {
 
 	// Prefix has already been read.
 	if len(prc.Prefix) < prc.i + 1 {
-		return prc.RC.Read(p)
+		n, err := prc.RC.Read(p)
+		return n, err
 	}
 
 	// Copy prefix to byte

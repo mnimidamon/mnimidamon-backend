@@ -28,6 +28,7 @@ import (
 	"mnimidamonbackend/domain/usecase/listinvite"
 	"mnimidamonbackend/domain/usecase/listuser"
 	"mnimidamonbackend/domain/usecase/managebackup"
+	"mnimidamonbackend/domain/usecase/managecomputerbackup"
 	"mnimidamonbackend/domain/usecase/managefile"
 	"mnimidamonbackend/domain/usecase/managegroup"
 	"mnimidamonbackend/domain/usecase/managegroupcomputer"
@@ -97,6 +98,7 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 	mbuc := managebackup.NewUseCase(fs, br, ur, gr, cr, gcr, cbr)
 	lbuc := listbackup.NewUseCase(br)
 	mfuc := managefile.NewUseCase(fs, br)
+	mgbuc := managecomputerbackup.NewUseCase(br, gcr, cbr, fs)
 
 	// Setting up the authorization.
 	ja := restapi.NewJwtAuthentication("SuperSecretKey", luuc, lguc, lcuc, lgcuc, lgmuc, liuc, lbuc)
@@ -135,6 +137,8 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 	api.BackupInitializeGroupBackupHandler = handlers.NewInitializeGroupBackupHandler(mbuc, ja)
 	api.BackupInitializeGroupBackupDeletionHandler = handlers.NewGroupBackupDeletionImpl(mbuc, ja)
 	api.BackupUploadBackupHandler = handlers.NewUploadBackupHandler(mfuc, ja)
+	api.BackupLogComputerBackupHandler = handlers.NewLogComputerBackupHandler(mgbuc, ja)
+
 
 	api.GroupComputerLeaveComputerFromGroupHandler = nil
 

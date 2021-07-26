@@ -131,6 +131,9 @@ func NewMnimidamonAPI(spec *loads.Document) *MnimidamonAPI {
 		GroupComputerLeaveComputerFromGroupHandler: group_computer.LeaveComputerFromGroupHandlerFunc(func(params group_computer.LeaveComputerFromGroupParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation group_computer.LeaveComputerFromGroup has not yet been implemented")
 		}),
+		BackupLogComputerBackupHandler: backup.LogComputerBackupHandlerFunc(func(params backup.LogComputerBackupParams, principal interface{}) middleware.Responder {
+			return middleware.NotImplemented("operation backup.LogComputerBackup has not yet been implemented")
+		}),
 		AuthorizationLoginUserHandler: authorization.LoginUserHandlerFunc(func(params authorization.LoginUserParams) middleware.Responder {
 			return middleware.NotImplemented("operation authorization.LoginUser has not yet been implemented")
 		}),
@@ -262,6 +265,8 @@ type MnimidamonAPI struct {
 	GroupComputerJoinComputerToGroupHandler group_computer.JoinComputerToGroupHandler
 	// GroupComputerLeaveComputerFromGroupHandler sets the operation handler for the leave computer from group operation
 	GroupComputerLeaveComputerFromGroupHandler group_computer.LeaveComputerFromGroupHandler
+	// BackupLogComputerBackupHandler sets the operation handler for the log computer backup operation
+	BackupLogComputerBackupHandler backup.LogComputerBackupHandler
 	// AuthorizationLoginUserHandler sets the operation handler for the login user operation
 	AuthorizationLoginUserHandler authorization.LoginUserHandler
 	// AuthorizationRegisterComputerHandler sets the operation handler for the register computer operation
@@ -439,6 +444,9 @@ func (o *MnimidamonAPI) Validate() error {
 	}
 	if o.GroupComputerLeaveComputerFromGroupHandler == nil {
 		unregistered = append(unregistered, "group_computer.LeaveComputerFromGroupHandler")
+	}
+	if o.BackupLogComputerBackupHandler == nil {
+		unregistered = append(unregistered, "backup.LogComputerBackupHandler")
 	}
 	if o.AuthorizationLoginUserHandler == nil {
 		unregistered = append(unregistered, "authorization.LoginUserHandler")
@@ -664,6 +672,10 @@ func (o *MnimidamonAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/users/current/computers/current/groups/{group_id}/leave"] = group_computer.NewLeaveComputerFromGroup(o.context, o.GroupComputerLeaveComputerFromGroupHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/users/current/computers/current/groups/{group_id}/backups/{backup_id}/log"] = backup.NewLogComputerBackup(o.context, o.BackupLogComputerBackupHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}

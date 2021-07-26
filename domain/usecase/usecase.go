@@ -52,7 +52,7 @@ type ListComputerBackupInterface interface {
 	FindAllOfBackup(backupID uint) ([]*model.ComputerBackup, error)
 }
 
-type ManageGroupBackupInterface interface {
+type ManageComputerBackupInterface interface {
 	LogDownload(backupID uint, computerID uint, prefix string, hash string) (*model.ComputerBackup, error)
 }
 
