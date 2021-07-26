@@ -1024,8 +1024,7 @@ definitions:
         type: integer
         minimum: 1
     example:
-      groupComputerPayload:
-        size: 1024
+      size: 1024
 
   StoredBackupsComputerResponse:
     description: "User and list of computers of that user which have the backup stored."
