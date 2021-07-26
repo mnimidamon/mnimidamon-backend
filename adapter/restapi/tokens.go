@@ -1,6 +1,6 @@
 package restapi
 
-import "github.com/dgrijalva/jwt-go"
+import "github.com/golang-jwt/jwt"
 
 // This will be saved inside our token for user authentication
 type userTokenClaims struct {

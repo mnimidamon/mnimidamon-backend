@@ -1,8 +1,8 @@
 package restapi
 
 import (
-	"github.com/dgrijalva/jwt-go"
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/golang-jwt/jwt"
 	"mnimidamonbackend/domain/model"
 	"mnimidamonbackend/domain/usecase"
 	"net/http"

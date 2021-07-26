@@ -3,10 +3,10 @@ package restapi
 import (
 	errors2 "errors"
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
-	jwtRequest "github.com/dgrijalva/jwt-go/request"
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/golang-jwt/jwt"
+	jwtRequest "github.com/golang-jwt/jwt/request"
 	"mnimidamonbackend/domain"
 	"mnimidamonbackend/domain/model"
 	"net/http"
@@ -113,7 +113,7 @@ func (ja jwtAuthenticationImpl) WithGroup(um *model.User, groupID uint, callback
 		}
 	}
 
-	isMember, err :=  ja.LGMCase.IsMemberOf(um.ID, gm.ID)
+	isMember, err := ja.LGMCase.IsMemberOf(um.ID, gm.ID)
 
 	if err != nil {
 		return newInternalServerErrorResponder(err)
@@ -165,7 +165,7 @@ func (ja jwtAuthenticationImpl) WithBackup(um *model.User, gm *model.Group, back
 		}
 	}
 
-	isMember, err :=  ja.LGMCase.IsMemberOf(um.ID, gm.ID)
+	isMember, err := ja.LGMCase.IsMemberOf(um.ID, gm.ID)
 
 	if err != nil {
 		return newInternalServerErrorResponder(err)
