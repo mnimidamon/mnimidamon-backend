@@ -28,6 +28,10 @@ func (mgb manageComputerBackupUseCase) LogDownload(backupID uint, computerID uin
 		return nil, domain.ToDomainError(err)
 	}
 
+	if !bm.OnServer {
+		return nil, domain.ErrBackupNotOnServer
+	}
+
 	gc, err := mgb.GCRepo.FindById(bm.GroupID, computerID)
 	if err != nil {
 		if errors.Is(err, repository.ErrNotFound) {
@@ -40,6 +44,7 @@ func (mgb manageComputerBackupUseCase) LogDownload(backupID uint, computerID uin
 	prc := NewPrefixReaderCloser(rc, []byte(prefix))
 
 	hashCalculated, err := mgb.FStore.CalculateReaderHash(prc)
+	rc.Close()
 
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v -> %v", domain.ErrInternalDomain, err, "prefixed reader closer hash calculation error")
