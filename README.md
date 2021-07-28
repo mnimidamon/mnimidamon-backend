@@ -1,7 +1,6 @@
 # ![md-s-icon](./public/mnimidamon-server-icon.svg) mnimidamon server
 Backend for _mnimidamon_ written in Go.
 
-
 ## Running
 
 The _mnimidamon_ server can be started with this command:
