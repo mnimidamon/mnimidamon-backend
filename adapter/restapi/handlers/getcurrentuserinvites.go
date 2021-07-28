@@ -2,14 +2,14 @@ package handlers
 
 import (
 	"github.com/go-openapi/runtime/middleware"
-	"mnimidamonbackend/adapter/restapi"
+	"mnimidamonbackend/adapter/restapi/authentication"
 	"mnimidamonbackend/adapter/restapi/endpoints/operations/current_user"
 	"mnimidamonbackend/domain/model"
 	"mnimidamonbackend/domain/usecase"
 )
 
 type getCurrentUserInvitesImpl struct {
-	JAuth  restapi.JwtAuthentication
+	JAuth  authentication.JwtAuthentication
 	LICase usecase.ListInviteInterface
 }
 
@@ -27,7 +27,7 @@ func (impl *getCurrentUserInvitesImpl) Handle(p current_user.GetCurrentUserInvit
 	})
 }
 
-func NewGetCurrentUserInvitesHandler(liuc usecase.ListInviteInterface, ja restapi.JwtAuthentication) current_user.GetCurrentUserInvitesHandler {
+func NewGetCurrentUserInvitesHandler(liuc usecase.ListInviteInterface, ja authentication.JwtAuthentication) current_user.GetCurrentUserInvitesHandler {
 	return &getCurrentUserInvitesImpl{
 		JAuth: ja,
 		LICase: liuc,

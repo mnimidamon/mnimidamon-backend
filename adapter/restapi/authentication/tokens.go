@@ -1,4 +1,4 @@
-package restapi
+package authentication
 
 import "github.com/golang-jwt/jwt"
 

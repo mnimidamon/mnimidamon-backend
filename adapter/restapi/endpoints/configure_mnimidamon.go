@@ -4,6 +4,7 @@ package endpoints
 
 import (
 	"crypto/tls"
+	"fmt"
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
@@ -11,6 +12,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"mnimidamonbackend/adapter/restapi"
+	"mnimidamonbackend/adapter/restapi/authentication"
 	"mnimidamonbackend/adapter/restapi/endpoints/operations"
 	"mnimidamonbackend/adapter/restapi/endpoints/operations/backup"
 	"mnimidamonbackend/adapter/restapi/endpoints/operations/computer"
@@ -45,14 +47,11 @@ func configureFlags(api *operations.MnimidamonAPI) {
 }
 
 func configureAPI(api *operations.MnimidamonAPI) http.Handler {
-	// configure the api here
+
 	api.ServeError = errors.ServeError
 
-	// Set your custom logger if needed. Default one is log.Printf
-	// Expected interface func(string, ...interface{})
-	//
-	// Example:
-	// api.Logger = log.Printf
+	// Set the logger to the global one.
+	api.Logger = constants.Log
 
 	api.UseSwaggerUI()
 	// To continue using redoc as your UI, uncomment the following line
@@ -60,20 +59,19 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 
 	api.JSONConsumer = runtime.JSONConsumer()
 	api.MultipartformConsumer = runtime.DiscardConsumer
-
 	api.JSONProducer = runtime.JSONProducer()
 
 	// Setting up the database.
-	db, err := sqliterepo.Initialize("../databasefiles/mnimidamon.db", &gorm.Config{
+	db, err := sqliterepo.Initialize(restapi.GlobalConfig.GetDatabaseFilePath(), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
 	}, false)
 
 	if err != nil {
-		panic(err)
+		panic(fmt.Errorf("error initializing database: %w", err))
 	}
 
 	// File store setup.
-	fs := filestore.New("../filestore")
+	fs := filestore.New(restapi.GlobalConfig.GetFileStoreFolderPath())
 
 	// Setting up the repositories.
 	ur := sqliterepo.NewUserRepository(db)
@@ -102,7 +100,7 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 	mgbuc := managecomputerbackup.NewUseCase(br, gcr, cbr, fs)
 
 	// Setting up the authorization.
-	ja := restapi.NewJwtAuthentication("SuperSecretKey", luuc, lguc, lcuc, lgcuc, lgmuc, liuc, lbuc)
+	ja := authentication.NewJwtAuthentication(restapi.GlobalConfig.JwtSecret, luuc, lguc, lcuc, lgcuc, lgmuc, liuc, lbuc)
 
 	// Applies when the "X-AUTH-KEY" header is set
 	api.AuthKeyAuth = ja.UserKeyMiddleware()
@@ -139,6 +137,7 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 	api.BackupInitializeGroupBackupDeletionHandler = handlers.NewGroupBackupDeletionImpl(mbuc, ja)
 	api.BackupUploadBackupHandler = handlers.NewUploadBackupHandler(mfuc, ja)
 	api.BackupLogComputerBackupHandler = handlers.NewLogComputerBackupHandler(mgbuc, ja)
+	api.BackupDownloadBackupHandler = handlers.NewDownloadBackupImpl(mfuc, ja)
 
 
 	api.GroupComputerLeaveComputerFromGroupHandler = nil
@@ -149,7 +148,6 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 		})
 	}
 
-	api.BackupDownloadBackupHandler = handlers.NewDownloadBackupImpl(mfuc, ja)
 
 	if api.ComputerGetBackupLocationsHandler == nil {
 		api.ComputerGetBackupLocationsHandler = computer.GetBackupLocationsHandlerFunc(func(params computer.GetBackupLocationsParams, principal interface{}) middleware.Responder {
@@ -201,7 +199,6 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 
 // The TLS configuration before HTTPS server starts.
 func configureTLS(tlsConfig *tls.Config) {
-	// Make all necessary changes to the TLS configuration here.
 }
 
 // As soon as server is initialized but not run yet, this function will be called.
@@ -209,6 +206,7 @@ func configureTLS(tlsConfig *tls.Config) {
 // This function can be called multiple times, depending on the number of serving schemes.
 // scheme value will be set accordingly: "http", "https" or "unix".
 func configureServer(s *http.Server, scheme, addr string) {
+	// Make all necessary changes to the TLS configuration here.
 }
 
 // The middleware configuration is for the handler executors. These do not apply to the swagger.json document.
@@ -225,7 +223,7 @@ func setupMiddlewares(handler http.Handler) http.Handler {
 		duration := time.Since(start)
 
 		// log request details
-		constants.Log("%v %v - %v\n", method, uri, duration)
+		constants.Log("%v %v - %v", method, uri, duration)
 	}
 
 	return http.HandlerFunc(logFn)

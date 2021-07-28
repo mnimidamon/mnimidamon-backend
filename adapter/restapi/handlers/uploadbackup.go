@@ -3,7 +3,7 @@ package handlers
 import (
 	"errors"
 	"github.com/go-openapi/runtime/middleware"
-	"mnimidamonbackend/adapter/restapi"
+	"mnimidamonbackend/adapter/restapi/authentication"
 	"mnimidamonbackend/adapter/restapi/endpoints/operations/backup"
 	"mnimidamonbackend/domain"
 	"mnimidamonbackend/domain/model"
@@ -12,7 +12,7 @@ import (
 
 type uploadBackupImpl struct {
 	MFCase usecase.ManageFileInterface
-	JAuth  restapi.JwtAuthentication
+	JAuth  authentication.JwtAuthentication
 }
 
 func (impl *uploadBackupImpl) Handle(p backup.UploadBackupParams, _ interface{}) middleware.Responder {
@@ -42,7 +42,7 @@ func (impl *uploadBackupImpl) Handle(p backup.UploadBackupParams, _ interface{})
 	})
 }
 
-func NewUploadBackupHandler(mfuc usecase.ManageFileInterface, ja restapi.JwtAuthentication) backup.UploadBackupHandler {
+func NewUploadBackupHandler(mfuc usecase.ManageFileInterface, ja authentication.JwtAuthentication) backup.UploadBackupHandler {
 	return &uploadBackupImpl{
 		MFCase: mfuc,
 		JAuth:  ja,

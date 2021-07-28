@@ -1,4 +1,4 @@
-package restapi
+package authentication
 
 import (
 	errors2 "errors"

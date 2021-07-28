@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"github.com/go-openapi/runtime/middleware"
-	"mnimidamonbackend/adapter/restapi"
+	"mnimidamonbackend/adapter/restapi/authentication"
 	"mnimidamonbackend/adapter/restapi/endpoints/operations/group"
 	"mnimidamonbackend/domain/model"
 	"mnimidamonbackend/domain/usecase"
@@ -10,7 +10,7 @@ import (
 
 type getGroupMembersImpl struct {
 	LGMCase usecase.ListGroupMemberInterface
-	JAuth   restapi.JwtAuthentication
+	JAuth   authentication.JwtAuthentication
 }
 
 func (impl *getGroupMembersImpl) Handle(p group.GetGroupMembersParams, _ interface{}) middleware.Responder {
@@ -30,7 +30,7 @@ func (impl *getGroupMembersImpl) Handle(p group.GetGroupMembersParams, _ interfa
 	})
 }
 
-func NewGetGroupMembersHandler(lgmuc usecase.ListGroupMemberInterface, ja restapi.JwtAuthentication) group.GetGroupMembersHandler {
+func NewGetGroupMembersHandler(lgmuc usecase.ListGroupMemberInterface, ja authentication.JwtAuthentication) group.GetGroupMembersHandler {
 	return &getGroupMembersImpl{
 		LGMCase: lgmuc,
 		JAuth:   ja,

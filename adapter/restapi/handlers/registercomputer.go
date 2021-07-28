@@ -3,7 +3,7 @@ package handlers
 import (
 	"errors"
 	"github.com/go-openapi/runtime/middleware"
-	"mnimidamonbackend/adapter/restapi"
+	"mnimidamonbackend/adapter/restapi/authentication"
 	"mnimidamonbackend/adapter/restapi/endpoints/operations/authorization"
 	"mnimidamonbackend/adapter/restapi/modelapi"
 	"mnimidamonbackend/domain"
@@ -13,7 +13,7 @@ import (
 )
 
 type registerComputerImpl struct {
-	JAuth  restapi.JwtAuthentication
+	JAuth  authentication.JwtAuthentication
 	CRCase usecase.ComputerRegistrationInterface
 }
 
@@ -50,7 +50,7 @@ func (impl *registerComputerImpl) Handle(p authorization.RegisterComputerParams,
 	})
 }
 
-func NewRegisterComputerHandler(crcuc usecase.ComputerRegistrationInterface, ja restapi.JwtAuthentication) authorization.RegisterComputerHandler {
+func NewRegisterComputerHandler(crcuc usecase.ComputerRegistrationInterface, ja authentication.JwtAuthentication) authorization.RegisterComputerHandler {
 	return &registerComputerImpl{
 		CRCase: crcuc,
 		JAuth: ja,

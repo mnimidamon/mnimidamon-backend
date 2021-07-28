@@ -2,13 +2,13 @@ package handlers
 
 import (
 	"github.com/go-openapi/runtime/middleware"
-	"mnimidamonbackend/adapter/restapi"
+	"mnimidamonbackend/adapter/restapi/authentication"
 	"mnimidamonbackend/adapter/restapi/endpoints/operations/group"
 	"mnimidamonbackend/domain/model"
 )
 
 type getGroupImpl struct {
-	JAuth restapi.JwtAuthentication
+	JAuth authentication.JwtAuthentication
 }
 
 func (impl *getGroupImpl) Handle(p group.GetGroupParams, _ interface{}) middleware.Responder {
@@ -20,7 +20,7 @@ func (impl *getGroupImpl) Handle(p group.GetGroupParams, _ interface{}) middlewa
 	})
 }
 
-func NewGetGroupHandler(ja restapi.JwtAuthentication) group.GetGroupHandler {
+func NewGetGroupHandler(ja authentication.JwtAuthentication) group.GetGroupHandler {
 	return &getGroupImpl{
 		JAuth: ja,
 	}

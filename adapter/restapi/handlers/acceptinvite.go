@@ -3,7 +3,7 @@ package handlers
 import (
 	"errors"
 	"github.com/go-openapi/runtime/middleware"
-	"mnimidamonbackend/adapter/restapi"
+	"mnimidamonbackend/adapter/restapi/authentication"
 	"mnimidamonbackend/adapter/restapi/endpoints/operations/invite"
 	"mnimidamonbackend/domain"
 	"mnimidamonbackend/domain/model"
@@ -12,7 +12,7 @@ import (
 
 type acceptInviteImpl struct {
 	GICase usecase.GroupInviteInterface
-	JAuth  restapi.JwtAuthentication
+	JAuth  authentication.JwtAuthentication
 }
 
 func (impl *acceptInviteImpl) Handle(p invite.AcceptCurrentUserInviteParams, _ interface{}) middleware.Responder {
@@ -36,7 +36,7 @@ func (impl *acceptInviteImpl) Handle(p invite.AcceptCurrentUserInviteParams, _ i
 	})
 }
 
-func NewAcceptInviteHandler(giuc usecase.GroupInviteInterface, ja restapi.JwtAuthentication) invite.AcceptCurrentUserInviteHandler {
+func NewAcceptInviteHandler(giuc usecase.GroupInviteInterface, ja authentication.JwtAuthentication) invite.AcceptCurrentUserInviteHandler {
 	return &acceptInviteImpl{
 		GICase: giuc,
 		JAuth:  ja,

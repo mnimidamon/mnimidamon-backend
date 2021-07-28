@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"github.com/go-openapi/runtime/middleware"
-	"mnimidamonbackend/adapter/restapi"
+	"mnimidamonbackend/adapter/restapi/authentication"
 	"mnimidamonbackend/adapter/restapi/endpoints/operations/authorization"
 	"mnimidamonbackend/adapter/restapi/modelapi"
 	"mnimidamonbackend/domain/usecase"
@@ -10,7 +10,7 @@ import (
 )
 
 type loginUserImpl struct {
-	JAuth restapi.JwtAuthentication
+	JAuth  authentication.JwtAuthentication
 	URCase usecase.UserRegistrationInterface
 }
 
@@ -47,7 +47,7 @@ func (impl *loginUserImpl) Handle(p authorization.LoginUserParams) middleware.Re
 		WithPayload(rp)
 }
 
-func NewLoginUserHandler(uruc usecase.UserRegistrationInterface, ja restapi.JwtAuthentication) authorization.LoginUserHandler {
+func NewLoginUserHandler(uruc usecase.UserRegistrationInterface, ja authentication.JwtAuthentication) authorization.LoginUserHandler {
 	return &loginUserImpl{
 		JAuth:  ja,
 		URCase: uruc,

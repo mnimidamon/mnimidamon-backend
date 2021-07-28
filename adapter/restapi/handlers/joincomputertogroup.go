@@ -3,7 +3,7 @@ package handlers
 import (
 	"errors"
 	"github.com/go-openapi/runtime/middleware"
-	"mnimidamonbackend/adapter/restapi"
+	"mnimidamonbackend/adapter/restapi/authentication"
 	"mnimidamonbackend/adapter/restapi/endpoints/operations/group_computer"
 	"mnimidamonbackend/domain"
 	"mnimidamonbackend/domain/model"
@@ -12,7 +12,7 @@ import (
 
 type joinComputerToGroupImpl struct {
 	MGCCase usecase.ManageGroupComputerInterface
-	JAuth restapi.JwtAuthentication
+	JAuth   authentication.JwtAuthentication
 }
 
 func (impl *joinComputerToGroupImpl) Handle(p group_computer.JoinComputerToGroupParams, _ interface{}) middleware.Responder {
@@ -36,7 +36,7 @@ func (impl *joinComputerToGroupImpl) Handle(p group_computer.JoinComputerToGroup
 	})
 }
 
-func NewJoinComputerToGroupHandler(mgcuc usecase.ManageGroupComputerInterface, ja restapi.JwtAuthentication) group_computer.JoinComputerToGroupHandler {
+func NewJoinComputerToGroupHandler(mgcuc usecase.ManageGroupComputerInterface, ja authentication.JwtAuthentication) group_computer.JoinComputerToGroupHandler {
 	return &joinComputerToGroupImpl{
 		MGCCase: mgcuc,
 		JAuth:   ja,

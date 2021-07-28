@@ -2,13 +2,13 @@ package handlers
 
 import (
 	"github.com/go-openapi/runtime/middleware"
-	"mnimidamonbackend/adapter/restapi"
+	"mnimidamonbackend/adapter/restapi/authentication"
 	"mnimidamonbackend/adapter/restapi/endpoints/operations/invite"
 	"mnimidamonbackend/domain/model"
 )
 
 type getCurrentUserInviteImpl struct {
-	JAuth  restapi.JwtAuthentication
+	JAuth authentication.JwtAuthentication
 }
 
 func (impl *getCurrentUserInviteImpl) Handle(p invite.GetCurrentUserInviteParams, _ interface{}) middleware.Responder {
@@ -21,7 +21,7 @@ func (impl *getCurrentUserInviteImpl) Handle(p invite.GetCurrentUserInviteParams
 	})
 }
 
-func NewGetCurrentUserInviteHandler(ja restapi.JwtAuthentication) invite.GetCurrentUserInviteHandler {
+func NewGetCurrentUserInviteHandler(ja authentication.JwtAuthentication) invite.GetCurrentUserInviteHandler {
 	return &getCurrentUserInviteImpl{
 		JAuth:  ja,
 	}

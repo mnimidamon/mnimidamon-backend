@@ -2,13 +2,13 @@ package handlers
 
 import (
 	"github.com/go-openapi/runtime/middleware"
-	"mnimidamonbackend/adapter/restapi"
+	"mnimidamonbackend/adapter/restapi/authentication"
 	"mnimidamonbackend/adapter/restapi/endpoints/operations/computer"
 	"mnimidamonbackend/domain/model"
 )
 
 type getCurrentComputerImpl struct {
-	JAuth  restapi.JwtAuthentication
+	JAuth authentication.JwtAuthentication
 }
 
 func (impl *getCurrentComputerImpl) Handle(p computer.GetCurrentComputerParams, _ interface{}) middleware.Responder {
@@ -20,7 +20,7 @@ func (impl *getCurrentComputerImpl) Handle(p computer.GetCurrentComputerParams, 
 	})
 }
 
-func NewGetCurrentUserComputer(ja restapi.JwtAuthentication) computer.GetCurrentComputerHandler {
+func NewGetCurrentUserComputer(ja authentication.JwtAuthentication) computer.GetCurrentComputerHandler {
 	return &getCurrentComputerImpl{
 		JAuth:  ja,
 	}

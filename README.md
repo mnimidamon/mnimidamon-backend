@@ -1,4 +1,4 @@
-# mnimidamon-backend
+# ![md-s-icon](./public/mnimidamon-server-icon.svg) mnimidamon server
 Backend for _mnimidamon_ written in Go.
 
 
@@ -27,3 +27,23 @@ Generate clients code:
 
 ``swagger generate client -A mnimidamon -f ./public/spec/swagger.yaml ``
 
+## Installation
+
+Generate GUI mnimidamon server .exe file for windows:
+
+`` go build -ldflags -H=windowsgui cmd/mnimidamon-server-gui/main.go ``
+
+For other platforms:
+
+`` go build cmd/mnimidamon-server-gui/main.go ``
+
+Generate command line mnimidamon server .exe file:
+
+`` go build cmd/mnimidamon-server/main.go ``
+
+## Application sneak peek
+
+![configure](https://i.imgur.com/6M7qEHa.png)
+![start](https://i.imgur.com/bdHWFtT.png)
+![started](https://i.imgur.com/CTOM97I.png)
+![reconfigure](https://i.imgur.com/b25uPsL.png)
