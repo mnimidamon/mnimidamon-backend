@@ -104,9 +104,13 @@ func NewSetupWindow(gi *GraphicalInterface, nextWindow ContentGetter) *SetupWind
 		SubmitText: "Save",
 		CancelText: "Reset",
 	}
-
+	appTitle := widget.NewLabelWithStyle("mnimidamon server", fyne.TextAlignCenter, fyne.TextStyle{
+		Bold:      true,
+		Italic:    false,
+		Monospace: true,
+	})
 	formContainer := container.NewPadded(form)
-	c := container.NewBorder(gi.AppTitle, nil, nil, nil, formContainer)
+	c := container.NewBorder(appTitle, nil, nil, nil, formContainer)
 
 	return &SetupWindow{
 		Content:     c,

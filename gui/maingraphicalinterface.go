@@ -3,7 +3,6 @@ package gui
 import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
-	"fyne.io/fyne/v2/widget"
 	"mnimidamonbackend/adapter/restapi"
 	"mnimidamonbackend/gui/appicons"
 )
@@ -13,8 +12,6 @@ type GraphicalInterface struct {
 	MainWindow fyne.Window // Main application window.
 
 	ConfigStore *ConfigStore
-
-	AppTitle *widget.Label
 
 	SetupWindow         *SetupWindow
 	ServerRunningWindow *ServerRunningWindow
@@ -46,19 +43,13 @@ func NewGraphicalServerInterface() (*GraphicalInterface, error) {
 
 	mainWindow := mdApp.NewWindow(" ")
 
-	appTitle := widget.NewLabelWithStyle("mnimidamon server", fyne.TextAlignCenter, fyne.TextStyle{
-		Bold:      true,
-		Italic:    false,
-		Monospace: true,
-	})
-
 	gi := &GraphicalInterface{
 		App:        mdApp,
 		MainWindow: mainWindow,
+
 		ConfigStore: &ConfigStore{
 			Pref: mdApp.Preferences(),
 		},
-		AppTitle: appTitle,
 
 		SetupWindow:         nil,
 		ServerRunningWindow: nil,

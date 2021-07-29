@@ -69,7 +69,7 @@ func (sr *ServerRunningWindow) AppendToLogString(str string) {
 
 func NewServerRunningWindow(gi *GraphicalInterface) *ServerRunningWindow {
 	srw := &ServerRunningWindow{
-		Content: gi.AppTitle,
+		Content: nil,
 		Server:  nil,
 		LogText: new(string),
 	}
