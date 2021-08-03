@@ -1334,17 +1334,19 @@ func init() {
         }
       },
       "example": {
-        "groupComputerPayload": {
-          "size": 1024
-        }
+        "size": 1024
       }
     },
     "Error": {
       "type": "object",
       "properties": {
         "code": {
+          "type": "number",
+          "example": 400
+        },
+        "message": {
           "type": "string",
-          "example": "CodeOfTheError"
+          "example": "ErrExampleString"
         }
       }
     },
@@ -3374,17 +3376,19 @@ func init() {
         }
       },
       "example": {
-        "groupComputerPayload": {
-          "size": 1024
-        }
+        "size": 1024
       }
     },
     "Error": {
       "type": "object",
       "properties": {
         "code": {
+          "type": "number",
+          "example": 400
+        },
+        "message": {
           "type": "string",
-          "example": "CodeOfTheError"
+          "example": "ErrExampleString"
         }
       }
     },

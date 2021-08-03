@@ -25,7 +25,7 @@ func newUnauthorizedErrorResponder(err error) middleware.Responder {
 	}
 	return &unauthorizedErrorResponder{
 		Payload: &modelapi.Error{
-			Code: err.Error(),
+			Message: err.Error(),
 		},
 	}
 }
@@ -51,7 +51,7 @@ func newInternalServerErrorResponder(err error) middleware.Responder {
 	}
 	return &internalServerErrorResponder{
 		Payload: &modelapi.Error{
-			Code: err.Error(),
+			Message: err.Error(),
 		},
 	}
 }
@@ -77,7 +77,7 @@ func newBadRequestErrorResponder(err error) middleware.Responder {
 	}
 	return &internalServerErrorResponder{
 		Payload: &modelapi.Error{
-			Code: err.Error(),
+			Message: err.Error(),
 		},
 	}
 }

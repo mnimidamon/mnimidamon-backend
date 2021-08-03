@@ -7,8 +7,8 @@ import (
 )
 
 var (
-	ErrInternalServer  = &modelapi.Error{Code: "ErrInternalServer"}
-	ErrSigningToken  = &modelapi.Error{Code: "ErrSigningToken"}
+	ErrInternalServer  = &modelapi.Error{Message: "ErrInternalServer"}
+	ErrSigningToken  = &modelapi.Error{Message: "ErrSigningToken"}
 )
 
 // Common error checker for more readable error.
@@ -28,6 +28,6 @@ func IsNotFoundError(err error) bool {
 
 func ToRestError(err error) *modelapi.Error {
 	return &modelapi.Error{
-		Code: err.Error(),
+		Message: err.Error(),
 	}
 }

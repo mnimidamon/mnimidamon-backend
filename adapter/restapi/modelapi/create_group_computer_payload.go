@@ -15,7 +15,7 @@ import (
 )
 
 // CreateGroupComputerPayload Payload when you join a computer to a group
-// Example: {"groupComputerPayload":{"size":1024}}
+// Example: {"size":1024}
 //
 // swagger:model CreateGroupComputerPayload
 type CreateGroupComputerPayload struct {

@@ -1186,8 +1186,11 @@ definitions:
     type: object
     properties:
       code:
+        type: number
+        example: 400
+      message:
         type: string
-        example: "CodeOfTheError"
+        example: "ErrExampleString"
 
 
 # Parameters definitions
