@@ -11,6 +11,14 @@ type listGroupComputerUseCase struct {
 	GCRepo repository.GroupComputerRepository
 }
 
+func (lg listGroupComputerUseCase) FindAllOfComputer(computerID uint) ([]*model.GroupComputer, error) {
+	gcs, err := lg.GCRepo.FindAllOfComputer(computerID)
+	if err != nil {
+		return nil, domain.ToDomainError(err)
+	}
+	return gcs, nil
+}
+
 func (lg listGroupComputerUseCase) FindAllOfGroup(groupID uint) ([]*model.GroupComputer, error) {
 	gcs, err := lg.GCRepo.FindAllOfGroup(groupID)
 	if err != nil {

@@ -140,6 +140,24 @@ func (ja jwtAuthenticationImpl) WithInvite(um *model.User, groupID uint, callbac
 	return callback(im)
 }
 
+func (ja jwtAuthenticationImpl) WithComputer(um *model.User, computerID uint, callback func(cm *model.Computer) middleware.Responder) middleware.Responder {
+	cm, err := ja.LCCase.FindById(computerID)
+
+	if err != nil {
+		if errors2.Is(err, domain.ErrNotFound) {
+			return newBadRequestErrorResponder(nil)
+		} else {
+			return newInternalServerErrorResponder(err)
+		}
+	}
+
+	if um.ID != cm.OwnerID {
+		return newBadRequestErrorResponder(nil)
+	}
+
+	return callback(cm)
+}
+
 func (ja jwtAuthenticationImpl) WithGroupComputer(cm *model.Computer, gm *model.Group, callback func(gcm *model.GroupComputer) middleware.Responder) middleware.Responder {
 	gcm, err := ja.LGCCase.FindById(gm.ID, cm.ID)
 

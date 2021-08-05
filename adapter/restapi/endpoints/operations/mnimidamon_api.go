@@ -104,6 +104,9 @@ func NewMnimidamonAPI(spec *loads.Document) *MnimidamonAPI {
 		BackupGetGroupBackupsHandler: backup.GetGroupBackupsHandlerFunc(func(params backup.GetGroupBackupsParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation backup.GetGroupBackups has not yet been implemented")
 		}),
+		GroupComputerGetGroupComputersOfComputerHandler: group_computer.GetGroupComputersOfComputerHandlerFunc(func(params group_computer.GetGroupComputersOfComputerParams, principal interface{}) middleware.Responder {
+			return middleware.NotImplemented("operation group_computer.GetGroupComputersOfComputer has not yet been implemented")
+		}),
 		GroupGetGroupInvitesHandler: group.GetGroupInvitesHandlerFunc(func(params group.GetGroupInvitesParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation group.GetGroupInvites has not yet been implemented")
 		}),
@@ -247,6 +250,8 @@ type MnimidamonAPI struct {
 	BackupGetGroupBackupHandler backup.GetGroupBackupHandler
 	// BackupGetGroupBackupsHandler sets the operation handler for the get group backups operation
 	BackupGetGroupBackupsHandler backup.GetGroupBackupsHandler
+	// GroupComputerGetGroupComputersOfComputerHandler sets the operation handler for the get group computers of computer operation
+	GroupComputerGetGroupComputersOfComputerHandler group_computer.GetGroupComputersOfComputerHandler
 	// GroupGetGroupInvitesHandler sets the operation handler for the get group invites operation
 	GroupGetGroupInvitesHandler group.GetGroupInvitesHandler
 	// GroupGetGroupMembersHandler sets the operation handler for the get group members operation
@@ -417,6 +422,9 @@ func (o *MnimidamonAPI) Validate() error {
 	}
 	if o.BackupGetGroupBackupsHandler == nil {
 		unregistered = append(unregistered, "backup.GetGroupBackupsHandler")
+	}
+	if o.GroupComputerGetGroupComputersOfComputerHandler == nil {
+		unregistered = append(unregistered, "group_computer.GetGroupComputersOfComputerHandler")
 	}
 	if o.GroupGetGroupInvitesHandler == nil {
 		unregistered = append(unregistered, "group.GetGroupInvitesHandler")
@@ -636,6 +644,10 @@ func (o *MnimidamonAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/users/current/computers/current/groups/{group_id}/backups"] = backup.NewGetGroupBackups(o.context, o.BackupGetGroupBackupsHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/users/current/computers/{computer_id}/groups"] = group_computer.NewGetGroupComputersOfComputer(o.context, o.GroupComputerGetGroupComputersOfComputerHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

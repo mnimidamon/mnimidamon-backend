@@ -281,6 +281,33 @@ paths:
         500:
           $ref: "#/responses/Internal"
 
+
+  /users/current/computers/{computer_id}/groups:
+    parameters:
+      - $ref: "#/parameters/PathComputerId"
+
+    # Get specific computer profile.
+    get:
+      operationId: getGroupComputersOfComputer
+      tags:
+        - group computer
+      security:
+        - auth_key: []
+      summary: Get group computers of computer
+      responses:
+        200:
+          description: The computer
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/GroupComputer"
+        400:
+          $ref: "#/responses/BadRequest"
+        401:
+          $ref: "#/responses/Unauthorized"
+        500:
+          $ref: "#/responses/Internal"
+
   /users/current/computers/current/groups/{group_id}/join:
     parameters:
       - $ref: "#/parameters/PathGroupId"

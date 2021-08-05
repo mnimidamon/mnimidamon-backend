@@ -743,6 +743,45 @@ func init() {
         }
       ]
     },
+    "/users/current/computers/{computer_id}/groups": {
+      "get": {
+        "security": [
+          {
+            "auth_key": []
+          }
+        ],
+        "tags": [
+          "group computer"
+        ],
+        "summary": "Get group computers of computer",
+        "operationId": "getGroupComputersOfComputer",
+        "responses": {
+          "200": {
+            "description": "The computer",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/GroupComputer"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "$ref": "#/parameters/PathComputerId"
+        }
+      ]
+    },
     "/users/current/groups": {
       "get": {
         "security": [
@@ -2641,6 +2680,58 @@ func init() {
             "description": "The computer",
             "schema": {
               "$ref": "#/definitions/Computer"
+            }
+          },
+          "400": {
+            "description": "Supplied parameters were not okay.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "type": "integer",
+          "description": "Numeric ID of the Computer.",
+          "name": "computer_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    "/users/current/computers/{computer_id}/groups": {
+      "get": {
+        "security": [
+          {
+            "auth_key": []
+          }
+        ],
+        "tags": [
+          "group computer"
+        ],
+        "summary": "Get group computers of computer",
+        "operationId": "getGroupComputersOfComputer",
+        "responses": {
+          "200": {
+            "description": "The computer",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/GroupComputer"
+              }
             }
           },
           "400": {

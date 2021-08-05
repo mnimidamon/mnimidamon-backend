@@ -130,7 +130,7 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 
 	api.ComputerGetCurrentComputerHandler = handlers.NewGetCurrentUserComputer(ja)
 	api.ComputerGetCurrentUserComputerHandler = handlers.NewGetCurrentUserComputerHandler(lcuc, ja)
-	api.ComputerGetCurrentUserGroupComputersHandler = handlers.NewGetCurrentUserGroupComputersHandler(ja, gcr)
+	api.ComputerGetCurrentUserGroupComputersHandler = handlers.NewGetCurrentUserGroupComputersHandler(ja, lgcuc)
 
 	api.InviteGetCurrentUserInviteHandler = handlers.NewGetCurrentUserInviteHandler(ja)
 
@@ -140,6 +140,7 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 	api.BackupLogComputerBackupHandler = handlers.NewLogComputerBackupHandler(mgbuc, ja)
 	api.BackupDownloadBackupHandler = handlers.NewDownloadBackupImpl(mfuc, ja)
 
+	api.GroupComputerGetGroupComputersOfComputerHandler = handlers.NewGetGroupComputersOfComputerHandler(ja, lgcuc)
 	api.GroupComputerLeaveComputerFromGroupHandler = nil
 
 	if api.CurrentUserDeleteCurrentUserHandler == nil {
