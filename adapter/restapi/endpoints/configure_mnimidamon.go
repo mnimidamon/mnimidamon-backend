@@ -130,6 +130,7 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 
 	api.ComputerGetCurrentComputerHandler = handlers.NewGetCurrentUserComputer(ja)
 	api.ComputerGetCurrentUserComputerHandler = handlers.NewGetCurrentUserComputerHandler(lcuc, ja)
+	api.ComputerGetCurrentUserGroupComputersHandler = handlers.NewGetCurrentUserGroupComputersHandler(ja, gcr)
 
 	api.InviteGetCurrentUserInviteHandler = handlers.NewGetCurrentUserInviteHandler(ja)
 
@@ -139,7 +140,6 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 	api.BackupLogComputerBackupHandler = handlers.NewLogComputerBackupHandler(mgbuc, ja)
 	api.BackupDownloadBackupHandler = handlers.NewDownloadBackupImpl(mfuc, ja)
 
-
 	api.GroupComputerLeaveComputerFromGroupHandler = nil
 
 	if api.CurrentUserDeleteCurrentUserHandler == nil {
@@ -147,7 +147,6 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 			return middleware.NotImplemented("operation current_user.DeleteCurrentUser has not yet been implemented")
 		})
 	}
-
 
 	if api.ComputerGetBackupLocationsHandler == nil {
 		api.ComputerGetBackupLocationsHandler = computer.GetBackupLocationsHandlerFunc(func(params computer.GetBackupLocationsParams, principal interface{}) middleware.Responder {
@@ -158,12 +157,6 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 	if api.ComputerGetCurrentUserComputersHandler == nil {
 		api.ComputerGetCurrentUserComputersHandler = computer.GetCurrentUserComputersHandlerFunc(func(params computer.GetCurrentUserComputersParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation computer.GetCurrentUserComputers has not yet been implemented")
-		})
-	}
-
-	if api.ComputerGetCurrentUserGroupComputersHandler == nil {
-		api.ComputerGetCurrentUserGroupComputersHandler = computer.GetCurrentUserGroupComputersHandlerFunc(func(params computer.GetCurrentUserGroupComputersParams, principal interface{}) middleware.Responder {
-			return middleware.NotImplemented("operation computer.GetCurrentUserGroupComputers has not yet been implemented")
 		})
 	}
 
@@ -184,8 +177,6 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 			return middleware.NotImplemented("operation backup.RequestBackupUpload has not yet been implemented")
 		})
 	}
-
-
 
 	api.PreServerShutdown = func() {}
 

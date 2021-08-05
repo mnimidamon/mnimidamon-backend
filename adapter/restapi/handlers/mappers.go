@@ -110,6 +110,20 @@ func MapToGroupComputer(gcm *model.GroupComputer) *modelapi.GroupComputer {
 	}
 }
 
+func MapToGroupComputers(gcms []*model.GroupComputer) []*modelapi.GroupComputer {
+	if gcms == nil {
+		return nil
+	}
+
+	var gcs []*modelapi.GroupComputer
+	for _, gc := range gcms {
+		x := MapToGroupComputer(gc)
+		gcs = append(gcs, x)
+	}
+
+	return gcs
+}
+
 func MapToBackup(bm *model.Backup) *modelapi.Backup {
 	if bm == nil {
 		return nil
