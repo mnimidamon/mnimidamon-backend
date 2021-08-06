@@ -78,6 +78,7 @@ func (gcd groupComputerData) FindAllOfGroup(groupID uint) ([]*model.GroupCompute
 
 	result :=
 		gcd.Where("group_id = ?", groupID).
+			Preload("Computer").
 			Find(&computers)
 
 	if result.Error != nil {
@@ -98,6 +99,7 @@ func (gcd groupComputerData) FindAllOfComputer(computerID uint) ([]*model.GroupC
 
 	result :=
 		gcd.Where("computer_id = ?", computerID).
+			Preload("Group").
 			Find(&computers)
 
 	if result.Error != nil {
