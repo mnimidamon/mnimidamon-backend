@@ -25,7 +25,8 @@ func (impl *inviteUserToGroupImpl) Handle(p group.InviteUserToGroupParams, _ int
 				return group.NewInviteUserToGroupInternalServerError().
 					WithPayload(ErrInternalServer)
 			} else if IsNotFoundError(err) {
-				return group.NewInviteUserToGroupBadRequest()
+				return group.NewInviteUserToGroupBadRequest().
+					WithPayload(ToRestError(err))
 			} else if err != nil {
 				return group.NewInviteUserToGroupInternalServerError().
 					WithPayload(ToRestError(err))
