@@ -142,6 +142,20 @@ func MapToBackup(bm *model.Backup) *modelapi.Backup {
 	}
 }
 
+func MapToBackups(bms []*model.Backup) []*modelapi.Backup {
+	if bms == nil {
+		return nil
+	}
+
+	var bs []*modelapi.Backup
+	for _, b := range bms {
+		x := MapToBackup(b)
+		bs = append(bs, x)
+	}
+
+	return bs
+}
+
 func MapToComputerBackup(cbm *model.ComputerBackup) *modelapi.GroupComputerBackup {
 	if cbm == nil {
 		return nil
