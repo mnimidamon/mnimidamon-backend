@@ -3,6 +3,7 @@ package managebackup
 import (
 	"errors"
 	"mnimidamonbackend/domain"
+	"mnimidamonbackend/domain/constants"
 	"mnimidamonbackend/domain/model"
 	"mnimidamonbackend/domain/repository"
 	"mnimidamonbackend/domain/usecase"
@@ -139,7 +140,7 @@ func (mb manageBackupUseCase) UploadRequest(ownerID uint, backupID uint) (*model
 
 func (mb manageBackupUseCase) DeleteRequest(userID uint, backupID uint) (*model.Backup, error) {
 	// Get user
-	u, err := mb.URepo.FindById(userID)
+	_, err := mb.URepo.FindById(userID)
 	if errors.Is(domain.ErrNotFound, err) {
 		return nil, domain.ErrUserNotFound
 	}
@@ -158,73 +159,48 @@ func (mb manageBackupUseCase) DeleteRequest(userID uint, backupID uint) (*model.
 		return nil, domain.ToDomainError(err)
 	}
 
-	gcrtx := mb.GCRepo.BeginTx()
-	crtx := mb.CRepo.ContinueTx(gcrtx)
-	cbtx := mb.CBRepo.ContinueTx(gcrtx)
-	brtx := mb.BRepo.ContinueTx(gcrtx)
-
-	if u.ID == b.OwnerID {
-		// Find the group computers of the backup owner and the group.
-		groupComputers, err := mb.findGroupComputersOfUserAndGroup(userID, b.GroupID, crtx, gcrtx)
-		if err != nil {
-			return nil, domain.ToDomainError(err)
-		}
-
-		// Delete the Computer Backup for these computers.
-		for _, gc := range groupComputers {
-			err := cbtx.Delete(gc.ID, backupID)
-			if err != nil {
-				cbtx.Rollback()
-				return nil, domain.ToDomainError(err)
-			}
-		}
-
-		// Find all the Computer backups.
-		gcbs, err := cbtx.FindAllOfBackup(backupID)
-		if err != nil {
-			cbtx.Rollback()
-			return nil, domain.ToDomainError(err)
-		}
-
-		// If the backups length is > 0 then update the flag, else delete the backup
-		if len(gcbs) > 0 {
-			b.UploadRequest = true
-		} else {
-			if err := brtx.Delete(b.ID); err != nil {
-				cbtx.Rollback()
-				return nil, domain.ToDomainError(err)
-			}
-
-			b = nil
-			cbtx.Commit()
-			brtx.Commit()
-		}
-
-		// If everything succeeded then delete the backup file.
-		if b.OnServer {
-			err := mb.FStore.DeleteFile(b.ID)
-			return nil, domain.ToDomainError(err)
-		}
-	} else {
-		// Find the group computers of the user and the group.
-		groupComputers, err := mb.findGroupComputersOfUserAndGroup(userID, b.GroupID, crtx, gcrtx)
-		if err != nil {
-			return nil, domain.ToDomainError(err)
-		}
-
-		// Delete the Computer Backup for these computers.
-		for _, gc := range groupComputers {
-			err := cbtx.Delete(gc.ID, backupID)
-			if err != nil {
-				cbtx.Rollback()
-				return nil, domain.ToDomainError(err)
-			}
-		}
-
-		cbtx.Commit()
-		brtx.Commit()
+	if b.OwnerID != userID {
+		return nil, domain.ErrUserNotOwner
 	}
 
+	ts := repository.NewTransactionStack()
+
+	cbtx := mb.CBRepo.BeginTx(); ts.Add(cbtx)
+	brtx := mb.BRepo.ContinueTx(cbtx); ts.Add(brtx)
+
+	defer ts.RollbackUnlessCommitted()
+
+	// Find all the Computer backups.
+	cbs, err := cbtx.FindAllOfBackup(backupID)
+	if err != nil {
+		return nil, domain.ToDomainError(err)
+	}
+
+	// Delete every computer backups of every user.
+	for _, cb := range cbs {
+		if err := cbtx.Delete(cb.GroupComputerID, cb.BackupID); err != nil {
+			constants.Log("error when deleting computer backup %v, %v", cb, err)
+			return nil, domain.ToDomainError(err)
+		}
+	}
+
+	// Delete the backup.
+	if err := brtx.Delete(b.ID); err != nil {
+		constants.Log("error deleting backup %v, %v", b, err)
+		return nil, domain.ToDomainError(err)
+	}
+
+	// Delete the local stored file.
+	if b.OnServer {
+		if err := mb.FStore.DeleteFile(b.ID); err != nil {
+			constants.Log("error deleting backup file %v, %v", b, err)
+		}
+	}
+
+	// TODO Recompute the Upload flags.
+
+	// If everything went ok commit.
+	ts.Commit()
 	return b, nil
 }
 
