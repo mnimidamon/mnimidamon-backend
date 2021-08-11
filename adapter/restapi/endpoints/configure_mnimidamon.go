@@ -90,7 +90,7 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 	lcuc := listcomputer.NewUseCase(cr)
 	lgcuc := listgroupcomputer.NewUseCase(gcr)
 	lgmuc := listgroupmember.NewUseCase(gr)
-	crcuc := computerregistration.NewUseCase(cr, ur, cbr, gcr)
+	crcuc := computerregistration.NewUseCase(cr, ur, cbr, gcr, br)
 	giuc := groupinvite.NewUseCase(gr, ir, ur)
 	liuc := listinvite.NewUseCase(ir)
 	mgcuc := managegroupcomputer.NewUseCase(gcr, cr, gr, br, cbr)
@@ -133,7 +133,6 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 	api.ComputerGetCurrentUserGroupComputersHandler = handlers.NewGetCurrentUserGroupComputersHandler(ja, lgcuc)
 	api.ComputerDeleteComputerHandler = handlers.NewDeleteComputerHandler(ja, crcuc)
 	api.ComputerGetCurrentUserComputersHandler = handlers.NewGetComputersHandler(ja, lcuc)
-
 
 	api.InviteGetCurrentUserInviteHandler = handlers.NewGetCurrentUserInviteHandler(ja)
 

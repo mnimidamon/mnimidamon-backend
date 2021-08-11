@@ -12,6 +12,7 @@ import (
 
 type computerRegistrationUseCase struct {
 	CRepo  repository.ComputerRepository
+	BRepo  repository.BackupRepository
 	CBRepo repository.ComputerBackupRepository
 	GCRepo repository.GroupComputerRepository
 	URepo  repository.UserRepository
@@ -25,12 +26,13 @@ func (cr computerRegistrationUseCase) UnregisterComputer(computerID uint)  error
 
 	ts := repository.NewTransactionStack()
 	ctx := cr.CRepo.BeginTx(); ts.Add(ctx)
+	brtx := cr.BRepo.ContinueTx(ctx); ts.Add(brtx)
 	gctx := cr.GCRepo.ContinueTx(ctx); ts.Add(gctx)
 	cbtx :=  cr.CBRepo.ContinueTx(ctx); ts.Add(cbtx)
 
 	defer ts.RollbackUnlessCommitted()
 
-	if err := procedure.DeleteComputer(c, gctx, cbtx, ctx); err != nil {
+	if err := procedure.DeleteComputer(c, gctx, cbtx, ctx, brtx); err != nil {
 		return err
 	}
 
@@ -72,11 +74,12 @@ func (cr computerRegistrationUseCase) RegisterComputer(p payload.ComputerCredent
 	return cm, nil
 }
 
-func NewUseCase(cr repository.ComputerRepository, ur repository.UserRepository, cbr repository.ComputerBackupRepository, gcr repository.GroupComputerRepository) usecase.ComputerRegistrationInterface {
+func NewUseCase(cr repository.ComputerRepository, ur repository.UserRepository, cbr repository.ComputerBackupRepository, gcr repository.GroupComputerRepository, br repository.BackupRepository) usecase.ComputerRegistrationInterface {
 	return computerRegistrationUseCase{
 		CRepo:  cr,
 		CBRepo: cbr,
 		GCRepo: gcr,
 		URepo:  ur,
+		BRepo: br,
 	}
 }
