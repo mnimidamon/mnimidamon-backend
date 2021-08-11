@@ -70,6 +70,21 @@ func MapToComputer(cm *model.Computer) *modelapi.Computer {
 	}
 }
 
+func MapToComputers(cms []*model.Computer) []*modelapi.Computer {
+	if cms == nil {
+		return nil
+	}
+
+	var x []*modelapi.Computer
+
+	for _, im := range cms {
+		i := MapToComputer(im)
+		x = append(x, i)
+	}
+
+	return x
+}
+
 func MapToInvite(im *model.Invite) *modelapi.Invite {
 	if im == nil {
 		return nil
