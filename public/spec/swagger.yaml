@@ -178,7 +178,7 @@ paths:
       security:
         - auth_key: []
       responses:
-        202:
+        204:
           description: Successfuly deleted current user account.
         401:
           $ref: "#/responses/Unauthorized"
@@ -290,10 +290,8 @@ paths:
         - auth_key: []
       summary: Delete a computer
       responses:
-        200:
+        204:
           description: Computer succesfully deleted
-          schema:
-            $ref: "#/definitions/Computer"
         400:
           $ref: "#/responses/BadRequest"
         401:
@@ -731,15 +729,13 @@ paths:
       description: If the current user is the owner of the backup then it initializes backup deletion otherwise deletes the logged local computer backup of the current computer.
       tags:
         - backup
-      summary: Initialize a backup deletion
+      summary: Delete a backup deletion
       security:
         - auth_key: []
           comp_key: []
       responses:
-        202:
-          description: The specified backup is logged to be deleted.
-          schema:
-            $ref: "#/definitions/Backup"
+        204:
+          description: Successuful backup deletion.
         404:
           $ref: "#/responses/NotFound"
         401:

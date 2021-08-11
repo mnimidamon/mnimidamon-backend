@@ -40,7 +40,7 @@ import (
 	"time"
 )
 
-//go:generate swagger generate server --target ..\..\restapi --name Mnimidamon --spec ..\..\..\public\spec\swagger.yaml --model-package modelapi --server-package endpoints --principal interface{}
+//go:generate swagger generate server --target ..\..\restapi --exclude-main --name Mnimidamon --spec ..\..\..\public\spec\swagger.yaml --model-package modelapi --server-package endpoints --principal interface{}
 
 func configureFlags(api *operations.MnimidamonAPI) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
@@ -131,14 +131,14 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 	api.ComputerGetCurrentComputerHandler = handlers.NewGetCurrentUserComputer(ja)
 	api.ComputerGetCurrentUserComputerHandler = handlers.NewGetCurrentUserComputerHandler(lcuc, ja)
 	api.ComputerGetCurrentUserGroupComputersHandler = handlers.NewGetCurrentUserGroupComputersHandler(ja, lgcuc)
-	// api.ComputerDeleteComputerHandler = nil // TODO NEXT
+	api.ComputerDeleteComputerHandler = handlers.NewDeleteComputerHandler(ja, crcuc)
 	api.ComputerGetCurrentUserComputersHandler = handlers.NewGetComputersHandler(ja, lcuc)
 
 
 	api.InviteGetCurrentUserInviteHandler = handlers.NewGetCurrentUserInviteHandler(ja)
 
 	api.BackupInitializeGroupBackupHandler = handlers.NewInitializeGroupBackupHandler(mbuc, ja)
-	api.BackupInitializeGroupBackupDeletionHandler = handlers.NewGroupBackupDeletionImpl(mbuc, ja)
+	api.BackupInitializeGroupBackupDeletionHandler = handlers.NewGroupBackupDeletionHandler(mbuc, ja)
 	api.BackupUploadBackupHandler = handlers.NewUploadBackupHandler(mfuc, ja)
 	api.BackupLogComputerBackupHandler = handlers.NewLogComputerBackupHandler(mgbuc, ja)
 	api.BackupDownloadBackupHandler = handlers.NewDownloadBackupImpl(mfuc, ja)

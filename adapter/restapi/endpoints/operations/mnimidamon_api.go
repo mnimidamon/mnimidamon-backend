@@ -62,6 +62,9 @@ func NewMnimidamonAPI(spec *loads.Document) *MnimidamonAPI {
 		InviteDeclineCurrentUserInviteHandler: invite.DeclineCurrentUserInviteHandlerFunc(func(params invite.DeclineCurrentUserInviteParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation invite.DeclineCurrentUserInvite has not yet been implemented")
 		}),
+		ComputerDeleteComputerHandler: computer.DeleteComputerHandlerFunc(func(params computer.DeleteComputerParams, principal interface{}) middleware.Responder {
+			return middleware.NotImplemented("operation computer.DeleteComputer has not yet been implemented")
+		}),
 		CurrentUserDeleteCurrentUserHandler: current_user.DeleteCurrentUserHandlerFunc(func(params current_user.DeleteCurrentUserParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation current_user.DeleteCurrentUser has not yet been implemented")
 		}),
@@ -222,6 +225,8 @@ type MnimidamonAPI struct {
 	GroupCreateGroupHandler group.CreateGroupHandler
 	// InviteDeclineCurrentUserInviteHandler sets the operation handler for the decline current user invite operation
 	InviteDeclineCurrentUserInviteHandler invite.DeclineCurrentUserInviteHandler
+	// ComputerDeleteComputerHandler sets the operation handler for the delete computer operation
+	ComputerDeleteComputerHandler computer.DeleteComputerHandler
 	// CurrentUserDeleteCurrentUserHandler sets the operation handler for the delete current user operation
 	CurrentUserDeleteCurrentUserHandler current_user.DeleteCurrentUserHandler
 	// BackupDownloadBackupHandler sets the operation handler for the download backup operation
@@ -380,6 +385,9 @@ func (o *MnimidamonAPI) Validate() error {
 	}
 	if o.InviteDeclineCurrentUserInviteHandler == nil {
 		unregistered = append(unregistered, "invite.DeclineCurrentUserInviteHandler")
+	}
+	if o.ComputerDeleteComputerHandler == nil {
+		unregistered = append(unregistered, "computer.DeleteComputerHandler")
 	}
 	if o.CurrentUserDeleteCurrentUserHandler == nil {
 		unregistered = append(unregistered, "current_user.DeleteCurrentUserHandler")
@@ -588,6 +596,10 @@ func (o *MnimidamonAPI) initHandlerCache() {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/users/current/invites/{group_id}"] = invite.NewDeclineCurrentUserInvite(o.context, o.InviteDeclineCurrentUserInviteHandler)
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/users/current/computers/{computer_id}"] = computer.NewDeleteComputer(o.context, o.ComputerDeleteComputerHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}

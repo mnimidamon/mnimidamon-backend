@@ -141,7 +141,7 @@ func init() {
         "summary": "Delete current user account",
         "operationId": "deleteCurrentUser",
         "responses": {
-          "202": {
+          "204": {
             "description": "Successfuly deleted current user account."
           },
           "401": {
@@ -411,14 +411,11 @@ func init() {
         "tags": [
           "backup"
         ],
-        "summary": "Initialize a backup deletion",
+        "summary": "Delete a backup deletion",
         "operationId": "initializeGroupBackupDeletion",
         "responses": {
-          "202": {
-            "description": "The specified backup is logged to be deleted.",
-            "schema": {
-              "$ref": "#/definitions/Backup"
-            }
+          "204": {
+            "description": "Successuful backup deletion."
           },
           "401": {
             "$ref": "#/responses/Unauthorized"
@@ -725,6 +722,33 @@ func init() {
             "schema": {
               "$ref": "#/definitions/Computer"
             }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/responses/Internal"
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "auth_key": []
+          }
+        ],
+        "description": "Deletes the computer with its group memberships",
+        "tags": [
+          "computer"
+        ],
+        "summary": "Delete a computer",
+        "operationId": "deleteComputer",
+        "responses": {
+          "204": {
+            "description": "Computer succesfully deleted"
           },
           "400": {
             "$ref": "#/responses/BadRequest"
@@ -1919,7 +1943,7 @@ func init() {
         "summary": "Delete current user account",
         "operationId": "deleteCurrentUser",
         "responses": {
-          "202": {
+          "204": {
             "description": "Successfuly deleted current user account."
           },
           "401": {
@@ -2253,14 +2277,11 @@ func init() {
         "tags": [
           "backup"
         ],
-        "summary": "Initialize a backup deletion",
+        "summary": "Delete a backup deletion",
         "operationId": "initializeGroupBackupDeletion",
         "responses": {
-          "202": {
-            "description": "The specified backup is logged to be deleted.",
-            "schema": {
-              "$ref": "#/definitions/Backup"
-            }
+          "204": {
+            "description": "Successuful backup deletion."
           },
           "401": {
             "description": "Unauthorized.",
@@ -2681,6 +2702,42 @@ func init() {
             "schema": {
               "$ref": "#/definitions/Computer"
             }
+          },
+          "400": {
+            "description": "Supplied parameters were not okay.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "auth_key": []
+          }
+        ],
+        "description": "Deletes the computer with its group memberships",
+        "tags": [
+          "computer"
+        ],
+        "summary": "Delete a computer",
+        "operationId": "deleteComputer",
+        "responses": {
+          "204": {
+            "description": "Computer succesfully deleted"
           },
           "400": {
             "description": "Supplied parameters were not okay.",

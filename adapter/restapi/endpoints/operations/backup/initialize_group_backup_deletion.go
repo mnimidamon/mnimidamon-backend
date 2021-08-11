@@ -31,7 +31,7 @@ func NewInitializeGroupBackupDeletion(ctx *middleware.Context, handler Initializ
 
 /* InitializeGroupBackupDeletion swagger:route DELETE /users/current/computers/current/groups/{group_id}/backups/{backup_id} backup initializeGroupBackupDeletion
 
-Initialize a backup deletion
+Delete a backup deletion
 
 If the current user is the owner of the backup then it initializes backup deletion otherwise deletes the logged local computer backup of the current computer.
 

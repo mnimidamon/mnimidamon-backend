@@ -24,7 +24,7 @@ func (impl *groupBackupDeletionImpl) Handle(p backup.InitializeGroupBackupDeleti
 			return impl.JAuth.WithGroup(um, groupID, func(gm *model.Group) middleware.Responder {
 				return impl.JAuth.WithGroupComputer(cm, gm, func(gcm *model.GroupComputer) middleware.Responder {
 					return impl.JAuth.WithBackup(um, gm, backupID, func(bm *model.Backup) middleware.Responder {
-						b, err := impl.MBCase.DeleteRequest(um.ID, backupID)
+						err := impl.MBCase.DeleteRequest(um.ID, backupID)
 
 						if err != nil {
 							if errors.Is(err, domain.ErrInternalDomain) {
@@ -36,8 +36,7 @@ func (impl *groupBackupDeletionImpl) Handle(p backup.InitializeGroupBackupDeleti
 							}
 						}
 
-						return backup.NewInitializeGroupBackupDeletionAccepted().
-							WithPayload(MapToBackup(b))
+						return backup.NewInitializeGroupBackupDeletionNoContent()
 					})
 				})
 			})
@@ -45,7 +44,7 @@ func (impl *groupBackupDeletionImpl) Handle(p backup.InitializeGroupBackupDeleti
 	})
 }
 
-func NewGroupBackupDeletionImpl(mbuc usecase.ManageBackupInterface, ja authentication.JwtAuthentication) backup.InitializeGroupBackupDeletionHandler {
+func NewGroupBackupDeletionHandler(mbuc usecase.ManageBackupInterface, ja authentication.JwtAuthentication) backup.InitializeGroupBackupDeletionHandler {
 	return &groupBackupDeletionImpl{
 		MBCase: mbuc,
 		JAuth:  ja,

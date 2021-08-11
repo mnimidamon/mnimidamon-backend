@@ -13,28 +13,28 @@ import (
 	"mnimidamonbackend/adapter/restapi/modelapi"
 )
 
-// DeleteCurrentUserAcceptedCode is the HTTP code returned for type DeleteCurrentUserAccepted
-const DeleteCurrentUserAcceptedCode int = 202
+// DeleteCurrentUserNoContentCode is the HTTP code returned for type DeleteCurrentUserNoContent
+const DeleteCurrentUserNoContentCode int = 204
 
-/*DeleteCurrentUserAccepted Successfuly deleted current user account.
+/*DeleteCurrentUserNoContent Successfuly deleted current user account.
 
-swagger:response deleteCurrentUserAccepted
+swagger:response deleteCurrentUserNoContent
 */
-type DeleteCurrentUserAccepted struct {
+type DeleteCurrentUserNoContent struct {
 }
 
-// NewDeleteCurrentUserAccepted creates DeleteCurrentUserAccepted with default headers values
-func NewDeleteCurrentUserAccepted() *DeleteCurrentUserAccepted {
+// NewDeleteCurrentUserNoContent creates DeleteCurrentUserNoContent with default headers values
+func NewDeleteCurrentUserNoContent() *DeleteCurrentUserNoContent {
 
-	return &DeleteCurrentUserAccepted{}
+	return &DeleteCurrentUserNoContent{}
 }
 
 // WriteResponse to the client
-func (o *DeleteCurrentUserAccepted) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+func (o *DeleteCurrentUserNoContent) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
 
-	rw.WriteHeader(202)
+	rw.WriteHeader(204)
 }
 
 // DeleteCurrentUserUnauthorizedCode is the HTTP code returned for type DeleteCurrentUserUnauthorized

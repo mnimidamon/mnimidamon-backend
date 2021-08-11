@@ -13,48 +13,28 @@ import (
 	"mnimidamonbackend/adapter/restapi/modelapi"
 )
 
-// InitializeGroupBackupDeletionAcceptedCode is the HTTP code returned for type InitializeGroupBackupDeletionAccepted
-const InitializeGroupBackupDeletionAcceptedCode int = 202
+// InitializeGroupBackupDeletionNoContentCode is the HTTP code returned for type InitializeGroupBackupDeletionNoContent
+const InitializeGroupBackupDeletionNoContentCode int = 204
 
-/*InitializeGroupBackupDeletionAccepted The specified backup is logged to be deleted.
+/*InitializeGroupBackupDeletionNoContent Successuful backup deletion.
 
-swagger:response initializeGroupBackupDeletionAccepted
+swagger:response initializeGroupBackupDeletionNoContent
 */
-type InitializeGroupBackupDeletionAccepted struct {
-
-	/*
-	  In: Body
-	*/
-	Payload *modelapi.Backup `json:"body,omitempty"`
+type InitializeGroupBackupDeletionNoContent struct {
 }
 
-// NewInitializeGroupBackupDeletionAccepted creates InitializeGroupBackupDeletionAccepted with default headers values
-func NewInitializeGroupBackupDeletionAccepted() *InitializeGroupBackupDeletionAccepted {
+// NewInitializeGroupBackupDeletionNoContent creates InitializeGroupBackupDeletionNoContent with default headers values
+func NewInitializeGroupBackupDeletionNoContent() *InitializeGroupBackupDeletionNoContent {
 
-	return &InitializeGroupBackupDeletionAccepted{}
-}
-
-// WithPayload adds the payload to the initialize group backup deletion accepted response
-func (o *InitializeGroupBackupDeletionAccepted) WithPayload(payload *modelapi.Backup) *InitializeGroupBackupDeletionAccepted {
-	o.Payload = payload
-	return o
-}
-
-// SetPayload sets the payload to the initialize group backup deletion accepted response
-func (o *InitializeGroupBackupDeletionAccepted) SetPayload(payload *modelapi.Backup) {
-	o.Payload = payload
+	return &InitializeGroupBackupDeletionNoContent{}
 }
 
 // WriteResponse to the client
-func (o *InitializeGroupBackupDeletionAccepted) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+func (o *InitializeGroupBackupDeletionNoContent) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
-	rw.WriteHeader(202)
-	if o.Payload != nil {
-		payload := o.Payload
-		if err := producer.Produce(rw, payload); err != nil {
-			panic(err) // let the recovery middleware deal with this
-		}
-	}
+	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
+
+	rw.WriteHeader(204)
 }
 
 // InitializeGroupBackupDeletionUnauthorizedCode is the HTTP code returned for type InitializeGroupBackupDeletionUnauthorized

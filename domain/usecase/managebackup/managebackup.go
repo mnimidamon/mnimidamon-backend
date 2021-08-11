@@ -138,29 +138,29 @@ func (mb manageBackupUseCase) UploadRequest(ownerID uint, backupID uint) (*model
 	return b, nil
 }
 
-func (mb manageBackupUseCase) DeleteRequest(userID uint, backupID uint) (*model.Backup, error) {
+func (mb manageBackupUseCase) DeleteRequest(userID uint, backupID uint) error {
 	// Get user
 	_, err := mb.URepo.FindById(userID)
 	if errors.Is(domain.ErrNotFound, err) {
-		return nil, domain.ErrUserNotFound
+		return domain.ErrUserNotFound
 	}
 
 	if err != nil {
-		return nil, domain.ToDomainError(err)
+		return domain.ToDomainError(err)
 	}
 
 	// Get backup
 	b, err := mb.BRepo.FindById(backupID)
 	if errors.Is(domain.ErrNotFound, err) {
-		return nil, domain.ErrBackupNotFound
+		return domain.ErrBackupNotFound
 	}
 
 	if err != nil {
-		return nil, domain.ToDomainError(err)
+		return domain.ToDomainError(err)
 	}
 
 	if b.OwnerID != userID {
-		return nil, domain.ErrUserNotOwner
+		return domain.ErrUserNotOwner
 	}
 
 	ts := repository.NewTransactionStack()
@@ -173,21 +173,21 @@ func (mb manageBackupUseCase) DeleteRequest(userID uint, backupID uint) (*model.
 	// Find all the Computer backups.
 	cbs, err := cbtx.FindAllOfBackup(backupID)
 	if err != nil {
-		return nil, domain.ToDomainError(err)
+		return domain.ToDomainError(err)
 	}
 
 	// Delete every computer backups of every user.
 	for _, cb := range cbs {
 		if err := cbtx.Delete(cb.GroupComputerID, cb.BackupID); err != nil {
 			constants.Log("error when deleting computer backup %v, %v", cb, err)
-			return nil, domain.ToDomainError(err)
+			return domain.ToDomainError(err)
 		}
 	}
 
 	// Delete the backup.
 	if err := brtx.Delete(b.ID); err != nil {
 		constants.Log("error deleting backup %v, %v", b, err)
-		return nil, domain.ToDomainError(err)
+		return domain.ToDomainError(err)
 	}
 
 	// Delete the local stored file.
@@ -201,7 +201,7 @@ func (mb manageBackupUseCase) DeleteRequest(userID uint, backupID uint) (*model.
 
 	// If everything went ok commit.
 	ts.Commit()
-	return b, nil
+	return nil
 }
 
 func (mb manageBackupUseCase) findGroupComputersOfUserAndGroup(userID uint, groupID uint, cr repository.ComputerRepository, gc repository.GroupComputerRepository) ([]*model.GroupComputer, error) {
