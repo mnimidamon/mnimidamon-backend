@@ -11,11 +11,12 @@ import (
 )
 
 type manageFileUseCase struct {
-	BRepo repository.BackupRepository
+	BRepo  repository.BackupRepository
+	CBRepo repository.ComputerBackupRepository
 	FStore repository.FileStore
 }
 
-func (mf manageFileUseCase) UploadBackup(backupID uint, rc io.ReadCloser) (*model.Backup, error) {
+func (mf manageFileUseCase) UploadBackup(groupComputerId uint, backupID uint, rc io.ReadCloser) (*model.Backup, error) {
 	// Get Backup model.
 	bm, err := mf.BRepo.FindById(backupID)
 
@@ -47,6 +48,15 @@ func (mf manageFileUseCase) UploadBackup(backupID uint, rc io.ReadCloser) (*mode
 		return nil, domain.ToDomainError(err)
 	}
 
+	// Register the backup if that is non existent.
+	exists, _ := mf.CBRepo.Exists(groupComputerId, backupID)
+	if !exists {
+		mf.CBRepo.Create(&model.ComputerBackup{
+			BackupID:        backupID,
+			GroupComputerID: groupComputerId,
+		})
+	}
+
 	return bm, err
 }
 
@@ -70,9 +80,10 @@ func (mf manageFileUseCase) DownloadBackup(backupID uint) (io.ReadCloser, error)
 	return rc, nil
 }
 
-func NewUseCase(fs repository.FileStore, br repository.BackupRepository) usecase.ManageFileInterface {
+func NewUseCase(fs repository.FileStore, br repository.BackupRepository, cbr repository.ComputerBackupRepository) usecase.ManageFileInterface {
 	return manageFileUseCase{
 		BRepo:  br,
 		FStore: fs,
+		CBRepo: cbr,
 	}
 }

@@ -96,7 +96,7 @@ func configureAPI(api *operations.MnimidamonAPI) http.Handler {
 	mgcuc := managegroupcomputer.NewUseCase(gcr, cr, gr, br, cbr)
 	mbuc := managebackup.NewUseCase(fs, br, ur, gr, cr, gcr, cbr)
 	lbuc := listbackup.NewUseCase(br)
-	mfuc := managefile.NewUseCase(fs, br)
+	mfuc := managefile.NewUseCase(fs, br, cbr)
 	mgbuc := managecomputerbackup.NewUseCase(br, gcr, cbr, fs)
 
 	// Setting up the authorization.

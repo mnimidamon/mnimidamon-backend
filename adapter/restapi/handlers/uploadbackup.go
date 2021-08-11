@@ -22,7 +22,7 @@ func (impl *uploadBackupImpl) Handle(p backup.UploadBackupParams, _ interface{})
 			return impl.JAuth.WithGroup(um, groupID, func(gm *model.Group) middleware.Responder {
 				return impl.JAuth.WithGroupComputer(cm, gm, func(gcm *model.GroupComputer) middleware.Responder {
 					return impl.JAuth.WithBackup(um, gm, backupID, func(bm *model.Backup) middleware.Responder {
-						b, err := impl.MFCase.UploadBackup(backupID, p.BackupData)
+						b, err := impl.MFCase.UploadBackup(gcm.ID, backupID, p.BackupData)
 
 						if err != nil {
 							if errors.Is(err, domain.ErrInternalDomain) {
