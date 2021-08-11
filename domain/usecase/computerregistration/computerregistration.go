@@ -2,33 +2,58 @@ package computerregistration
 
 import (
 	"errors"
-	"mnimidamonbackend/domain"
+	. "mnimidamonbackend/domain"
 	"mnimidamonbackend/domain/model"
 	"mnimidamonbackend/domain/repository"
 	"mnimidamonbackend/domain/usecase"
 	"mnimidamonbackend/domain/usecase/payload"
+	"mnimidamonbackend/domain/usecase/procedure"
 )
 
 type computerRegistrationUseCase struct {
-	CRepo repository.ComputerRepository
-	URepo repository.UserRepository
+	CRepo  repository.ComputerRepository
+	CBRepo repository.ComputerBackupRepository
+	GCRepo repository.GroupComputerRepository
+	URepo  repository.UserRepository
+}
+
+func (cr computerRegistrationUseCase) UnregisterComputer(computerID uint)  error {
+	c, err := cr.CRepo.FindById(computerID)
+	if err != nil {
+		return ToDomainError(err)
+	}
+
+	ts := repository.NewTransactionStack()
+	ctx := cr.CRepo.BeginTx(); ts.Add(ctx)
+	gctx := cr.GCRepo.ContinueTx(ctx); ts.Add(gctx)
+	cbtx :=  cr.CBRepo.ContinueTx(ctx); ts.Add(cbtx)
+
+	defer ts.RollbackUnlessCommitted()
+
+	if err := procedure.DeleteComputer(c, gctx, cbtx, ctx); err != nil {
+		return err
+	}
+
+	// Commit the changes
+	ts.Commit()
+	return nil
 }
 
 func (cr computerRegistrationUseCase) RegisterComputer(p payload.ComputerCredentialsPayload) (*model.Computer, error) {
 	// Find the owner
 	u, err := cr.URepo.FindById(p.OwnerID)
 	if err != nil {
-		return nil, domain.ToDomainError(err)
+		return nil,ToDomainError(err)
 	}
 
 	// Find if name is unique
 	_, err = cr.CRepo.FindByName(p.Name, u.ID)
 
 	if err == nil {
-		return nil, domain.ErrNameNotUnique
+		return nil, ErrNameNotUnique
 	} else {
 		if !errors.Is(err, repository.ErrNotFound) {
-			return nil, domain.ToDomainError(err)
+			return nil, ToDomainError(err)
 		}
 	}
 
@@ -41,17 +66,17 @@ func (cr computerRegistrationUseCase) RegisterComputer(p payload.ComputerCredent
 	}
 
 	if err := cr.CRepo.Create(cm, u.ID); err != nil {
-		return nil, domain.ToDomainError(err)
+		return nil, ToDomainError(err)
 	}
 
 	return cm, nil
 }
 
-func NewUseCase(cr repository.ComputerRepository, ur repository.UserRepository) usecase.ComputerRegistrationInterface {
+func NewUseCase(cr repository.ComputerRepository, ur repository.UserRepository, cbr repository.ComputerBackupRepository, gcr repository.GroupComputerRepository) usecase.ComputerRegistrationInterface {
 	return computerRegistrationUseCase{
-		CRepo: cr,
-		URepo: ur,
+		CRepo:  cr,
+		CBRepo: cbr,
+		GCRepo: gcr,
+		URepo:  ur,
 	}
 }
-
-

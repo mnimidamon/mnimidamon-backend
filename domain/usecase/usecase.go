@@ -29,6 +29,7 @@ type ListGroupMemberInterface interface {
 
 type ComputerRegistrationInterface interface {
 	RegisterComputer(p payload.ComputerCredentialsPayload) (*model.Computer, error)
+	UnregisterComputer(computerID uint) error
 }
 
 type ManageGroupComputerInterface interface {

@@ -8,7 +8,7 @@ import (
 
 type ErrDomain error
 
-func NewError(msg string) ErrDomain {
+func NewError(msg string) error {
 	return errors.New(msg)
 }
 
