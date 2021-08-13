@@ -41,7 +41,7 @@ func NewGraphicalServerInterface() (*GraphicalInterface, error) {
 	mdApp := app.NewWithID("server.mnimidamon.marmiha.com")
 	mdApp.SetIcon(appicons.ResourceMnimidamonServerIconPng)
 
-	mainWindow := mdApp.NewWindow(" ")
+	mainWindow := mdApp.NewWindow("mnimidamon server")
 
 	gi := &GraphicalInterface{
 		App:        mdApp,
