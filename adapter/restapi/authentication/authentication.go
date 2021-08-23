@@ -6,8 +6,6 @@ import (
 	"mnimidamonbackend/domain/model"
 	"mnimidamonbackend/domain/usecase"
 	"net/http"
-	"strconv"
-	"time"
 )
 
 type JwtAuthentication interface {
@@ -84,19 +82,10 @@ func (ja *jwtAuthenticationImpl) ParseUserToken(tokenString string, claims *user
 }
 
 func (ja *jwtAuthenticationImpl) GenerateComputerToken(computerID uint) (*string, error) {
-	// The tokens will expire in one day. Unix function converts the
-	// date to the seconds passed so int64.
-	expiresAt := time.Unix(1<<63-1, 0)
-
 	// Populate the claims.
 	claims := computerTokenClaims{
 		ComputerID: computerID,
-		StandardClaims: jwt.StandardClaims{
-			Id:        strconv.FormatInt(int64(computerID), 10),
-			Issuer:    "mnimidamon-server",
-			ExpiresAt: expiresAt.Unix(),
-			IssuedAt:  time.Now().Unix(),
-		},
+		Issuer: "mnimidamon-server",
 	}
 
 	return ja.generateSignedString(claims)
@@ -116,19 +105,10 @@ func (ja *jwtAuthenticationImpl) generateSignedString(claims jwt.Claims) (*strin
 }
 
 func (ja *jwtAuthenticationImpl) GenerateUserToken(userID uint) (*string, error) {
-	// The tokens will expire in one day. Unix function converts the
-	// date to the seconds passed so int64.
-	expiresAt := time.Unix(1<<63-1, 0)
-
 	// Populate the claims.
 	claims := userTokenClaims{
 		UserID: userID,
-		StandardClaims: jwt.StandardClaims{
-			Id:        strconv.FormatInt(int64(userID), 10),
-			Issuer:    "mnimidamon-server",
-			ExpiresAt: expiresAt.Unix(),
-			IssuedAt:  time.Now().Unix(),
-		},
+		Issuer: "mnimidamon-server",
 	}
 
 	return ja.generateSignedString(claims)

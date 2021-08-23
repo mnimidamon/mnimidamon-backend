@@ -1,23 +1,31 @@
 package authentication
 
-import "github.com/golang-jwt/jwt"
+import (
+	"errors"
+)
 
 // This will be saved inside our token for user authentication
 type userTokenClaims struct {
-	UserID         uint       `json:"user_id"`
-	StandardClaims jwt.StandardClaims `json:"standard_claims"`
+	UserID uint   `json:"uid"`
+	Issuer string `json:"iss"`
 }
 
 func (ut userTokenClaims) Valid() error {
-	return ut.StandardClaims.Valid()
+	if ut.Issuer != "mnimidamon-server" {
+		return errors.New("not issued by mnimidamon server")
+	}
+	return nil
 }
 
 // This will be saved inside our token for computer authentication.
 type computerTokenClaims struct {
-	ComputerID         uint       `json:"user_id"`
-	StandardClaims jwt.StandardClaims `json:"standard_claims"`
+	ComputerID uint   `json:"cid"`
+	Issuer     string `json:"iss"`
 }
 
 func (ct computerTokenClaims) Valid() error {
-	return ct.StandardClaims.Valid()
+	if ct.Issuer != "mnimidamon-server" {
+		return errors.New("not issued by mnimidamon server")
+	}
+	return nil
 }
