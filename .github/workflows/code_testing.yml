@@ -20,4 +20,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Run Tests
-        run: sudo go test ./... -v
+        run: |
+          CGO_ENABLED=1
+          GOOS=linux
+          sudo go test ./... -v
