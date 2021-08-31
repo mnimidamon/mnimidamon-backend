@@ -17,12 +17,10 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: ${{ matrix.go-version }}
-      - name: Install GCO for Fyne
-        run: sudo apt-get install golang gcc libgl1-mesa-dev xorg-dev
       - name: Checkout
         uses: actions/checkout@v2
       - name: Run Tests
         run: |
           CGO_ENABLED=1
           GOOS=linux
-          sudo go test ./... -v
+          sudo go test ./domain/... -v
