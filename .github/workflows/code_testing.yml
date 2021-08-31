@@ -1,4 +1,4 @@
-name: build binaries
+name: code test
 
 on:
   pull_request:
