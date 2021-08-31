@@ -86,7 +86,7 @@ func (fs fileStoreImpl) CalculateReaderHash(rc io.Reader) (string, error) {
 	h := sha256.New()
 
 	if _, err := io.Copy(h, rc); err != nil {
-		return "", fmt.Errorf("%w: error calculating hash of backup %v: %v", repository.ErrCalculatingHash, err)
+		return "", fmt.Errorf("%w: error calculating hash of backup: %v", repository.ErrCalculatingHash, err)
 	}
 
 	calculatedHash := hex.EncodeToString(h.Sum(nil))
