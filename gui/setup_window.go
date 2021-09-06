@@ -88,7 +88,7 @@ func NewSetupWindow(gi *GraphicalInterface, nextWindow ContentGetter) *SetupWind
 			restapi.GlobalConfig = config
 
 			// Make the required files and folders
-			err := makeRequiredFiles(config)
+			err := MakeRequiredFiles(config)
 			if err != nil {
 				dialog.NewError(err, gi.MainWindow)
 			}
@@ -119,7 +119,7 @@ func NewSetupWindow(gi *GraphicalInterface, nextWindow ContentGetter) *SetupWind
 	}
 }
 
-func makeRequiredFiles(config *restapi.Config) error {
+func MakeRequiredFiles(config *restapi.Config) error {
 	// Make file store folder
 	if _, err := os.Stat(config.GetFileStoreFolderPath()); os.IsNotExist(err) {
 		err := os.MkdirAll(config.GetFileStoreFolderPath(), 0700)
