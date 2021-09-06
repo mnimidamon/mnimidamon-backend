@@ -35,9 +35,9 @@ jobs:
           go build github.com/fyne-io/fyne-cross
           mv ./fyne-cross ./fc
       - name: Compile Linux Binaries
-        run: sudo ./fc linux -arch=amd64,386,arm -app-id mnimidamon-client -icon $GITHUB_WORKSPACE/public/mnimidamon-server-icon.png -name mnimidamon-server  $GITHUB_WORKSPACE/cmd/mnimidamon-server
+        run: sudo ./fc linux -arch=amd64,386,arm -app-id mnimidamon-server -icon $GITHUB_WORKSPACE/public/mnimidamon-server-icon.png -name mnimidamon-server  $GITHUB_WORKSPACE/cmd/mnimidamon-server
       - name: Compile Windows Binaries
-        run: sudo ./fc windows -arch=amd64,386 -app-id mnimidamon-client -icon $GITHUB_WORKSPACE/public/mnimidamon-server-icon.png -name mnimidamon-server.exe $GITHUB_WORKSPACE/cmd/mnimidamon-server
+        run: sudo ./fc windows -arch=amd64,386 -app-id mnimidamon-server -icon $GITHUB_WORKSPACE/public/mnimidamon-server-icon.png -name mnimidamon-server.exe $GITHUB_WORKSPACE/cmd/mnimidamon-server
       - name: Move and Rename Binaries
         run: |
           sudo mkdir $GITHUB_WORKSPACE/dist
