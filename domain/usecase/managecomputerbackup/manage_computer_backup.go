@@ -63,9 +63,13 @@ func (mgb manageComputerBackupUseCase) LogDownload(backupID uint, computerID uin
 	}
 
 
+	ts := repository.NewTransactionStack()
 	// Start Transactions.
-	cbrtx := mgb.CBRepo.BeginTx()
-	brtx := mgb.BRepo.ContinueTx(cbrtx)
+	cbrtx := mgb.CBRepo.BeginTx(); ts.Add(cbrtx)
+	brtx := mgb.BRepo.ContinueTx(cbrtx); ts.Add(brtx)
+	gcmtx := mgb.GCRepo.ContinueTx(cbrtx); ts.Add(gcmtx)
+
+	defer ts.RollbackUnlessCommitted()
 
 
 	err = cbrtx.Create(cbm)
@@ -75,10 +79,9 @@ func (mgb manageComputerBackupUseCase) LogDownload(backupID uint, computerID uin
 
 	if bm.OnServer {
 		// Check if file should be deleted off the server.
-		gcms, err := mgb.GCRepo.FindAllOfGroup(gc.GroupID)
+		gcms, err := gcmtx.FindAllOfGroup(gc.GroupID)
 
 		if err != nil {
-			cbrtx.Rollback()
 			return nil, domain.ToDomainError(err)
 		}
 
@@ -88,7 +91,6 @@ func (mgb manageComputerBackupUseCase) LogDownload(backupID uint, computerID uin
 			exists, err := cbrtx.Exists(gcm.ID, bm.ID)
 
 			if err != nil {
-				cbrtx.Rollback()
 				return nil, domain.ToDomainError(err)
 			}
 
@@ -101,7 +103,6 @@ func (mgb manageComputerBackupUseCase) LogDownload(backupID uint, computerID uin
 			storedSize, err := cbrtx.FindStoredSizeOf(gcm.ID)
 
 			if err != nil {
-				cbrtx.Rollback()
 				return nil, domain.ToDomainError(err)
 			}
 
@@ -121,23 +122,18 @@ func (mgb manageComputerBackupUseCase) LogDownload(backupID uint, computerID uin
 
 			err := brtx.Update(bm)
 			if err != nil {
-				cbrtx.Rollback()
 				return nil, domain.ToDomainError(err)
 			}
 
 			// Delete the file.
 			err = mgb.FStore.DeleteFile(bm.ID)
 			if err != nil {
-				cbrtx.Rollback()
-				brtx.Rollback()
 				return nil, domain.ToDomainError(err)
 			}
 		}
 	}
 
-	cbrtx.Commit()
-	brtx.Commit()
-
+	ts.Commit()
 	return cbm, nil
 }
 

@@ -28,8 +28,8 @@ func (cbd computerBackupData) FindStoredSizeOf(groupComputerID uint) (uint, erro
 			cbd.Model(&ComputerBackup{}).
 				Where("group_computer_id = ?", groupComputerID).
 				Select("backup_id"),
-		).Select("sum(storage_size) as size").
-		Scan(sumResult)
+		).Select("sum(size) as size").
+		Scan(&sumResult)
 
 	if result.Error != nil {
 		return 0, toRepositoryError(result.Error)
