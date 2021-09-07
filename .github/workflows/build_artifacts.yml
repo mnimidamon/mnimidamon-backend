@@ -26,10 +26,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Checkout Fyne-Cross Develop branch
-        uses: actions/checkout@master
+        uses: actions/checkout@develop
         with:
-          name: fyne-io/fyne-cross     <-- clone https://github.com/org1/repo1
-          ref: refs/heads/develop
+          name: fyne-io/fyne-cross
       - name: Make Windows and Docker Image
         run: |
           cd fyne-cross
