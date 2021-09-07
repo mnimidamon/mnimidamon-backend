@@ -26,9 +26,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Checkout Fyne-Cross Develop branch
-        uses: actions/checkout@develop
+        uses: actions/checkout@v2
         with:
-          name: fyne-io/fyne-cross
+          name: fyne-io/fyne-cross@develop
       - name: Make Windows and Docker Image
         run: |
           cd fyne-cross
