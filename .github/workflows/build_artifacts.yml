@@ -2,10 +2,6 @@ name: build binaries
 
 on:
   push:
-    tags:
-      - 'v*'
-    paths-ignore:
-      - '**.md'
   pull_request:
     branches:
       - 'master'
@@ -29,9 +25,20 @@ jobs:
         uses: docker-practice/actions-setup-docker@master
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Checkout Fyne-Cross Develop branch
+        uses: actions/checkout@master
+        with:
+          name: fyne-io/fyne-cross     <-- clone https://github.com/org1/repo1
+          ref: refs/heads/develop
+      - name: Make Windows and Docker Image
+        run: |
+          cd fyne-cross
+          make windows
+          make linux
+          cd ..
       - name: Install Fyne Cross
         run: |
-          go get github.com/fyne-io/fyne-cross@develop
+          go install github.com/fyne-io/fyne-cross
           go build github.com/fyne-io/fyne-cross
           mv ./fyne-cross ./fc
       - name: Compile Linux Binaries
